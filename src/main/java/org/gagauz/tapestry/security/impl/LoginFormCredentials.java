@@ -1,4 +1,6 @@
-package org.gagauz.tapestry.security.api;
+package org.gagauz.tapestry.security.impl;
+
+import org.gagauz.tapestry.security.api.Credentials;
 
 public class LoginFormCredentials implements Credentials {
     private final String username;

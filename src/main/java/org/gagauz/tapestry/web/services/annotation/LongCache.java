@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.services;
+package org.gagauz.tapestry.web.services.annotation;
 
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;

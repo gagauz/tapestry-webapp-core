@@ -1,10 +1,12 @@
 package org.gagauz.tapestry.web.services;
 
-import com.dumbster.smtp.SimpleSmtpServer;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
+import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -15,11 +17,10 @@ import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.webresources.modules.WebResourcesModule;
 import org.gagauz.tapestry.binding.*;
 import org.gagauz.tapestry.hibernate.HibernateModule;
+import org.gagauz.tapestry.security.SecurityModule;
 import org.gagauz.tapestry.validate.NonLatinCharsValidator;
-import org.gagauz.tapestry.web.services.model.GetParamTransformer;
-import org.gagauz.tapestry.web.services.model.LongCacheTransformer;
-import org.gagauz.tapestry.web.services.security.SecurityModuleSetup;
-import org.gagauz.utils.SysEnv;
+import org.gagauz.tapestry.web.services.annotation.GetParamTransformer;
+import org.gagauz.tapestry.web.services.annotation.LongCacheTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,32 +36,16 @@ import java.io.PrintWriter;
  */
 @ImportModule({HibernateModule.class,
         TypeCoercerModule.class,
-        SecurityModuleSetup.class,
+        SecurityModule.class,
         WebResourcesModule.class})
 public class CoreWebappModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreWebappModule.class);
 
-    @Startup
-    public static void startup(@Inject @Symbol(SymbolConstants.PRODUCTION_MODE) String productionMode) {
-        if (SysEnv.TEST_DATA.toString().equals("true")) {
-            SimpleSmtpServer.start();
-        }
-    }
-
     public static void bind(ServiceBinder binder) {
         binder.bind(ToolsService.class);
-        binder.bind(JSSupport.class);
         binder.bind(RequestMessagesPipeline.class);
         binder.bind(CookieService.class);
-    }
-
-    public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration) {
-        configuration.override(SymbolConstants.APPLICATION_VERSION, "1.0-SNAPSHOT");
-        configuration.override(SymbolConstants.HMAC_PASSPHRASE, "1.0-SNAPSHOT");
-        configuration.override(SymbolConstants.CHARSET, "utf-8");
-        configuration
-                .override(ComponentParameterConstants.GRID_TABLE_CSS_CLASS, "table-responsive");
     }
 
     @ApplicationDefaults

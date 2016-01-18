@@ -33,12 +33,16 @@ public class AuthenticationService {
         U newUser = userProvider.findByCredentials(credentials);
         LoginResult result = null;
         if (null != newUser) {
-            @SuppressWarnings("unchecked")
-            Class<U> clz = (Class<U>) newUser.getClass();
-            U lastUser = applicationStateManager.getIfExists(clz);
-            applicationStateManager.set(clz, newUser);
+            UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
+            if (null == userSet) {
+                userSet = new UserSet();
+            } else {
+                userSet.remove(newUser);
+            }
+            userSet.add(newUser);
+            applicationStateManager.set(UserSet.class, userSet);
             result = new LoginResult(newUser, credentials);
-            result.setLastUser(lastUser);
+            //            result.setLastUser(lastUser);
         } else {
             result = new LoginResult(credentials);
         }
@@ -51,13 +55,15 @@ public class AuthenticationService {
 
     public void logout() {
 
-        User user = applicationStateManager.getIfExists(User.class);
+        UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
 
         for (AuthenticationHandler handler : handlers) {
-            handler.handleLogout(user);
+            for (User user : userSet) {
+                handler.handleLogout(user);
+            }
         }
 
-        applicationStateManager.set(User.class, null);
+        applicationStateManager.set(UserSet.class, null);
 
         Session session = request.getSession(false);
 

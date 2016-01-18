@@ -5,7 +5,7 @@ import org.apache.tapestry5.corelib.base.AbstractConditional;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.gagauz.tapestry.security.AccessDeniedException;
 import org.gagauz.tapestry.security.api.AccessAttribute;
-import org.gagauz.tapestry.security.api.AccessAttributeChecker;
+import org.gagauz.tapestry.security.api.AccessAttributeExtractorChecker;
 
 public class IfAuthorized extends AbstractConditional {
 
@@ -14,7 +14,7 @@ public class IfAuthorized extends AbstractConditional {
     private AccessAttribute attribute;
 
     @Inject
-    private AccessAttributeChecker accessAttributeChecker;
+    private AccessAttributeExtractorChecker accessAttributeChecker;
 
     @Override
     protected boolean test() {

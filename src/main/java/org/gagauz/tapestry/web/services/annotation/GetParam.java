@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.services.model;
+package org.gagauz.tapestry.web.services.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

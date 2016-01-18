@@ -1,4 +1,5 @@
-package org.gagauz.tapestry.web.services.model;
+package org.gagauz.tapestry.web.services.annotation;
+
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.ValueEncoder;

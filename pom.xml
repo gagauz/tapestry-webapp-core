@@ -64,13 +64,14 @@
 		</dependency>
 
 		<!-- Provided by the servlet container, but sometimes referenced in the 
-			application code. -->
+			application code.  -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${servlet-api-release.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- Provide dependency to the Tapestry javadoc taglet which replaces the 
 			Maven component report -->
 		<!-- Hibernate -->
@@ -155,50 +156,6 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.12</version>
 		</dependency>
-
-		<!-- Lucene -->
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>${lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers-common</artifactId>
-			<version>${lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-queryparser</artifactId>
-			<version>${lucene.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-backward-codecs</artifactId>
-			<version>${lucene.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<!-- mail -->
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>2.3.19</version>
-		</dependency>
-		<dependency>
-			<groupId>dumbster</groupId>
-			<artifactId>dumbster</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<dependency>
-			<artifactId>mail</artifactId>
-			<groupId>javax.mail</groupId>
-			<version>1.4.7</version>
-		</dependency>
-		<dependency>
-			<artifactId>activation</artifactId>
-			<groupId>javax.activation</groupId>
-			<version>1.1.1</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>tapestry-webapp-core</finalName>
@@ -234,21 +191,9 @@
 		</plugins>
 	</build>
 	<reporting />
-	<repositories>
-		<!-- This repository is only needed when the Tapestry version is a preview 
-			release, rather than a final release. -->
-		<repository>
-			<id>apache-staging</id>
-			<url>https://repository.apache.org/content/groups/staging/</url>
-		</repository>
-		<repository>
-			<id>codehaus</id>
-			<url>http://repository.codehaus.org/org/codehaus</url>
-		</repository>
-	</repositories>
 	<properties>
-		<tapestry-release.version>5.4-rc-1</tapestry-release.version>
 		<servlet-api-release.version>3.1.0</servlet-api-release.version>
+		<tapestry-release.version>5.4-rc-1</tapestry-release.version>
 		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
 		<spring-release.version>4.0.2.RELEASE</spring-release.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

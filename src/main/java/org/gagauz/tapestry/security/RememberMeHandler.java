@@ -1,9 +1,10 @@
 package org.gagauz.tapestry.security;
 
+import org.gagauz.tapestry.security.impl.LoginFormCredentials;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Cookies;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
-import org.gagauz.tapestry.security.api.LoginFormCredentials;
 import org.gagauz.tapestry.security.api.User;
 import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
 import org.slf4j.Logger;

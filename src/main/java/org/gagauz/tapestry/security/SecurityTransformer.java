@@ -13,8 +13,7 @@ import org.apache.tapestry5.services.ComponentEventHandler;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.gagauz.tapestry.security.api.AccessAttribute;
-import org.gagauz.tapestry.security.api.AccessAttributeChecker;
-import org.gagauz.tapestry.security.api.AccessAttributeExtractor;
+import org.gagauz.tapestry.security.api.AccessAttributeExtractorChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,34 +25,31 @@ public class SecurityTransformer implements ComponentClassTransformWorker2 {
     protected static Logger LOG = LoggerFactory.getLogger(SecurityTransformer.class);
 
     @Inject
-    private AccessAttributeExtractor accessAttributeExtractor;
-
-    @Inject
-    private AccessAttributeChecker accessAttributesChecker;
+    private AccessAttributeExtractorChecker accessAttributeExtractorChecker;
 
     @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support,
-            MutableComponentModel model) {
-        final AccessAttribute attribute = accessAttributeExtractor.extract(plasticClass);
+                          MutableComponentModel model) {
+        final AccessAttribute attribute = accessAttributeExtractorChecker.extract(plasticClass);
 
         if (null != attribute) {
             support.addEventHandler(EventConstants.ACTIVATE, 0,
                     "SecurityTransformer activate event handler", new ComponentEventHandler() {
                         @Override
                         public void handleEvent(Component instance, ComponentEvent event) {
-                            accessAttributesChecker.check(attribute);
+                            accessAttributeExtractorChecker.check(attribute);
                         }
                     });
         }
         for (PlasticMethod plasticMethod : plasticClass.getMethods()) {
-            final AccessAttribute attribute1 = accessAttributeExtractor.extract(plasticClass,
+            final AccessAttribute attribute1 = accessAttributeExtractorChecker.extract(plasticClass,
                     plasticMethod);
 
             if (null != attribute1) {
                 plasticMethod.addAdvice(new MethodAdvice() {
                     @Override
                     public void advise(MethodInvocation invocation) {
-                        accessAttributesChecker.check(attribute1);
+                        accessAttributeExtractorChecker.check(attribute1);
                         invocation.proceed();
                     }
                 });

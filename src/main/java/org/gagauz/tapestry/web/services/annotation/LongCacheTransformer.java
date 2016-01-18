@@ -1,6 +1,5 @@
-package org.gagauz.tapestry.web.services.model;
+package org.gagauz.tapestry.web.services.annotation;
 
-import org.gagauz.tapestry.web.services.LongCache;
 
 import org.apache.tapestry5.internal.transform.MethodResultCache;
 import org.apache.tapestry5.model.MutableComponentModel;
