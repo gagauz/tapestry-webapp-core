@@ -1,0 +1,30 @@
+
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"  class="s-pos_r">
+    <div class="header3">
+        <div class="header3-message">
+            <div class="f-row">
+                <div class="">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 s-mb_27">
+                        <h1 class="header3-h1 s-uppercase s-p_0i">Работа для репетиторов</h1>
+                        <div class="s-mt_45">
+                            <div class="f-row collapse row">
+                                <div class="col-sm-12 col-lg-12 col-md-12 s-float_ni s-m_a"> 
+                                      <div class="row c-max_90per-lg">
+                                          <div class="col-sm-12 col-lg-9 col-md-9 s-p_0">
+                                              <a href="/login/?r" class="btn-wide i-search_s_btn2 s-ta_c s-lh_53">Создать профиль</a>
+                                          </div>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 s-ta_c">
+                        <img class="s-full header3-image" src="/static/images/banner3.png"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,21 @@
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="col-md-12"><h1>Отзывы</h1></div>
+	<div class="col-md-12">
+		<t:loop source="comments" value="comment">
+			<div class="b-comment-item">
+				<div class="clear s-mb_9">
+					<strong class="s-float_l">${comment.author.name}</strong>
+					<span class="s-float_r s-fs_14">${date:comment.created,dd.MM.yyyy}</span>
+				</div>
+				<p class="s-mb_9">${comment.text}</p>
+				<span class="s-fs_12 s-label blue s-mr_5 s-rating-${comment.rating}"><i
+					class="fa fa-star-o star-1 s-mr_1"></i><i
+					class="fa fa-star-o star-2 s-mr_1"></i><i
+					class="fa fa-star-o star-3 s-mr_1"></i><i
+					class="fa fa-star-o star-4 s-mr_1"></i><i
+					class="fa fa-star-o star-5 s-mr_1"></i>
+				</span>
+			</div>
+		</t:loop>
+	</div>
+</div>

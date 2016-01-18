@@ -1,0 +1,54 @@
+<t:admin.MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	
+	<div class="row">
+    	<div class="col-md-12 col-lg-12">
+    		
+			<h1>Транзакции</h1>
+   			<t:beaneditform class="form-horizontal" t:id="form" t:object="object" cancel="true" 
+   				exclude="id,created,updated"
+   				add="order,repetitor">
+   				
+   				<p:order>
+   					<t:label class="col-sm-3 control-label" for="order">ID заказа</t:label>
+					<div class="col-sm-2">
+						<t:textfield class="form-control" t:id="order" t:value="object.order" translate="order"/>
+					</div>
+   				</p:order>
+  				
+   				<p:repetitor>
+   					<t:label class="col-sm-3 control-label" for="repetitor">ID репетитора</t:label>
+					<div class="col-sm-2">
+						<t:textfield class="form-control" t:id="repetitor" t:value="object.repetitor" translate="repetitor"/>
+					</div>
+   				</p:repetitor>
+   				
+   			</t:beaneditform>
+   		
+    		
+    		<h2>Список транзакций</h2>
+    		<t:grid class="table table-striped" source="payments" row="payment"
+    			add="edit,orderId,managerId,repetitorId" reorder="edit">
+    			<p:editCell>
+    				<t:eventlink event="edit" context="payment">Править</t:eventlink>
+    			</p:editCell>
+    			<p:orderIdCell>
+    				<t:if test="payment.order">
+    					<t:pagelink page="admin/orderinfo" context="payment.order.id">${payment.order.id}</t:pagelink>
+    				</t:if>
+    			</p:orderIdCell>
+    			<p:managerIdCell>
+    				<t:if test="payment.manager">
+    					<t:eventlink event="edit" context="payment.manager.id">${payment.manager.id}</t:eventlink>
+    				</t:if>
+    			</p:managerIdCell>
+    			<p:repetitorIdCell>
+    				<t:eventlink event="edit" context="payment.repetitor.id">${payment.repetitor.id}</t:eventlink>
+    			</p:repetitorIdCell>
+    		</t:grid>
+    		
+    	</div>
+    </div>
+
+</t:admin.MainTemplate>

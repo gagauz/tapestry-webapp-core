@@ -1,0 +1,112 @@
+<t:MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<link href="/static/css/bootstrap-slider.css" rel="stylesheet"/>
+	<div id="placementModel" class="s-p_wrapper f-row">
+		<h1 class="fluid-head"><strong>Платное размещение</strong></h1>
+		<p>
+		<strong>Платное размещение</strong> - это уникальная возможность для Вас максимально быстро найти себе учеников на длительный срок. Платное размещение представляет собой особые места анкет в выдаче. Основное преимущество платного размещения в том, что Ваша анкета существенно поднимается в поисковой выдаче на нашем сайте. По статистике на анкету репетитора, находящуюся в платном размещении, в среднем откликаются в три раза чаще, чем на его основную анкету.
+		</p>
+		<!-- <p class="s-mb_9">
+		<strong>Обращаем внимание</strong>, что выбранный коэффициент платного размещения будет действовать на все заявки, передаваемые репетитору по данному предмету (до момента отключения платного размещения). В том числе на заявки, где:
+		</p>
+		<ul class="list-default s-mb_27">
+			<li>ученик выбрал репетитора на нашем сайте</li>
+			<li>консультант выбрал репетитора на нашем сайте</li>
+			<li>репетитор оставил самостоятельно запрос</li>
+		</ul> -->
+		<div class="row s-mb_18">
+        	<div class="col-md-2">
+        		<div>Всего на счету:</div>
+        		<div>
+        			<strong class="s-mr_5">${total}</strong>
+        			<i class="fa fa-rub"></i>
+        		</div>
+        	</div>
+        	<div class="col-md-3">
+        		<div>Стоимость платного размещения:</div>
+        		<div>
+        			<strong class="s-mr_5" data-bind="text:totalCostForAll()"></strong>
+        			<i class="fa fa-rub"></i>
+        		</div>
+        	</div>
+        	<div class="col-md-3">
+        		<div>Необходимо зачислить:</div>
+        		<div>
+	        		<a class="s-mr_5" data-bind="attr:{href:'/user/BalanceRefill?summ=' + totalCashDiff()}"><span data-bind="text:totalCashDiff()"></span></a>
+        			<i class="fa fa-rub"></i>
+        		</div>
+        	</div>
+        </div>
+        
+        <t:form t:id="rateForm">
+        	<t:errors />
+			<!-- ko foreach: allSubjectsFull -->
+				<div class="s-mb_18 row">
+					<div class="col-md-7 col-lg-7 col-sm-8 col-xs-12">
+						<h3>
+							<input data-bind="attr:{'id':('enable-'+$data.id),
+							  'name':('enable-'+$data.id)},
+							  toggler:'.js-placement',
+							  value:$data.id,
+							  checked:$root.enabledSubjects, event:{change:$root.toggleActive}" class="css-checkbox js-switch" type="checkbox"/>
+							<label data-bind="attr:{'for':('enable-'+$data.id)}" class="css-checkbox-label s-fs_14">Включить платное размещение</label>
+							<span class="s-mr_10">:</span>
+							<strong data-bind="text:$data.name" class="s-mr_10 s-icon"></strong>
+						</h3>
+						<div data-bind="style:{'display':$data.paidPlacement() ? 'block':'none'}" class="js-placement s-display_n_">
+							<div class="s-mb_18 slider-full s-slider_wrapper">
+			                    <input  
+			                    type="text" 
+			                    class="js-slider span2" 
+			                    value="2.00" 
+			                    data-slider-step="0.05" 
+			                    data-slider-value="2.00"
+	                            data-bind="value:$data.subjectCoefficient, valueUpdate:'slideStop', updateFromServer:$data.subjectCoefficient()"/>
+			                </div>
+							
+			                <p>С коэффициентом <strong data-bind="text:$data.subjectCoefficient"></strong>, Ваша анкета окажется на 1-й странице, на 
+			                	<strong data-bind="text:$data.position">1</strong>-й позиции платного размещения по запросу на этот предмет.
+	                            <br/>
+	                            <span data-bind="visible:$data.moneyExceeded()">
+	                                <strong>У Вас недостаточно средств на счету для платного размещения по этому предмету.</strong>
+	                            </span>
+	                        </p>
+						</div>
+	
+					</div>
+				</div>
+	        <!-- /ko -->
+	        <input id="allSubjects" value="${subjectsjson}" type="hidden"/>
+	        <input id="totalCash" value="${total}" type="hidden"/>
+	        <input id="totalCostForAll" data-bind="value:totalCostForAll()" type="hidden"/>
+	
+	        <input id="allPayedPositions" data-bind="value:allPayedPositions()" value="${getRepetitorRanges()}" type="hidden"/>
+	        <!-- это предметы включенные, разделитель зпт  -->
+	        <input t:id="enableSubjects" id="enableSubjects" data-bind="value:enabledSubjects" type="hidden" />
+	        <!-- это коэффициенты, разделитель зпт  -->
+	        <input t:id="enabledSubjectsCoefficients" data-bind="value:enabledSubjectsCoefficients" type="hidden"/>
+	        <!-- это количество денег которое надо списать-->
+	        <input name="totalCostForAll" data-bind="value:totalCostForAll()" type="hidden"/>
+	        
+	        
+	        <input id="getRateMinValue" value="${getRateMinValue()}" type="hidden"/>
+	        <input id="getRateMaxValue" value="${getRateMaxValue()}" type="hidden"/>
+	        <input id="getRateMultiplier" value="${getRateMultiplier()}" type="hidden"/>
+	        	        
+	        <div>
+	            <button class="ask_btn" data-bind="enable:saveButtonVisibility()"><i class="fa fa-save s-mr_5"></i>Сохранить</button>
+	        </div>
+        </t:form>
+	</div>
+	
+	<t:IncludeBlock>
+		<script src="/static/js/libs/bootstrap-slider.js"></script>
+        <script src="/static/js/libs/underscore.js"></script>
+    	<script src="/static/js/models/placementModel.js"></script>
+    	<t:if test="message">
+			<script type="text/javascript">
+				controller.message = "${message}";
+				controller.showResultModal();
+			</script>
+		</t:if>
+	</t:IncludeBlock>
+</t:MainTemplate>

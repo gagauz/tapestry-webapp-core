@@ -1,0 +1,95 @@
+<t:LoginTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<!-- BEGIN LOGO -->
+<div class="logo">
+    <a class="main-logo s-icon" href="/"></a>
+</div>
+<!-- END LOGO -->
+<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+<div class="menu-toggler sidebar-toggler">
+</div>
+<!-- END SIDEBAR TOGGLER BUTTON -->
+<!-- BEGIN LOGIN -->
+<div class="content">
+<!-- BEGIN LOGIN FORM -->
+<div t:id="zone0" class="login-form">
+	<form t:id="form0">
+	    <h3 class="form-title">Авторизация</h3>
+	    <div class="form-group">
+	        <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+	        <label class="control-label visible-ie8 visible-ie9">Имя пользователя</label>
+	        <div class="input-icon">
+	            <i class="fa fa-user"></i>
+	            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Имя пользователя" name="username"
+	             t:id="username"  t:clientId="username" />
+	            <t:error for="username"/>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label class="control-label visible-ie8 visible-ie9">Пароль</label>
+	        <div class="input-icon">
+	            <i class="fa fa-lock"></i>
+	            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Пароль" name="password"
+	             t:id="password" t:clientId="password"/>
+	        </div>
+	    </div>
+	    <div class="form-actions">
+	        <label>
+	            <input class="s-icon s-mr_5" type="checkbox" name="remember" value="1" t:id="remember"/>
+	            <span class="s-icon">Запомнить меня</span>
+	        </label>
+	        <t:LinkSubmit class="btn blue pull-right">
+	            Вход <i class="fa fa-arrow-circle-o-right"></i>
+	        </t:LinkSubmit>
+	    </div>
+	    <div class="forget-password">
+	        <h4>Забыли свой пароль ?</h4>
+	        <p>
+	            Перейдите по <a href="javascript:;" id="forget-password">
+	            ссылке </a>
+	            чтобы сменить пароль.
+	        </p>
+	    </div>
+	    <div class="create-account">
+	        <p>
+	            Еще не зарегистрированы ?&nbsp; <a href="javascript:;" id="register-btn">
+	            Создать аккаунт </a>
+	        </p>
+	    </div>
+	</form>
+</div>
+<!-- END LOGIN FORM -->
+<!-- BEGIN FORGOT PASSWORD FORM -->
+<div t:id="zone1" class="forget-form" style="display:none">
+	<form t:id="form1">
+	    <h3>Забыли пароль ?</h3>
+	    <p>
+	        Укажите адрес почты который Вы указывали при регистрации.
+	    </p>
+	    <div class="form-group">
+	        <div class="input-icon">
+	            <i class="fa fa-envelope"></i>
+	            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Email" name="email" t:id="email2"/>
+	            <t:error for="email2" />
+	        </div>
+	    </div>
+	    <div class="form-actions">
+	        <button type="button" id="back-btn" class="btn">
+	            <i class="fa fa-arrow-circle-o-left"></i> Назад </button>
+	        <t:LinkSubmit class="btn blue pull-right">
+	            Отправить <i class="fa fa-arrow-circle-o-right"></i>
+	        </t:LinkSubmit>
+	    </div>
+	</form>
+</div>
+<!-- END FORGOT PASSWORD FORM -->
+<!-- BEGIN REGISTRATION FORM -->
+<t:RegistrationForm />
+<!-- END REGISTRATION FORM -->
+</div>
+<!-- END LOGIN -->
+<!-- BEGIN COPYRIGHT -->
+<div class="copyright">
+    2015 &copy; TUTORFINDER
+</div>
+<!-- END COPYRIGHT -->
+</t:LoginTemplate>

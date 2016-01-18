@@ -1,0 +1,15 @@
+<form t:id="form" validate="object" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" class="form-horizontal">
+	<t:errors class="literal:alert alert-danger" role="literal:alert"/>
+	
+	<t:BeanEditor t:id="editor" object="object" model="model" overrides="this" />
+
+	<div class="form-group">
+		<div class="col-sm-3 control-label"></div>
+		<div class="col-sm-9 btn-group">
+			<input class="btn btn-success" type="submit" value="${submitLabel}" />
+			<t:if test="cancel">
+				<t:CancelLink class="btn btn-danger" t:id="cancel" mode="cancel" object="object">${message:cancel-label}</t:CancelLink>
+			</t:if>
+		</div>
+	</div>
+</form>

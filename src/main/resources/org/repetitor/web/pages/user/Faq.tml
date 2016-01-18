@@ -1,0 +1,6 @@
+<t:MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<h1><strong>Вопрос-ответ</strong></h1>
+		<p>В разработке</p>	
+	</div>
+</t:MainTemplate>

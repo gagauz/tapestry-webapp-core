@@ -1,0 +1,19 @@
+<t:MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<h1><strong>Оставить отзыв</strong></h1>
+		<t:form t:id="form">
+			<t:label for="name"/>
+			<t:error for="name"/>
+			<t:textfield t:id="name"/><br/>
+			<t:label for="rating"/>
+			<t:error for="rating"/>
+			<t:textfield t:id="rating"/><br/>
+			<t:label for="text"/>
+			<t:error for="text"/>
+			<t:textarea t:id="text"/><br/>
+			<t:submit value="Save"/>
+		</t:form>		
+	</div>
+</t:MainTemplate>

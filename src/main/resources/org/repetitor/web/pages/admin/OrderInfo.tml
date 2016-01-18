@@ -1,0 +1,159 @@
+<t:admin.MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter"
+>
+	<div class="row">
+		<div class="col-md-12 col-lg-12">
+			<t:if test="orderObject">
+				<h2>Заказ</h2>
+				<t:beaneditform class="form-horizontal" t:id="form" t:object="orderObject" cancel="true"
+					exclude="extrasMask, sectionsMask" 
+					add="status,contact,info,customer,subject,section,extra,repetitor,repetitorDegree,placePupilRegion,wantRep,recomRep" 
+					reorder="info,id,created,updated,status,recomRep,finalPrice,commission,ratio,
+					contact,name,phone,email,customer,pupilName,placePupil,placePupilRegion,placeRepetitor,placeOnline,subject,section,extra,totalLessonCount,weekLessonCount,description,pupilCategory,
+					repetitor,priceMin,priceMax,repetitorGender,repetitorStageMin,repetitorStageMax,repetitorAgeMin,repetitorAgeMax,repetitorDegree"
+				>
+					<p:info>
+						<div class="col-sm-offset-3 col-sm-9">
+							<h3>Детали заявки №${orderObject.id}</h3>
+						</div>
+					</p:info>
+					<p:id>
+						<label class="col-sm-3 control-label">ID</label>
+						<div class="col-sm-1">
+							<input class="form-control" type="text" readonly="readonly" value="${orderObject.id}" />
+						</div>
+					</p:id>
+					<p:created>
+						<label class="col-sm-3 control-label">Создан</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" readonly="readonly" value="${orderObject.created}" />
+						</div>
+					</p:created>
+					<p:updated>
+						<label class="col-sm-3 control-label">Изменен</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" readonly="readonly" value="${orderObject.updated}" />
+						</div>
+					</p:updated>
+					<p:status>
+						<t:label class="col-sm-3 control-label" for="status">Статус</t:label>
+						<div class="col-sm-2">
+							<t:select t:id="status" class="form-control" model="statusModel" value="newStatus" blankOption="NEVER" validate="required" />
+						</div>
+					</p:status>
+					<p:contact>
+						<div class="col-sm-offset-3 col-sm-9">
+							<h3>Контактные данные</h3>
+						</div>
+					</p:contact>
+					<p:customer>
+						<div class="col-sm-offset-3 col-sm-9">
+							<h3>Описание ученика</h3>
+						</div>
+					</p:customer>
+					<p:subject>
+						<label class="col-sm-3 control-label">Предмет</label>
+						<div class="col-sm-3">
+							<t:select t:id="subject" class="form-control" model="subjectsModel"
+								value="orderObject.subject" validate="required"
+								zone="literal:sectionZone" blankOption="ALWAYS"
+								blankLabel="literal:Не выбран" />
+						</div>
+					</p:subject>
+					<p:section>
+						<label class="col-sm-3 control-label">Разделы</label>
+						<div class="col-sm-9">
+							<div class="form-control">
+								<t:foreach source="orderObject.subjectSections" value="section" separator=", ">
+									${section.name}
+								</t:foreach>
+							</div>
+						</div>
+					</p:section>
+					<p:extra>
+						<label class="col-sm-3 control-label">Дополнения</label>
+						<div class="col-sm-9">
+							<div class="form-control">
+								<t:foreach source="orderObject.subjectExtras" value="extra" separator=", ">
+									${extra.name}
+								</t:foreach>
+							</div>
+						</div>
+					</p:extra>
+					<p:placePupilRegion>
+						<label class="col-sm-3 control-label">Район</label>
+						<div class="col-sm-9">
+							<div class="form-control">
+								<t:if test="orderObject.placePupilRegion">
+									${orderObject.placePupilRegion.name}
+								</t:if>
+							</div>
+						</div>
+					</p:placePupilRegion>
+					<p:repetitor>
+						<div class="col-sm-offset-3 col-sm-9">
+							<h3>Требования к репетитору</h3>
+						</div>
+					</p:repetitor>
+					<p:repetitorDegree>
+						<t:label class="col-sm-3 control-label" t:for="repetitorDegree"/>
+						<div class="col-sm-2">
+							<t:MultiSelect class="form-control" t:id="repetitorDegree" 
+								model="repetitorDegreeModel" value="orderObject.repetitorDegree" size="7" />
+						</div>
+					</p:repetitorDegree>
+					<p:wantRep>
+						<label class="col-sm-3 control-label">Репетиторы, указанные учеником</label>
+						<div class="col-sm-2">
+							<t:foreach source="orderObject.wantedRepetitors" value="repetitor">
+								<t:pagelink t:page="admin/repetitors" context="repetitor">
+									 ${repetitor.username} - ${repetitor.name} ${repetitor.patronymic}
+								</t:pagelink><br/>
+							</t:foreach>
+						</div>
+					</p:wantRep>
+					<p:recomRep>
+						<label class="col-sm-3 control-label">Назначить или рекомендовать репетитору</label>
+						<div class="col-sm-3">
+							<t:if test="canAssign">
+								<t:textfield class="form-control" t:id="rep" value="recommendedRepetitorUsername" t:mixins="autocomplete"
+										placeholder="Начните вводить логин"
+										minChars="2" />
+								<p:else>
+									<div class="alert alert-warning" role="alert">
+										<t:if test="orderObject.getOwner()">
+										Уже присвоенную заявку нельзя назначить другому репетитору!
+										<p:else>	
+											В этом статусе заявку нельзя рекомедовать или назначить другому репетитору! 
+										</p:else>
+										</t:if>
+									</div>
+								</p:else>
+							</t:if>
+							<t:if test="orderObject.owner">
+								<div class="col-sm-9">
+									${orderObject.owner.id} ${orderObject.owner.username}
+									<t:eventlink t:event="removeOwner">Убрать</t:eventlink>
+								</div>
+							</t:if>
+						</div>
+					</p:recomRep>
+				</t:beaneditform>
+				<h3 id="_logform">Комментарии по заказу</h3>
+				<div class="alert alert-warning" role="alert">
+					Комментарий можно сделать видимым или невидимым пользователю в личном кабинете (колонка Видимый)
+				</div>
+				<t:grid class="table table-striped" source="orderObject.orderLogs" row="log" add="edit">
+					<p:editCell>
+						<t:eventlink event="editLog" context="[orderObject,log]" anchor="_logform">Редакт.</t:eventlink>
+					</p:editCell>
+					<p:visibleCell>
+						<t:eventlink event="toggleLog" context="[orderObject,log]" anchor="_logform">${cond:log.visible,Скрыть,Показать}</t:eventlink>
+					</p:visibleCell>
+				</t:grid>
+				<h3>Добавить/редактировать комментарий</h3>
+				<form t:id="logform" id="logform" exclude="id,created,updated,type" />
+			</t:if>
+		</div>
+	</div>
+</t:admin.MainTemplate>

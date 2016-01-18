@@ -1,0 +1,407 @@
+<t:MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<link href="/static/css/bootstrap-slider.css" rel="stylesheet"/>
+	<div id="TasksModel" class="s-p_wrapper f-row clear">
+		<h1 class="fluid-head">
+			<strong class="s-icon s-mr_10">
+				<t:if test="filterSubject">
+					${filterSubject.name2}
+					<p:else>Репетиторы</p:else>
+				</t:if>
+				в ${regionName}
+			</strong>
+			<span class="repetitors-c_label s-icon">${repetitors.size()}</span>
+		</h1>
+		<a class="s-mb_9 toggler_link_m ask_btn" href="javascript:void(0)">
+			<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+			Фильтры
+		</a>
+		<div class="s-right-fixed" t:id="filterZone">
+			<t:form t:id="filterForm">
+				<t:eventlink event="reset" zone="literal:listZone" class="ask_btn s-full s-mb_9">Сбросить все фильтры</t:eventlink>
+				<t:submit class="ask_btn s-full" value="Подобрать репетиторов" />
+				<div class="s-filter_deline"></div>
+				<div class="row">
+					<div class="s-mb_9 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<t:checkbox class="css-checkbox" t:id="whithPhoto" value="filterWithPhoto" />
+						<t:label class="css-checkbox-label s-fs_14" for="whithPhoto">С фото</t:label>
+					</div>
+					<div class="s-mb_9 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<t:checkbox class="css-checkbox" t:id="verified" value="filterVerified" />
+						<t:label class="css-checkbox-label s-fs_14" for="verified">Верифицированные</t:label>
+					</div>
+					<div class="s-mb_9 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<t:checkbox class="css-checkbox" t:id="filterWithReview" value="filterWithReview" />
+						<t:label class="css-checkbox-label s-fs_14" for="filterWithReview">С Отзывами</t:label>
+					</div>
+					<t:if test="hasPlaceOnline">
+						<div class="s-mb_9 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<t:checkbox class="css-checkbox" t:id="placeOnline" t:value="filterPlaceOnline" />
+							<t:label class="css-checkbox-label s-fs_14" for="placeOnline">Занятия по skype</t:label>
+						</div>
+					</t:if>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small ${cond:filterSubject,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:filterSubject,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						Предмет
+					</a>
+					<div>
+						<t:select t:id="subjectSelect" model="subjectModel" value="filterSubject" zone="filterZone"
+							class="custom s-full" blankLabel="Все предметы" />
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<t:if test="!hasSections.isEmpty()">
+					<div class="customform customform-small ${cond:filterSection,,js-toggler_t}">
+						<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:filterSection,open,}" href="javascript:void(0)">
+							<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+							Разделы
+						</a>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+								<t:loop source="hasSections" value="section" encoder="sectionencoder">
+									<div class="s-mb_5">
+										<t:checkbox class="css-checkbox" t:id="section" t:value="checkedSection" />
+										<t:label class="css-checkbox-label" for="section">${section.name}</t:label>
+									</div>
+								</t:loop>
+							</div>
+						</div>
+					</div>
+					<div class="s-filter_deline"></div>
+				</t:if>
+				<div class="customform customform-small js-toggler_t">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						Район
+					</a>
+					<div>
+						<t:select model="regionModel" value="filterRegion" class="custom s-full" blankLabel="Не выбран" />
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small js-toggler_t">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						Цена
+					</a>
+					<div>
+						<div class="s-mb_18 slider-full">
+							<input id="slider" type="text" class="span2" value="" data-slider-step="5"
+								data-slider-value="[${filterPriceMin},${filterPriceMax}]" />
+						</div>
+						<div class="row">
+							<span class="col-md-6">
+								<t:textfield t:id="priceMin" t:value="filterPriceMin" class="s-filtet-input"/>
+								<i class="fa fa-rub"></i>
+							</span>
+							<span class="col-md-6 s-ta_r">
+								<t:textfield t:id="priceMax" t:value="filterPriceMax" class="s-filtet-input"/>
+								<i class="fa fa-rub"></i>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<t:if test="!hasExtras.isEmpty()">
+					<div class="customform customform-small ${cond:filterExtra,,js-toggler_t}">
+						<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:filterExtra,open,}" href="javascript:void(0)">
+							<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+							Дополнения
+						</a>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-lg-12 col-xs-12">
+								<t:loop source="hasExtras" value="extra" encoder="extraencoder">
+									<div class="s-mb_5">
+										<t:checkbox class="css-checkbox" t:id="extra" t:value="checkedExtra" />
+										<t:label class="css-checkbox-label" for="extra">${extra.name}</t:label>
+									</div>
+								</t:loop>
+							</div>
+						</div>
+					</div>
+					<div class="s-filter_deline"></div>
+				</t:if>
+				<div class="customform customform-small ${cond:filterPupilCategory,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:filterPupilCategory,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						Категория ученика
+					</a>
+					<div>
+						<t:loop source="hasPupilCategories" value="pupilCategory">
+							<div class="s-mb_5">
+								<t:checkbox class="css-checkbox" t:id="pupilCategory" t:value="checkedPupilCategory" />
+								<t:label class="css-checkbox-label" for="pupilCategory">${msg:prop:pupilCategory}</t:label>
+							</div>
+						</t:loop>
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small ${cond:filterDegree,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:filterDegree,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						Статус репетитора
+					</a>
+					<div>
+						<t:loop source="hasDegrees" value="degree">
+							<div class="s-mb_5">
+								<t:checkbox class="css-checkbox" t:id="degree" t:value="checkedDegree" />
+								<t:label class="css-checkbox-label" for="degree">${msg:prop:degree}</t:label>
+							</div>
+						</t:loop>
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small ${cond:selectedPlace,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:selectedPlace,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						Проведение занятий
+					</a>
+					<div>
+						<t:if test="hasPlacePupil">
+							<div class="s-mb_5">
+								<t:checkbox class="css-checkbox" t:id="placePupil" t:value="filterPlacePupil" />
+								<t:label class="css-checkbox-label" for="placePupil">У ученика</t:label>
+							</div>
+						</t:if>
+						<t:if test="hasPlaceRepetitor">
+							<div class="s-mb_5">
+								<t:checkbox class="css-checkbox" t:id="placeRepetitor" t:value="filterPlaceRepetitor" />
+								<t:label class="css-checkbox-label" for="placeRepetitor">У репетитора</t:label>
+							</div>
+						</t:if>
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small ${cond:selectedStage,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:selectedStage,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						ОПЫТ ПРЕПОДАВАНИЯ
+					</a>
+					<div>
+						<div class="s-mb_18 slider-full">
+							<input id="slider_stage" type="text" class="span2" value="" data-slider-step="1"
+								data-slider-value="[${filterStageMin},${filterStageMax}]" />
+						</div>
+						<div class="row">
+							<span class="col-md-6">
+								<t:textfield t:id="stageMin" class="s-filtet-input" t:value="filterStageMin" />
+							</span>
+							<span class="col-md-6 s-ta_r">
+								<t:textfield t:id="stageMax" class="s-filtet-input" t:value="filterStageMax" />
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small ${cond:filterGender,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:filterGender,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						ПОЛ
+					</a>
+					<div>
+						<t:select value="filterGender" class="custom s-full" blankLabel="Не важно" />
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<div class="customform customform-small ${cond:selectedAge,,js-toggler_t}">
+					<a class="s-mb_9 s-display_b js-toggler toggler_link ${cond:selectedAge,open,}" href="javascript:void(0)">
+						<i class="fa fa-angle-right s-mr_5 c10 s-fs_20i"></i>
+						ВОЗРАСТ
+					</a>
+					<div>
+						<div class="s-mb_18 slider-full">
+							<input id="slider_age" type="text" class="span2" value="" data-slider-step="1"
+								data-slider-value="[${filterAgeMin},${filterAgeMax}]" />
+						</div>
+						<div class="row">
+							<span class="col-md-6">
+								<t:textfield t:id="ageMin" class="s-filtet-input" t:value="filterAgeMin" />
+							</span>
+							<span class="col-md-6 s-ta_r">
+								<t:textfield t:id="ageMax" class="s-filtet-input" t:value="filterAgeMax" />
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="s-filter_deline"></div>
+				<t:submit class="ask_btn s-full" value="Подобрать репетиторов" />
+			</t:form>
+		</div>
+		<div class="s-left-blocj-fluid s-float_l">
+			<div t:id="listZone">
+				<t:loop t:source="repetitors" t:value="repetitor">
+					<div class="b-repetitor s-float_l clear ${cond:payedPlacement,s-payed_placement,}">
+						<div class="b-repetitor-img_b">
+							<img class="fluid-m" onerror="/*tutor.imgError(this)*/" src="/static/images/photo/${repetitor.image}" />
+						</div>
+						<div class="b-repetitor_info">
+							<div class="s-mb_9">
+								<a class="s-ellipsis s-float_l" t:type="pagelink" t:page="repetitorinfo" t:context="repetitor">
+									<strong class="s-mr_5">${repetitor.name} ${repetitor.patronymic}</strong>
+									<t:if test="repetitor.verified">
+										<i class="fa fa-check"></i>
+									</t:if>
+									<span class="payedIcon">
+									<i data-toggle="tooltip" title="Платное размещение" class="fa fa-trophy payedIcon-c typestry-fix"></i>
+									</span>
+								</a>
+								<div class="s-float_r">
+									<strong>${format:%d,repetitor.hourPrice}</strong>
+									р/час
+								</div>
+							</div>
+							<br class="clar none" />
+							<div class="s-mb_18">
+								<span class="s-fs_12 s-label blue s-mr_5">
+									<i class="fa fa-graduation-cap"></i>
+									${msg:prop:repetitor.degree}
+								</span>
+								<span class="s-fs_12 s-label blue s-mr_5">
+									<i class="fa fa-trophy"></i>
+									Стаж ${decline:repetitor.stage,year}
+								</span>
+								<span class="s-fs_12 s-label blue s-mr_5 s-rating-${repetitor.rating}">
+									<i class="fa fa-star-o star-1 s-mr_1"></i>
+									<i class="fa fa-star-o star-2 s-mr_1"></i>
+									<i class="fa fa-star-o star-3 s-mr_1"></i>
+									<i class="fa fa-star-o star-4 s-mr_1"></i>
+									<i class="fa fa-star-o star-5 s-mr_1"></i>
+									${repetitor.ratingCount}
+								</span>
+								<a href="#">
+									<span class="s-fs_12 s-label blue">
+										<i class="fa fa-comment s-mr_5"></i>
+										${repetitor.commentCount}
+									</span>
+								</a>
+							</div>
+							<div class="b-repetitor_info-separate"></div>
+							<!-- subjects -->
+							<div class="s-mb_9 s-fs_13">
+								<t:foreach source="getRepetitorSubjects()" value="subject">
+									<div class="s-mb_9 clear">
+										<div class="s-mb_5">
+											<i class="fa fa-tag s-mr_5"></i>
+											<strong>${subject.subject.name}</strong>
+										</div>
+										<div class="s-mb_5 clear">
+											<div class="b-repetitor_info-info-left">Разделы</div>
+											<div class="b-repetitor_info-info-right s-labels blue">
+												<t:foreach source="subject.getSubjectSections()" value="section0">
+													<span>${section0.name}</span>
+												</t:foreach>
+											</div>
+										</div>
+										<div class="s-mb_5 clear">
+											<div class="b-repetitor_info-info-left">Дополнения</div>
+											<div class="b-repetitor_info-info-right s-labels">
+												<t:foreach source="subject.getSubjectExtras()" value="extra0">
+													<span>${extra0.name}</span>
+												</t:foreach>
+											</div>
+										</div>
+										<div class="s-mb_5 clear">
+											<div class="b-repetitor_info-info-left">Категория ученика</div>
+											<div class="b-repetitor_info-info-right s-labels">
+												<t:foreach source="subject.getPupilCategories()" value="pupilCategory">
+													<span>${msg:pupilCategory}</span>
+												</t:foreach>
+											</div>
+										</div>
+									</div>
+								</t:foreach>
+							</div>
+							<div class="b-repetitor_info-separate"></div>
+							<div class="s-mb_5 s-fs_13">
+								<i class="fa fa-tag s-mr_5"></i>
+								<strong>проведения занятий</strong>
+							</div>
+							<div class="s-mb_5 s-fs_13 clear">
+								<div class="b-repetitor_info-info-left">Места</div>
+								<div class="b-repetitor_info-info-right">
+									<t:if test="repetitor.placeRepetitor">
+										<span class="s-fs_12 s-label blue s-mr_5">у себя</span>
+									</t:if>
+									<t:if test="repetitor.placePupil">
+										<span class="s-fs_12 s-label blue s-mr_5">выезд на дом</span>
+									</t:if>
+									<t:if test="repetitor.placeOnline">
+										<span class="s-fs_12 s-label blue s-mr_5">по skype</span>
+									</t:if>
+								</div>
+							</div>
+							<div class="s-mb_5 s-fs_13 clear">
+								<div class="b-repetitor_info-info-left">Районы</div>
+								<div class="b-repetitor_info-info-right">
+									<t:if test="repetitor.placeRepetitor">
+										<div>${repetitor.placeRepetitorInfo}</div>
+										<div>
+											<strong>${msg:repetitor.placeRepetitorRegion.type} ${repetitor.placeRepetitorRegion.name}</strong>
+										</div>
+									</t:if>
+									<div>${repetitor.placePupilInfo}</div>
+									<div>${repetitor.placeOnlineInfo}</div>
+								</div>
+							</div>
+							<div class="b-repetitor_info-separate"></div>
+							<div class="s-mb_5 s-fs_13">
+								<i class="fa fa-tag s-mr_5"></i>
+								<strong>Образование</strong>
+							</div>
+							<div class="s-mb_5 s-fs_13 clear"> ${repetitor.education}
+							</div>
+						</div>
+						<div class="s-p_20">
+							<button
+								data-bind="addTeacher:{id:${repetitor.id},
+						 name:'${repetitor.name} ${repetitor.patronymic}',
+						 cost:${format:%d,repetitor.hourPrice}, subject:'${getFirstSubject()}', subjectId:'${getFirstSubjectId()}', image:'${repetitor.image}'}" class="ask_btn s-full">Добавить в заявку</button>
+					</div>	
+				</div>
+				${endIteration()}
+			</t:loop>
+			</div>
+		</div>
+	</div>
+	<t:IncludeBlock>
+		<script src="/static/js/libs/bootstrap-slider.js"></script>
+		<script type="text/javascript" src="/static/js/libs/underscore.js"></script>
+		<script type="text/javascript" src="/static/js/models/tasksModel.js"></script>
+		<script type="text/javascript">
+			(function($){
+				var Repetitors_InitFilterSlider = function() {
+					var form = $('#filterZone form');
+					var slider = new Slider('#slider', { min: ${hasPriceMin}, max: ${hasPriceMax}}), $sliderMin = $("input[name=priceMin]", form), $sliderMax = $("input[name=priceMax]", form);
+					slider.on("slide", function(slideEvt) {
+						$sliderMin.val(slideEvt[0]);
+						$sliderMax.val(slideEvt[1]);
+					});
+					
+					var slider1 = new Slider('#slider_stage', { min: ${hasStageMin}, max: ${hasStageMax}}), $stageMin = $("input[name=stageMin]", form), $stageMax = $("input[name=stageMax]", form);
+					slider1.on("slide", function(slideEvt) {
+						$stageMin.val(slideEvt[0]);
+						$stageMax.val(slideEvt[1]);
+					});
+					
+					var slider2 = new Slider('#slider_age', { min: ${hasAgeMin}, max: ${hasAgeMax}}), $ageMin = $("input[name=ageMin]", form), $ageMax = $("input[name=ageMax]", form);
+					slider2.on("slide", function(slideEvt) {
+						$ageMin.val(slideEvt[0]);
+						$ageMax.val(slideEvt[1]);
+					});
+					
+				};
+				
+				Repetitors_InitFilterSlider();
+				
+				window.Repetitors_InitFilterSlider = Repetitors_InitFilterSlider;
+				$("[data-toggle='tooltip']").tooltip();
+			})(jQuery);
+			
+			tutor.toggler_m();
+		</script>
+	</t:IncludeBlock>
+</t:MainTemplate>

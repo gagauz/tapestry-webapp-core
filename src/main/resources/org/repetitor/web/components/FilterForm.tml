@@ -1,0 +1,28 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<div class="s-right-fixed">
+	<button class="ask_btn s-full">Сбросить все фильтры</button>
+	<div class="s-filter_deline"></div>
+	<div class="s-mb_9">
+		<input data-bind="" class="css-checkbox" id="whithPhoto" name="whithPhoto" type="checkbox"/>
+		<label class="css-checkbox-label" for="whithPhoto">С фото</label>
+	</div>
+	<div class="s-mb_9">
+		<input data-bind="" class="css-checkbox" id="verified" name="verified" type="checkbox"/>
+		<label class="css-checkbox-label" for="verified">Верифицированные</label>
+	</div>
+	<div>
+		<input data-bind="" class="css-checkbox" id="withNote" name="withNote" type="checkbox"/>
+		<label class="css-checkbox-label" for="withNote">С Отзывами</label>
+	</div>
+	<div class="s-filter_deline"></div>
+	<div class="customform customform-small">
+		<a class="s-mb_9 s-display_b" href="javascript:void(0)">
+			<i class="fa fa-angle-right s-mr_5"></i>
+			Предмет
+		</a>
+		<div>
+		
+		</div>
+	</div>
+</div>
+</t:container>

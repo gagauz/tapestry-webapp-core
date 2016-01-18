@@ -1,0 +1,106 @@
+<t:MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<h1>
+			<strong>Мои заявки</strong>
+		</h1>
+		<p>
+			В данном разделе представлен список заявок, по которым Вы <strong>начали</strong>
+			работать.
+		</p>
+
+
+		<div class="row s-mb_18">
+			<div class="col-md-12 col-sm-12">
+				<!-- BEGIN Portlet PORTLET -->
+				<div class="portlet light s-p_0i">
+					<div class="portlet-title">
+						<!-- <t:Paginator source="allorders" destination="orders" url="url" itemsPerPage="20" /> -->
+					</div>
+					<div class="portlet-body">
+						<div class="">
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th class="col-md-1 s-sortable">Номер</th>
+										<th class="col-md-1 s-sortable">Предмет</th>
+										<th class="col-md-2 s-sortable">Дата заявки</th>
+										<th class="col-md-1 s-sortable">Цена</th>
+										<th class="col-md-1 s-sortable">Коэфф.</th>
+										<th class="col-md-2 s-sortable">Место проведения</th>
+										<th class="col-md-1 s-sortable">Адрес</th>
+										<th class="col-md-1 s-sortable">Статус</th>
+										<th class="col-md-2 s-sortable">Сумма к оплате</th>
+										<th class="">&nbsp;</th>
+										<th class="">&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+									<t:if test="orders">
+									<p:else>
+									<tr>
+										<td colspan="11" class="s-ta_c">Нет данных.</td>
+									</tr>
+									</p:else>
+									<t:loop source="orders" value="order">
+									<tr>
+										<td>${order.id}</td>
+										<td>${order.subject.name}</td>
+										<td>${date:order.created,dd.MM.yyyy}</td>
+										<td>
+											${format:%d,order.finalPrice} руб.
+										</td>
+										<td>${order.ratio}</td>
+										<td>
+											<t:if test="order.placeRepetitor">
+												у репетитора
+												<p:else>
+													<t:if test="order.placePupil">
+														у ученика
+														<p:else>
+															по skype
+														</p:else>
+													</t:if>
+												</p:else>
+											</t:if>
+										</td>
+										<td>
+											<t:if test="order.placePupilRegion">
+												${msg:order.placePupilRegion.type} ${order.placePupilRegion.name}	
+											</t:if>
+										</td>
+										<td>${msg:order.status}</td>
+										<td>${format:%d,order.commission} руб.</td>
+										<td>
+											<a href="#" class="s-c_stn-1 s-fs_12" t:type="pagelink" t:page="orderinfo" t:context="order.id">Информация</a>
+										</td>
+										<td>
+											<a class="open_m s-c_stn-1">
+												<i	class="fa fa-bars"></i>
+											</a>
+										</td>
+									</tr>
+									</t:loop>
+									</t:if>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+	<t:IncludeBlock>
+		<!-- <script src="/static/js/libs/knockout-3.2.0.js"></script> -->
+		<!-- <script src="/static/js/models/TableModel.js"></script> -->
+		<!-- <script src="/static/js/models/StudentsOrderModel.js"></script> -->
+		<script type="text/javascript">
+			tutor.modal();
+		</script>
+		
+	</t:IncludeBlock>
+</t:MainTemplate>

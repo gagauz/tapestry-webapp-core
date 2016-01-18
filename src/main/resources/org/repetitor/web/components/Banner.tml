@@ -1,0 +1,46 @@
+
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter"  class="s-pos_r">
+    <div class="header h alt-1">
+     <!--  MESSAGES ABOVE HEADER IMAGE -->
+        <div class="message">
+            <div class="f-row">
+                <div class="col-sm-12 ">
+                    <div class="message-intro">
+                        <span class="message-line"></span>
+                        <p>Tutorfinder</p>
+                        <span class="message-line"></span>
+                    </div>
+                    <h1 class="s-uppercase">Выбирайте проверенных специалистов</h1>
+
+                    <!-- DOMAIN NAME SEARCH BOX -->
+
+                    <div class="s-mt_45 s-p_10">
+                        <div class="f-row collapse">
+                            <div class="col-sm-12 col-lg-10 col-md-10 s-float_ni s-m_a">
+
+                                <form method="get" action="/repetitors">
+                                    <div class="f-row collapse">
+                                        <div class="col-sm-12 col-lg-10 col-md-10 s-p_0">
+                                            <input placeholder="Репетитор по математике..." class="i-search_b" type="text" name="sw" />
+                                        </div>
+                                        <div class="col-sm-12 col-lg-2 col-md-2 s-p_0">
+                                            <input class="btn-wide i-search_s_btn" type="submit" value="ПОИСК" name="submit"/>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END OF DOMAIN NAME SEARCH BOX -->
+                </div>
+            </div>
+        </div>
+        <!--  END OF MESSAGES ABOVE HEADER IMAGE -->
+    </div>
+        <div class="clouds">
+        <img class="s-va_b" src="/static/images/clouds.png" alt="cloud me"/>
+    </div>
+</div>
+
+

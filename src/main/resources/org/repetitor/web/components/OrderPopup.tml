@@ -1,0 +1,136 @@
+<div t:id="modal" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<t:if test="orderDetail">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="fa fa-times"></i>
+			</button>
+			<h4 class="modal-title">
+				Заявка:
+				<strong>${orderDetail.id}</strong>
+			</h4>
+		</div>
+		<div class="modal-body">
+			<label class="control-label">Предмет</label>
+			<p>${orderDetail.subject.name}</p>
+			<label class="control-label">Цель занятий</label>
+			<p>
+				<t:if test="orderDetail.pupilCategory">
+					Категория ученика: ${msg:orderDetail.pupilCategory}
+					<br />
+				</t:if>
+				<t:if test="orderDetail.sectionsMask">
+					Разделы:
+					<t:foreach source="orderDetail.getSubjectSections()" value="section" separator=", ">
+						<span>${section.name}</span>
+					</t:foreach>
+					<br />
+				</t:if>
+				<t:if test="orderDetail.extrasMask">
+					Дополнения:
+					<t:foreach source="orderDetail.getSubjectExtras()" value="extra" separator=", ">
+						<span>${extra.name}</span>
+					</t:foreach>
+					<br />
+				</t:if>
+			</p>
+			<label class="control-label">Желаемое место проведения ранятий</label>
+			<p>
+				<t:if test="orderDetail.placePupil">
+					у ученика
+					<br />
+				</t:if>
+				<t:if test="orderDetail.placeRepetitor">
+					у преподавателя
+					<br />
+				</t:if>
+				<t:if test="orderDetail.placeOnline">
+					по skype
+					<br />
+				</t:if>
+			</p>
+			<label class="control-label">Стоимость занятия</label>
+			<p>
+				<t:if test="orderDetail.priceMin"> от ${format:%d,orderDetail.priceMin}
+				</t:if>
+				<t:if test="orderDetail.priceMax"> до ${format:%d,orderDetail.priceMax}
+				</t:if>
+				за час
+			</p>
+			<t:if test="orderDetail.totalLessonCount.max">
+				<label class="control-label">Предполагаемое количество занятий</label>
+				<p>${msg:orderDetail.totalLessonCount}.</p>
+			</t:if>
+			<t:if test="orderDetail.placePupilRegion">
+				<label class="control-label">Ближайшая станция метро</label>
+				<p>${msg:orderDetail.placePupilRegion.type} ${orderDetail.placePupilRegion.name}</p>
+			</t:if>
+			<label class="control-label">Дополнительные пожелания</label>
+			<p class="">
+				<t:if test="orderDetail.weekLessonCount.max"> Предполагаемое число занятий в неделю: ${msg:orderDetail.weekLessonCount}.
+				</t:if>
+				<t:if test="orderDetail.repetitorStageMin">
+					Опыт репетитора: от ${decline:orderDetail.repetitorStageMin,yeara}
+					<!-- <t:if test="orderDetail.repetitorStageMax"> до ${decline:orderDetail.repetitorStageMax,yeara}.<br/> </t:if> -->
+					.
+					<br />
+				</t:if>
+				<t:if test="orderDetail.repetitorAgeMin">
+					Возраст репетитора: от ${decline:orderDetail.repetitorAgeMin,yeara}
+					<t:if test="orderDetail.repetitorAgeMax"> до ${decline:orderDetail.repetitorAgeMax,yeara}
+					</t:if>
+					.
+					<br />
+				</t:if>
+				Пол репетитора:
+				<t:if test="orderDetail.repetitorGender">
+					${msg:orderDetail.repetitorGender}
+					<p:else> не важно
+					</p:else>
+				</t:if>
+				.
+				<br />
+				<t:if test="orderDetail.repetitorDegree">
+					Статус репетитора:
+					<t:foreach source="orderDetail.repetitorDegree" value="degree" separator=", "> ${msg:degree}
+					</t:foreach>
+					<br />
+				</t:if>
+			</p>
+		</div>
+		<div class="modal-footer">
+			<t:if test="notice">
+				<div id="alertDiv${zoneId}" class="alert alert-info" role="alert">${notice}</div>
+				<br />
+			</t:if>
+			<div id="buttonsDiv${zoneId}">
+				<t:if test="canDecline">
+					<a t:type="eventlink" t:event="decline" t:context="orderDetail" zone="literal:modal_zone" class="ask_btn js_toggler s-mr_5">
+						Отказаться от заявки</a>
+				</t:if>
+				<t:if test="canAccept">
+					<a href="javascript:void(0)" data-block="#acceptFormDiv${zoneId},#buttonsDiv${zoneId}"
+						data-hide-blocks="alertDiv${zoneId}" data-class="s-display_n_" class="ask_btn js_toggler s-mr_5"
+					> Принять заявку</a>
+				</t:if>
+				<a href="javascript:void(0)" class="ask_btn secondary" data-dismiss="modal">Закрыть</a>
+			</div>
+			<t:if test="canAccept">
+				<div class="s-display_n_" id="acceptFormDiv${zoneId}">
+					<t:form t:id="acceptForm">
+						<div class="form-group">
+							<t:label class="s-fs_13" for="message">Ваши комментарии к заявке:</t:label>
+							<div class="s-mb_5">
+								<t:error for="message" />
+								<t:textarea class="form-control placeholder-no-fix" t:id="message" t:value="message"
+									validate="maxlength=1000" />
+							</div>
+						</div>
+						<div class="s-fs_13 s-mb_18">Коэффициент оплаты этой заявки будет равен ${rate} (Подробнее о коэффициентах)</div>
+						<t:submit value="Принять заявку" class="ask_btn s-mr_5" />
+						<a href="javascript:void(0)" class="ask_btn secondary" data-dismiss="modal">Закрыть</a>
+					</t:form>
+				</div>
+			</t:if>
+		</div>
+	</t:if>
+</div>

@@ -1,0 +1,46 @@
+<t:MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<t:if test="read">
+			<h1>
+				<span data-bind="text:blog.date">${date:read.date,dd.MM.yyyy}</span>
+				<span data-bind="text:blog.name">${read.title}</span>
+			</h1>
+			<div class="s-line _grey"></div>
+			<div class="row">
+				<div class="col-lg-3 col-md-3 col-sm-3 s-ta_c">
+					<img data-bind="attr:{src:('/Content/images/blog/'+ blog.id() + '.jpg')}"
+						src="/static/images/photo/${read.photo}" width="200" />
+				</div>
+				<div data-bind="html:blog.description_full"
+					class="col-lg-9 col-md-9 col-sm-9 wysicontent s-fs_14 s-word_break">
+					<t:OutputRaw value="read.fullDescription" />
+				</div>
+			</div>
+			<p:else>
+				<h1>
+					<strong>Блог</strong>
+				</h1>
+				<div class="row">
+					<t:loop source="news" value="row">
+						<div class="b-blog col-md-12 col-lg-12 col-sm-12 s-mb_18">
+							<p>
+								<a data-bind="attr:{href:('/Blog/${row.id})}" href="/blog/${row.id}">
+									<strong>
+										<span data-bind="text:">${date:row.date,dd.MM.yyyy}</span>&nbsp;
+										<span data-bind="text:">${row.title}</span>
+									</strong>
+								</a>
+							</p>
+							<div class="s-overflow_h s-float_l c200">
+								<img class="s-full" data-bind="attr:{src:('')}"
+									src="/static/images/photo/${row.photo}" width="200" />
+							</div>
+							<div data-bind="text:" class="b-blog-description">${row.shortDescription}</div>
+						</div>
+					</t:loop>
+				</div>
+			</p:else>
+		</t:if>
+	</div>
+</t:MainTemplate>

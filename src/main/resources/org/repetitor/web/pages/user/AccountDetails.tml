@@ -1,0 +1,220 @@
+<t:MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+
+	<div class="s-p_wrapper f-row">
+		<h1 class="fluid-head">
+			<strong class="s-icon s-mr_10">${my.surname} ${my.name}
+				${my.patronymic}</strong> <span class="repetitors-c_label s-icon s-mr_10">ID${my.id}</span>
+				<t:if test="my.verified">
+					<i title="Верифицированный репетитор" class="fa fa-check"></i>
+				</t:if>
+		</h1>
+		<div class="row">
+			<div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 s-ta_c s-mb_18">
+				<div class="b-account-details-image-wrapper">
+					<img class="s-full s-lk-avatar" src="/static/images/photo/${my.image}" alt="" />
+					<t:eventlink event="showUpload" zone="${zoneId}">Загрузить новую фотографию</t:eventlink>
+				</div>
+			</div>
+			<div class="col-md-9 col-lg-9 col-sm-9 col-xs-12">
+				<div class="s-mb_18">
+					<div class="clear s-mb_9">
+						<div class="b-account-details--i-left">
+							<i class="fa fa-phone s-mr_5 s-c_stn-1 c20"></i>
+							Номер телефона:
+						</div>
+					 	<div class="b-account-details--i-right">${my.phone1}</div>
+					</div>
+					<div class="clear s-mb_9">
+						<div class="b-account-details--i-left">
+							<i class="fa fa-envelope s-mr_5 s-c_stn-1 c20"></i>E-mail:
+						</div>
+					 	<div class="b-account-details--i-right">${my.email}</div>
+					</div>
+					<div class="clear s-mb_9">
+						<div class="b-account-details--i-left">
+							<i class="fa fa-user s-mr_5 s-c_stn-1 c20"></i>Возраст:
+						</div>
+					 	<div class="b-account-details--i-right">${decline:my.age,year}</div>
+					</div>
+					<div class="clear s-mb_9">
+						<div class="b-account-details--i-left">
+						<i class="fa fa-skyatlas s-mr_5 s-c_stn-1 c20"></i>Опыт работы:
+						</div>
+					 	<div class="b-account-details--i-right">${decline:my.stage,year}</div>
+					</div> 
+					<div class="clear s-mb_9">
+						<div class="b-account-details--i-left">
+							<i class="fa fa-bank s-mr_5 s-c_stn-1 c20"></i>Образование:
+						</div>
+					 	<div class="b-account-details--i-right">${my.education}</div>
+					</div>
+					<div class="clear s-mb_9">
+						<div class="b-account-details--i-left">
+						<i class="fa fa-info-circle s-mr_5 s-c_stn-1 c20"></i>Статус преподавателя:</div>
+					 	<div class="b-account-details--i-right">${msg:my.degree.name()}</div>
+					</div>
+				</div>  
+				 
+				<h2><strong class="s-uppercase">ПРЕПОДАВАЕМЫЕ ПРЕДМЕТЫ</strong></h2>
+				<p class="s-mb_27">Минимальная продолжительность занятия — <strong>60</strong> минут</p>
+				
+				<div class="row s-mb_18">
+					<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 s-c_stn-1 s-uppercase s-strong">Предметы</div>
+					<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 s-c_stn-1 s-uppercase s-strong">У себя</div>
+					<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 s-c_stn-1 s-uppercase s-strong">Выезд</div>
+					<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 s-c_stn-1 s-uppercase s-strong">По skype</div>
+				</div>
+				
+								
+				
+				<div class="s-mb_18">
+					<t:loop source="my.subjects" value="subject">
+						<div class="b-account-subject">
+							<div class="row b-account-subject_item">
+								<div title="${subject.subject.name}" class="col-md-3 col-lg-3 col-sm-3 col-xs-3 s-ellipsis">
+									<i class="fa fa-angle-right s-mr_5"></i>
+									${subject.subject.name}
+								</div>
+								<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3">
+									<t:if test="my.placeRepetitor">
+										от ${format:%d,my.hourPrice} <i class="fa fa-rub"></i>
+										<p:else>
+											<span class="false">
+											Не преподаёт
+											</span>
+											<span class="true-b s-ta_c">
+											<i class="fa fa-frown-o"></i>
+											</span>
+										</p:else>
+									</t:if>
+								</div>
+								<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3">
+									<t:if test="my.placePupil">
+									от ${format:%d,my.hourPrice} <i class="fa fa-rub"></i>
+									<p:else>
+									<span class="false">
+											Не преподаёт
+											</span>
+											<span class="true-b s-ta_c">
+											<i class="fa fa-frown-o"></i>
+											</span>
+									</p:else>
+									</t:if>
+								</div>
+								<div class="col-md-3 col-lg-3 col-sm-3 col-xs-3 s-ellipsis">
+									<t:if test="my.placeOnline">
+									от ${format:%d,my.hourPrice} <i class="fa fa-rub"></i>
+									<p:else>
+									<span class="false">
+										Не преподаёт
+									</span>
+									<span class="true-b s-ta_c">
+										<i class="fa fa-frown-o"></i>
+									</span>
+									</p:else>
+									</t:if>
+								</div>
+							</div>
+							<div class="">
+								<div class="row s-mb_9">
+									<div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 s-strong">Разделы</div>
+									<div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">
+										<t:foreach source="subject.getSubjectSections()" value="section" separator="">
+								    		<span class="s-fs_12 s-label blue s-mr_5">${section.name}</span>
+								    	</t:foreach>
+									</div>
+								</div>
+								<div class="row s-mb_9">
+									<div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 s-strong">Дополнительно</div>
+									<div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">
+										<t:foreach source="subject.getSubjectExtras()" value="extra" separator=", ">
+								    		<span class="s-fs_14">${extra.name}</span>
+								    	</t:foreach>
+									</div>
+								</div>
+								<div class="row s-mb_9">
+									<div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 s-strong">Категория ученика</div>
+									<div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">
+										<t:foreach source="subject.getPupilCategories()" value="pupilCategory" separator="">
+								    		<span class="s-fs_12 s-label blue s-mr_5">${msg:pupilCategory}</span>
+								    	</t:foreach>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 s-strong">Комментарии</div>
+									<div class="col-md-9 col-lg-9 col-sm-12 col-xs-12">${subject.info}</div>
+								</div>
+								
+							</div>
+						</div>
+					</t:loop>
+				</div>
+				
+				<h2><strong class="s-uppercase">Условия</strong></h2>
+				<div class="s-mb_18 s-fs_14">
+					<div class="s-mb_9">
+						<i class="fa fa-home c20 s-mr_5 s-c_stn-1"></i>
+						<strong>У себя:</strong>
+						<t:if test="my.placeRepetitor">
+						${my.placeRepetitorinfo}
+						<p:else>
+						Не преподаёт
+						</p:else>
+						</t:if>
+					</div>
+					<div class="s-mb_9">
+						<i class="fa fa-bus c20 s-mr_5 s-c_stn-1"></i>
+						<strong>Выезд:</strong>
+						<t:if test="my.placePupil">
+						Условия:${my.placePupilInfo}
+						<p:else>
+						Не преподаёт
+						</p:else>
+						</t:if>
+					</div>
+					<div class="s-mb_9">
+						<i class="fa fa-bus c20 s-mr_5 s-c_stn-1"></i>
+						<strong>По skype:</strong>
+						<t:if test="my.placeOnline">
+						Цена: ${format:%d,my.hourPrice} руб., 
+						Условия:${my.placeOnlineInfo}
+						<p:else>
+						Не преподаёт
+						</p:else>
+						</t:if>
+					</div>
+				</div>
+				
+				<h2><strong class="s-uppercase">Статистика</strong></h2>
+				<div class="row">
+					<div class="b-stat col-md-3 col-lg-3 col-sm-6  col-xs-12 s-mb_9"><strong>${my.rating}</strong> из <strong>${totalRatings}</strong> В общем рейтинге</div>
+					<div class="b-stat col-md-3 col-lg-3 col-sm-6  col-xs-12 s-mb_9"><strong>${my.viewCount}</strong> просмотров за месяц</div>
+					<div class="b-stat col-md-3 col-lg-3 col-sm-6  col-xs-12 s-mb_9"><strong>${date:my.lastLogin,dd.MM.yyyy hh:mm}</strong> последняя активность</div>
+					<div class="b-stat col-md-3 col-lg-3 col-sm-6  col-xs-12 s-mb_9"><strong>${totalOrders}</strong> подобрано за <strong>${totalTime}</strong></div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<t:zone t:id="uploadFormZone">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+			<h4 class="modal-title">
+				Загрузить изображение
+			</h4>
+		</div>
+		<div class="modal-body">
+			<div id="${zoneId}Div">
+				<iframe name="uploadform" frameborder="no" height="50" width="350" src="/uploadform?callback=${link}" scrolling="no" />
+			</div>
+
+		</div>
+        <div class="modal-footer">
+            <a href="javascript:void(0)" class="ask_btn secondary" data-dismiss="modal">Закрыть</a>
+        </div>
+	</t:zone>
+
+</t:MainTemplate>

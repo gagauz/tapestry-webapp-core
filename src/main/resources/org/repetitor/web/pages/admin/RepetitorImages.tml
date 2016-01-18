@@ -1,0 +1,30 @@
+<t:admin.MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	
+	<div class="row">
+    	<div class="col-md-12 col-lg-12">
+    		
+    		<h2>Список фотографий репетиторов для проверки</h2>
+    		
+    		<t:grid class="table table-striped" source="images" row="image"
+    			add="accept, remove, imagePath"
+    			reorder="accept, remove">
+    			
+    			<p:imageCell>
+    				<img src="/RawFileData?file=${image.image}&amp;contentType=${mimeType}" />
+    			</p:imageCell>
+    			<p:imagePathCell>
+    				${image.image}
+    			</p:imagePathCell>
+    			<p:acceptCell>
+    				<t:eventlink event="accept" context="image.id">Разрешить</t:eventlink>
+    			</p:acceptCell>
+    			<p:removeCell>
+    				<t:eventlink event="removeimage" context="image.id">Удалить</t:eventlink>
+    			</p:removeCell>
+    		</t:grid>
+    		
+    	</div>
+    </div>
+</t:admin.MainTemplate>

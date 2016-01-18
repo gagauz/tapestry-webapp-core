@@ -1,0 +1,88 @@
+<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+	<t:block id="text">
+		<t:label class="col-sm-3 control-label" for="textField" />
+		<div class="col-sm-9">
+			<input class="form-control" t:id="textField" />
+			<t:error for="textField"/>
+		</div>
+	</t:block>
+
+	<t:block id="number">
+		<t:label class="col-sm-3 control-label" for="numberField" />
+		<div class="col-sm-2">
+			<input class="form-control t-number" t:id="numberField" />
+			<t:error for="numberField"/>
+		</div>
+	</t:block>
+
+
+	<t:block id="enum">
+		<t:label class="col-sm-3 control-label" for="select" />
+		<div class="col-sm-2">
+			<input class="form-control" t:id="select" />
+			<t:error for="select"/>
+		</div>
+	</t:block>
+
+	<t:block id="boolean">
+		<div class="col-sm-offset-3 col-sm-9">
+			<div class="checkbox">
+				<t:mylabel for="checkboxField">
+					<input t:id="checkboxField" />
+				</t:mylabel>
+				<t:error for="checkboxField"/>
+			</div>
+		</div>
+	</t:block>
+
+	<t:block id="date">
+		<t:label class="col-sm-3 control-label" for="textField0" />
+		<div class="col-sm-1">
+			<input class="form-control" 
+				t:type="TextField" 
+				t:id="textField0" 
+				value="context.propertyValue"
+				label="prop:context.label"
+                translate="date"
+                validate="prop:textFieldValidator"
+				clientId="prop:context.propertyId"
+				annotationProvider="context"
+				data-provide="datepicker" />
+			<t:error for="textField0"/>
+		</div>
+	</t:block>
+	
+	<t:if test="false">
+		<t:label class="col-sm-3 control-label" for="dateField" />
+		<div class="col-sm-9">
+			<input class="form-control" t:id="dateField" data-provide="datepicker" />
+			<t:error for="dateField"/>
+		</div>
+	</t:if>
+
+	<t:block id="calendar">
+		<t:label class="col-sm-3 control-label" for="calendarField" />
+		<div class="col-sm-9">
+			<input class="form-control" t:id="calendarField" />
+			<t:error for="calendarField"/>
+		</div>
+	</t:block>
+
+	<t:block id="password">
+		<t:label class="col-sm-3 control-label" for="passwordField" />
+		<div class="col-sm-9">
+			<input class="form-control" t:id="passwordField" />
+			<t:error for="passwordField"/>
+		</div>
+	</t:block>
+
+	<t:block id="longtext">
+		<t:label class="col-sm-3 control-label" for="textarea" />
+		<div class="col-sm-9">
+			<textarea class="form-control" t:id="textarea" rows="6" />
+			<t:error for="textarea"/>
+		</div>
+	</t:block>
+
+</div>

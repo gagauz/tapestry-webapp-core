@@ -1,0 +1,71 @@
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter" class="b-footer">
+    <div class="b-footer">
+        <div class="b-footer_in">
+            <div>
+                <div class="b-footer-top-bg">
+                    <div class="f-row s-p_0_20">
+                        <div class="b-footer_in-copyrights">
+                            <div class="row s-c_fff">
+                                <div class="col-lg-3 col-md-3 col-sm-3 3 col-xs-12 s-mb_18 s-ta_c_xs">
+                                    <a class="main-logo s-icon" href="/"></a>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 s-h_xs">
+                                    <h4>Ученикам</h4>
+                                    <ul class="s-list_n">
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/Materials">Материалы</a>
+                                        </li>
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/Help">Как мы работаем</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 s-h_xs">
+                                    <h4>Репетиторам</h4>
+                                    <ul class="s-list_n">
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/Help">Как мы работаем</a>
+                                        </li>
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/RepetitorsHelp">Регистрация</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 s-h_xs">
+                                    <h4>О компании</h4>
+                                    <ul class="s-list_n">
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/blog">Новости</a>
+                                        </li>
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/Contacts">Контакты</a>
+                                        </li>
+                                        <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/Сonfidential">Политика конфиденциальности</a>
+                                        </li>
+                                         <li class="s-mb_5">
+                                            <a class="s-c_footer" href="/Terms">Условия пользования</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 clear col-xs-12 s-ta_c_xs s-ta_r">
+                                    <div class="s-fs_21">
+                                        <i class="fa fa-phone s-mr_10 s-c_green"></i>
+                                        <a class="s-c_fff" href="tel:8 8003335205"><strong>8 800 333 52 05</strong></a>
+                                        <p class="s-fs_12 s-c_footer">Общероссийский номер</p>
+                                        <a href="/contacts/#contactsAnchor" class="ask_btn"><i class="fa fa-envelope s-mr_5"></i>Обратная связь</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="s-line"></div>
+                                <span>&copy; ASK education 2014 &mdash; 2015 Все права защищены</span>
+                                <i class="main-page-scissors fa fa-scissors"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

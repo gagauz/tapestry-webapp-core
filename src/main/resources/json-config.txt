@@ -1,0 +1,60 @@
+org.repetitor.database.model.Repetitor {
+	id,
+    username,
+    password,
+    birthdate,
+    gender,
+    placeRepetitor,
+    placeRepetitorRegion,
+    placeRepetitorInfo,
+    placePupil,
+    placePupilInfo,
+    placeOnline,
+    placeOnlineInfo,
+    hourPrice,
+    degree,
+    stageSince,
+    education,
+    additionalInfo,
+    image,
+    subjects,
+    approved,
+    verified,
+    views,
+    rating,
+    lastLogin,
+    contactInfo
+}
+
+org.repetitor.database.model.Subject {
+	id,
+	name
+}
+
+org.repetitor.database.model.ContactInfo {
+	name,
+	surname,
+	patronymic,
+	phone1,
+	phone2,
+	email
+}
+
+org.repetitor.database.model.RepetitorSubject {
+	subject,
+	info,
+	extras
+}
+
+org.repetitor.database.model.Region {
+	type,
+	name
+}
+
+java.util.Date {
+	toGMTString
+}
+
+java.sql.Date {
+	toString
+}

@@ -1,0 +1,37 @@
+<t:MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<t:if test="read">
+            <p:else>
+                <h1 class="fluid-head">
+                    <strong>Статьи</strong>
+                </h1>
+            </p:else>
+		</t:if>
+		<ol class="list_type_number">
+			<t:if test="read">
+				<h1>
+					<span data-bind="text:blog.date">${date:read.date,dd.MM.yyyy}</span>
+					<span data-bind="text:blog.name">${read.title}</span>
+				</h1>
+				<div class="s-line _grey"></div>
+				<div class="row">
+					<div data-bind="html:blog.description_full"
+						class="col-lg-9 col-md-9 col-sm-9 wysicontent s-fs_14 s-word_break">
+						<t:OutputRaw value="read.fullDescription" />
+					</div>
+				</div>
+
+				<p:else>
+				
+					<t:loop source="news" value="row">
+						<li>
+							<a class="" href="/materials/${row.id}">${row.title}</a>
+						</li>
+					</t:loop>
+				</p:else>
+
+			</t:if>
+		</ol>
+	</div>
+</t:MainTemplate>

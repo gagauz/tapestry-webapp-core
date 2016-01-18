@@ -1,0 +1,31 @@
+<t:MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<h1>
+			<strong>как оплатить</strong>
+		</h1>
+		<p>
+			Как только клиент подтвердит готовность заниматься с вами, наш сервис
+			автоматически уведомит вас с помощью SMS и электронной почты. На
+			первом уроке вы сможете лучше понять, подходите ли вы с клиентом друг
+			другу. После успешно проведенного урока, вам нужно отчитаться в
+			разделе “Ваши заявки” <a target="_blank"
+				href="http://tutorfinder.ru/user/myorders">http://tutorfinder.ru/user/myorders</a>,
+			после чего система выставит вам счет на оплату комиссии. Доступные
+			способы оплаты: Платежная платформа ChronoPay обеспечивает
+			возможность принимать к оплате банковские карты международных
+			платежных систем <a target="_blank" href="http://visa.com/">VISA</a>,
+			<a target="_blank" href="http://www.mastercard.com/">MasterCard</a>,
+			<a target="_blank" href="https://home.americanexpress.com/home/axpi/">American
+				Express</a>, <a target="_blank" href="http://www.dinersclub.com/">Diners
+				Club</a>, <a target="_blank" href="http://www.jcbinternational.com/">JCB</a>
+			и других популярных региональных платежных систем. Платежный шлюз
+			ChronoPay поддерживает 158 валют, что позволяет организовать оплату
+			на сайте любой страны мира. Для удобства наших клиентов мы подключаем
+			электронные платежные системы, такие как <a target="_blank" href="http://www.webmoney.ru/">Webmoney</a>, <a target="_blank" href="http://money.yandex.ru/">Яндекс-деньги</a>,
+			<a target="_blank" href="http://www.qiwi.ru/">QIWI</a>.
+		</p>
+	</div>
+
+</t:MainTemplate>

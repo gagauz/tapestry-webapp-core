@@ -1,0 +1,118 @@
+<t:MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row">
+		<h1><strong>Заявки учеников</strong></h1>	
+		<p>В данном разделе представлены заявки учеников, которым требуется репетитор. Более подробную информацию по каждой заявке можно узнать, нажав на кнопку "Подробнее..." в строке заявки. На понравившуюся Вам заявку Вы можете оставить запрос, нажав на кнопку "Принять заявку". При необходимости можно оставить комментарий к заявке.
+		Если Вы оставляете запрос на заявку, не подходящую Вам по каким-либо формальным критериям (данным в Вашей анкете), то в поле "Ваши комментарии к заявке" указывайте, пожалуйста, те условия, при которых Вы готовы заниматься с данным учеником. В противном случае Ваш запрос рассмотрен не будет.
+		</p>
+		
+		
+		<div class="row s-mb_18" t:id="zone">
+			<div class="col-md-12 col-sm-12">
+				<!-- BEGIN Portlet PORTLET -->
+				<div class="portlet light s-p_0i">
+					<div class="portlet-title">
+						<div class="caption">
+							<t:form t:id="form" class="customform customform-small" zone="orders_zone">
+								<t:select t:id="select" model="subjectModel" class="custom s-mr_10" value="subject" blankLabel="literal:Все предметы" />
+								<t:submit class="ask_btn" value="Отфильтровать" />
+							</t:form>
+						</div>
+						<t:Paginator source="allorders" destination="orders" url="url" itemsPerPage="20" />
+					</div>
+					<div class="portlet-body">
+						<div class="">
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th class="col-md-3 s-sortable">
+											Номер
+
+										</th>
+										<th class="col-md-2 s-sortable">
+											Предмет
+
+										</th>
+										<th class="col-md-3 s-sortable">
+											Дата заявки
+
+										</th>
+										<th class="col-md-4 s-sortable">
+											Цена
+
+										</th>
+										<th class="col-md-4 s-sortable">
+											Место проведения
+										</th>
+										<th class="col-md-4 s-sortable">
+											Адрес
+										</th>
+										<th class="">&nbsp;
+										</th>
+									</tr>
+								</thead>
+								<tbody class="s-fs_13">
+									<t:if test="orders">
+										<p:else>
+											<tr>
+												<td colspan="7" class="s-ta_c">
+													Ничего не найдено
+												</td>
+											</tr>
+										</p:else>
+										<t:loop source="orders" value="order">
+											<tr>
+												<td>${order.id}</td>
+												<td>${order.subject.name}</td>
+												<td>${date:order.created,dd.MM.yyyy}</td>
+												<td>
+													<t:if test="order.priceMin">
+														от ${format:%d,order.priceMin} руб.
+													</t:if>
+													<t:if test="order.priceMax">
+														до ${format:%d,order.priceMax} руб.
+													</t:if>
+													за час
+												</td>
+												<td>
+													<t:if test="order.placePupil">
+														у ученика
+													</t:if>
+													<t:if test="order.placeRepetitor">
+														у преподавателя
+													</t:if>
+													<t:if test="order.placeOnline">
+														по skype
+													</t:if>
+												</td>
+												<td>
+													<t:if test="order.placePupilRegion">
+														${msg:order.placePupilRegion.type} ${order.placePupilRegion.name}
+													</t:if>
+												</td>
+												<td class="s-fs_16">
+													<a class="open_m s-c_stn-1" t:type="eventlink" t:event="modal" t:context="order.id" t:zone="literal:modal_zone">
+														<i class="fa fa-bars"></i>
+													</a>
+												</td>
+											</tr>
+										</t:loop>
+									</t:if>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<!-- MODAL -->
+		<div t:id="modal" />
+	</div>
+
+	<t:IncludeBlock>
+		<!-- <script src="/static/js/libs/knockout-3.2.0.js"></script> -->
+		<!-- <script src="/static/js/models/TableModel.js"></script> -->
+		<!-- <script src="/static/js/models/StudentsOrderModel.js"></script> -->
+	</t:IncludeBlock>
+
+</t:MainTemplate>

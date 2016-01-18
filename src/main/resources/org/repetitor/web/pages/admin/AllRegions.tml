@@ -1,0 +1,38 @@
+<t:admin.MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	
+	<div class="row">
+    	<div class="col-md-12 col-lg-12">
+    		
+			<h1>Все регионы</h1>
+   			<t:beaneditform class="form-horizontal" t:id="form" t:object="object" cancel="true" exclude="container" add="parent">
+   				<p:id>
+					<label class="col-sm-3 control-label">ID</label>
+					<div class="col-sm-1">
+						<input class="form-control" type="text" readonly="readonly" value="${object.id}" />
+					</div>
+   				</p:id>
+   				<p:parent>
+   					<t:label class="col-sm-3 control-label" for="parent"/>
+  						<div class="col-sm-2">
+   						<t:select class="form-control" t:id="parent" model="model" value="object.parent" />
+   					</div>
+   				</p:parent>
+   			</t:beaneditform>
+   		
+    		
+    		<h2>Список регионов</h2>
+    		<t:grid class="table table-striped" source="regions" row="region"
+    			add="edit"
+    			reorder="edit,id,type,name,name2">
+    			
+    			<p:editCell>
+    				<t:eventlink event="edit" context="region">Редакт.</t:eventlink>
+    			</p:editCell>
+    		</t:grid>
+    		
+    	</div>
+    </div>
+
+</t:admin.MainTemplate>

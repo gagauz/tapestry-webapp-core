@@ -1,0 +1,20 @@
+<t:MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	<div class="s-p_wrapper f-row customform customform-small">
+		<h1 class="fluid-head"><strong>Информация о заявке</strong></h1>
+		<p>Сообщить информацию о заявке</p>
+		<t:zone t:id="zone">
+			<t:form t:id="form" context="orderId" zone="prop:zone.clientId">
+				<div class="s-fs_13 s-mb_5 s-c_grey"><t:label for="info"><i class="fa fa-info-circle s-mr_5"></i>Информация (обязательно)</t:label></div>
+				<div class="s-mb_9"><t:textarea class="s-full" t:id="info" value="message" validate="required, maxlength=1000"/></div>
+				<t:error for="info"/>
+				<t:submit class="ask_btn s-mb_27" value="Сообщить"/>
+			</t:form>
+		</t:zone>
+		<h2>Отчеты по этой заявке</h2>
+		<t:foreach source="logs" value="log">
+			<div class="s-fs_14 s-mb_5"><span class="s-c_stn-1">${date:log.created,dd.MM.yyyy hh:mm}</span> - ${msg:log.type}: ${log.message}</div>
+		</t:foreach>
+	</div>
+</t:MainTemplate>

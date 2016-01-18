@@ -1,0 +1,61 @@
+<t:admin.MainTemplate
+	xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+	xmlns:p="tapestry:parameter">
+	
+	<div class="row">
+    	<div class="col-md-12 col-lg-12">
+    		
+			<h1>Все предметы</h1>
+   			<t:beaneditform class="form-horizontal" t:id="form" t:object="object" cancel="true" exclude="container" add="parent,sections,extras">
+   				<p:id>
+					<label class="col-sm-3 control-label">ID</label>
+					<div class="col-sm-1">
+						<input class="form-control" type="text" readonly="readonly" value="${object.id}" />
+					</div>
+   				</p:id>
+   				<p:created>
+   					<label class="col-sm-3 control-label">Создан</label>
+  						<div class="col-sm-2">
+   						<input class="form-control" type="text" readonly="readonly" value="${object.created}" />
+   					</div>
+   				</p:created>
+   				<p:updated>
+   					<label class="col-sm-3 control-label">Изменен</label>
+  						<div class="col-sm-2">
+   						<input class="form-control" type="text" readonly="readonly" value="${object.updated}" />
+   					</div>
+   				</p:updated>
+   				<p:parent>
+   					<t:label class="col-sm-3 control-label" for="parent"/>
+  						<div class="col-sm-2">
+   						<t:select class="form-control" t:id="parent" model="model" value="object.parent" />
+   					</div>
+   				</p:parent>
+   				<p:sections>
+   					<div class="col-sm-offset-3 col-sm-9">
+   						<t:pagelink t:page="admin/allsections" context="[object.id,-1]">Разделы</t:pagelink>
+   					</div>
+   				</p:sections>
+   				<p:extras>
+   					<div class="col-sm-offset-3 col-sm-9">
+   						<t:pagelink t:page="admin/allextras" context="[object.id,-1]">Дополнения</t:pagelink>
+   					</div>
+   				</p:extras>
+   			</t:beaneditform>
+   		
+    		
+    		<h2>Список предметов</h2>
+    		<t:grid class="table table-striped" source="subjects" row="subject"
+    			add="edit"
+    			exclude="container,hierarchyname"
+    			reorder="edit,id,sortid,name,name2">
+    			
+    			<p:editCell>
+    				<t:eventlink event="edit" context="subject">Редакт.</t:eventlink>
+    			</p:editCell>
+    		</t:grid>
+    		
+    	</div>
+    </div>
+
+</t:admin.MainTemplate>

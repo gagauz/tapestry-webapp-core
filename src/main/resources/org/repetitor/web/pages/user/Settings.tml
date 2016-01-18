@@ -1,0 +1,149 @@
+<t:MainTemplate xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<link href="/static/css/datepicker3.css" id="style_components" rel="stylesheet" type="text/css"/>
+	<div id="settingsModel" class="s-p_wrapper f-row">
+		<h1><strong>Настройки аккаунта</strong></h1>
+		<div class="customform customform-small" t:id="zone">
+			<h2>Основная информация</h2>
+			<t:form t:id="form">
+				<div class="b-settings-hints s-mb_9">
+	                 <span data-bind="visible:showOnSearch() === 'true'">Ваша анкета будет отображаться в результатах поиска</span>
+	                 <span data-bind="visible:showOnSearch() === 'false'">Ваша анкета будет видна только нашим консультантам</span>
+	            </div>
+	                    
+	            <div class="b-settings-hints s-mb_18">
+	            	<span data-bind="visible:showOnMap() === 'true'">Ваша анкета будет отображаться на карте репетиторов</span>
+	                <span data-bind="visible:showOnMap() === 'false'">Ваша анкета на карте будет видна только нашим консультантам</span>
+	            </div>
+	                    
+				<div class="s-mb_9 clear">
+					<t:label class="b-settings-label" for="email">E-mail</t:label>
+					<div class="b-settings-fields">
+					<input type="text" t:type="textfield" t:id="email" t:value="repetitor.email"/>
+					<t:error for="email"/>
+					</div>
+				</div>
+				<div class="s-mb_9 clear">
+					<t:label class="b-settings-label" for="phone1">МОБИЛЬНЫЙ ТЕЛЕФОН</t:label>
+					<div class="b-settings-fields">
+						<input type="text" t:type="textfield" t:id="phone1" t:value="repetitor.phone1"/>
+						<t:error for="phone1"/>
+					</div>
+				</div>
+				<div class="s-mb_9 clear">
+					<t:label class="b-settings-label" for="oldpassword">ПАРОЛЬ</t:label>
+					<div class="b-settings-fields">
+						<input type="password" t:type="textfield" t:id="oldpassword" t:value="oldpassword"/>
+						<t:error for="oldpassword"/>
+					</div>
+				</div>
+				<div class="s-mb_9 clear">
+					<t:label class="b-settings-label" for="password">новый пароль</t:label>
+					<div class="b-settings-fields">
+						<input type="password" t:type="textfield" t:id="password" t:value="newpassword"/>
+						<t:error for="password"/>
+					</div>
+				</div>
+				<div class="s-mb_9 clear">
+					<label class="b-settings-label">повторите новый пароль</label>
+					<div class="b-settings-fields">
+					<input type="password"/>
+					</div>
+				</div>
+				
+				<div class="s-mb_9 clear">
+					<label class="b-settings-label">НУЖНЫ ЛИ ВАМ УЧЕНИКИ?</label>
+					<div class="b-settings-fields">
+						<t:radiogroup t:value="repetitor.needStudents">
+		                    <span class="s-mr_10">
+		                        <input data-bind="checked:needStudents" value="true" class="css-radio" t:id="needStudentsYes" t:type="radio"/>
+		                        <t:label for="needStudentsYes" class="css-label">Да</t:label>
+		                    </span>
+		                    <span>
+		                        <input data-bind="checked:needStudents" value="false" class="css-radio" t:id="needStudentsNo" t:type="radio"/>
+		                        <t:label for="needStudentsNo" class="css-label">Нет</t:label>
+		                    </span>
+	                    </t:radiogroup>
+	                </div>
+					
+				</div>
+				<div data-bind="visible:needStudents() === 'false'" class="s-mb_9 clear">
+					<t:label class="b-settings-label" for="notNeedStudentsUntil">не НУЖНЫ до</t:label>
+					<div class="b-settings-fields">
+	                    <input data-provide="datepicker" t:id="notNeedStudentsUntil" value="repetitor.notNeedStudentsUntil" t:type="textfield" translate="date" />
+	                    
+	                </div>
+				</div>
+				<div class="s-mb_9 clear">
+					<label class="b-settings-label">ПОКАЗЫВАТЬ АНКЕТУ В РЕЗУЛЬТАТАХ ПОИСКА</label>
+					<div class="b-settings-fields">
+						<t:radiogroup t:value="repetitor.showInSearch">
+		                    <span class="s-mr_10">
+		                        <input data-bind="checked:showOnSearch" class="css-radio" t:id="showOnSearchYes" value="true" name="showOnSearch" t:type="radio"/>
+		                        <t:label for="showOnSearchYes" class="css-label">Да</t:label>
+		                    </span>
+		                    <span>
+		                        <input data-bind="checked:showOnSearch" class="css-radio" t:id="showOnSearchNo" value="false" name="showOnSearch" t:type="radio"/>
+		                        <t:label for="showOnSearchNo" class="css-label">Нет</t:label>
+		                    </span>
+	                    </t:radiogroup>
+	                </div>
+				</div>
+				<div class="s-mb_18 clear">
+					<label class="b-settings-label">ПОКАЗЫВАТЬ АНКЕТУ НА КАРТЕ РЕПЕТИТОРОВ</label>
+					<div class="b-settings-fields">
+						<t:radiogroup t:value="repetitor.showOnMap">
+		                    <span class="s-mr_10">
+		                        <input  data-bind="checked:showOnMap" class="css-radio" t:id="showOnMapYes" name="showOnMap" value="true" t:type="radio"/>
+		                        <t:label for="showOnMapYes" class="css-label">Да</t:label>
+		                    </span>
+		                    <span>
+		                        <input data-bind="checked:showOnMap" class="css-radio" t:id="showOnMapNo" name="showOnMap" value="false" t:type="radio"/>
+		                        <t:label for="showOnMapNo" class="css-label">Нет</t:label>
+		                    </span>
+	                    </t:radiogroup>
+	                </div>
+				</div>
+				
+				<h2>УВЕДОМЛЕНИЯ</h2>
+				<p>Настройте уведомления на почту и телефон, чтобы вовремя получать новые заявки и быть в курсе изменений на сайте.</p>
+				<div class="s-mb_9 clear">
+					<label class="b-settings-label">УВЕДОМЛЕНИЯ О ПОДХОДЯЩИХ ЗАЯВКАХ</label>
+					<div class="b-settings-fields">
+						<t:radiogroup t:value="repetitor.notifyOrders">
+		                    <span class="s-mr_10">
+		                        <input data-bind="" class="css-radio" name="type" value="true" t:type="radio" t:id="notifyOrdersYes"/>
+		                        <t:label for="notifyOrdersYes" class="css-label">Да</t:label>
+		                    </span>
+		                    <span>
+		                        <input data-bind="" class="css-radio" name="type" value="false" t:type="radio" t:id="notifyOrdersNo"/>
+		                        <t:label for="notifyOrdersNo" class="css-label">Нет</t:label>
+		                    </span>
+	                    </t:radiogroup>
+	                </div>
+				</div>
+				<div class="s-mb_18 clear">
+					<label class="b-settings-label">РАССЫЛКА НА ПОЧТУ ОБ ИЗМЕНЕНИЯХ НА САЙТЕ</label>
+					<div class="b-settings-fields">
+						<t:radiogroup t:value="repetitor.notifyChanges">
+		                    <span class="s-mr_10">
+		                        <input data-bind="" class="css-radio" name="type" value="true" t:type="radio" t:id="notifyChangesYes"/>
+		                        <t:label for="notifyChangesYes" class="css-label">Да</t:label>
+		                    </span>
+		                    <span>
+		                        <input data-bind="" class="css-radio" name="type" value="false" t:type="radio" t:id="notifyChangesNo"/>
+		                        <t:label for="notifyChangesNo" class="css-label">Нет</t:label>
+		                    </span>
+						</t:radiogroup>
+	                </div>
+				</div>
+				
+				<t:submit class="ask_btn big_btn" value="Сохранить изменения"/>
+			</t:form>
+		</div>
+	</div>
+	<t:IncludeBlock>
+	<script src="/static/js/libs/bootstrap-datepicker.js" type="text/javascript"></script>
+	<script src="/static/js/libs/bootstrap-datepicker.ru.js" type="text/javascript"></script>
+	<script src="/static/js/models/settingsModel.js" type="text/javascript"></script>
+	</t:IncludeBlock>
+</t:MainTemplate>

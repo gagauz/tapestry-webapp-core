@@ -1,0 +1,285 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter" class="b-header">
+	<div t:id="zone" class="register-form" style="display:none">
+		<form t:id="form">
+			<h3>Регистрация</h3>
+			<p>
+				Укажите персональную информацию:
+			</p>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Имя</label>
+				<div class="input-icon">
+					<i class="fa fa-font"></i>
+					<input class="form-control placeholder-no-fix" type="text" placeholder="Имя" name="fullname" t:id="name" t:clientId="name"  />
+					<t:error for="name" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Фамилия</label>
+				<div class="input-icon">
+					<i class="fa fa-user"></i>
+					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Фамилия" name="surname" t:id="surname" t:clientId="surname" />
+					<t:error for="surname" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Отчество</label>
+				<div class="input-icon">
+					<i class="fa fa-user"></i>
+					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Отчество" name="patronymic" t:id="patronymic" t:clientId="patronymic" />
+					<t:error for="patronymic" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Дата рождения</label>
+				<div class="input-icon">
+					<i class="fa fa-birthday-cake"></i>
+					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Дата рождения" name="birthday" t:id="birthday"
+					 	t:clientId="birthday" 
+						data-provide="datepicker"
+						data-format="dd.mm.yyyy" 
+						/><!-- data-date-end-date="-18y" data-date-start-date="-100y"-->
+					<t:error for="birthday" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Пол</label>
+				<div class="input-icon">
+					<i class="fa fa-transgender"></i>
+					<select class="form-control placeholder-no-fix" autocomplete="off" placeholder="Пол" name="gender" t:id="gender" t:clientId="gender"  />
+					<t:error for="gender" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that -->
+				<label class="control-label visible-ie8 visible-ie9">Email</label>
+				<div class="input-icon">
+					<i class="fa fa-envelope"></i>
+					<input class="form-control placeholder-no-fix" type="text" placeholder="Email" name="email" t:id="email" t:clientId="email" />
+					<t:error for="email" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Телефон</label>
+				<div class="input-icon">
+					<i class="fa fa-phone"></i>
+					<input class="form-control placeholder-no-fix" type="text" placeholder="Телефон" name="address" t:id="phone" t:clientId="phone" />
+					<t:error for="phone" />
+				</div>
+			</div>
+
+			<p>Преподаваемый(ые) предмет(ы)</p>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Предмет</label>
+				<div class="input-icon">
+					<i class="fa fa-user"></i>
+					<t:select class="form-control placeholder-no-fix" autocomplete="off" placeholder="Предмет" t:id="subject"
+						t:value="repetitorSubject1.subject" t:clientId="subject" />
+					<t:error for="subject" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Комментарии по предмету (например, программа 9-11 классов средней школы) и по ученикам (например, только школьники, абитуриенты, взрослые и др.)</label>
+				<div>
+					<t:textarea class="form-control placeholder-no-fix" t:id="subjectInfo" t:value="repetitorSubject1.info" t:clientId="subjectInfo" />
+					<t:error for="subjectInfo" />
+				</div>
+			</div>
+			
+			<div style="display:none1">
+				<p>Преподаваемый(ые) предмет(ы) #2</p>
+				<div class="form-group">
+					<t:label class="control-label visible-ie8 visible-ie9" for="subject2">Предмет</t:label>
+					<div class="input-icon">
+						<i class="fa fa-user"></i>
+						<t:select class="form-control placeholder-no-fix" autocomplete="off" placeholder="Предмет" 
+							t:id="subject2" t:clientId="subject2" />
+						<t:error for="subject2" />
+					</div>
+				</div>
+				<div class="form-group">
+					<t:label for="subjectInfo2" class="control-label">Комментарии по предмету (например, программа 9-11 классов средней школы) и по ученикам (например, только школьники, абитуриенты, взрослые и др.)</t:label>
+					<div>
+						<t:textarea class="form-control placeholder-no-fix" t:id="subjectInfo2" t:clientId="subjectInfo2" t:value="repetitorSubject2.info"/>
+						<t:error for="subjectInfo2" />
+					</div>
+				</div>
+				
+				<p>Преподаваемый(ые) предмет(ы) #3</p>
+				<div class="form-group">
+					<t:label class="control-label visible-ie8 visible-ie9" for="subject3">Предмет</t:label>
+					<div class="input-icon">
+						<i class="fa fa-user"></i>
+						<t:select class="form-control placeholder-no-fix" autocomplete="off" placeholder="Предмет" 
+							t:id="subject3" t:clientId="subject3" />
+						<t:error for="subject3" />
+					</div>
+				</div>
+				<div class="form-group">
+					<t:label for="subjectInfo3" class="control-label">Комментарии по предмету (например, программа 9-11 классов средней школы) и по ученикам (например, только школьники, абитуриенты, взрослые и др.)</t:label>
+					<div>
+						<t:textarea class="form-control placeholder-no-fix" t:id="subjectInfo3" t:clientId="subjectInfo3" t:value="repetitorSubject3.info"/>
+						<t:error for="subjectInfo3" />
+					</div>
+				</div>
+								
+			</div>
+
+			<div class="form-group">
+				<label class="control-label">Проводите ли Вы занятия у себя</label>
+				<div class="input-icon">
+										
+					<t:radiogroup t:value="repetitor.placeRepetitor">
+						<span class="s-mr_10">
+							<t:radio class="css-radio" t:id="yes" t:value="true" />
+							<t:label for="yes" class="css-label">Да</t:label>
+						</span>
+						<span class="s-mr_10">
+							<t:radio class="css-radio" t:id="no" t:value="false" />
+							<t:label for="no" class="css-label">Нет</t:label>
+						</span>
+						
+					</t:radiogroup>
+				</div>
+			</div>
+			<div class="form-group">
+				<t:label class="control-label" for="region">Район проведения занятий</t:label>
+				<div>
+					<t:select class="form-control placeholder-no-fix" placeholder="Район проведения занятий" 
+						t:id="region" t:clientId="region" t:model="regionModel" value="repetitor.placeRepetitorRegion"/>
+					<t:error for="region" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Выезжаете ли Вы к ученику</label>
+				<div class="input-icon">
+					
+					<t:radiogroup t:value="repetitor.placePupil">
+						<span class="s-mr_10">
+							<t:radio class="css-radio" t:id="placePupilTrue" t:value="true" />
+							<t:label for="placePupilTrue" class="css-label">Да</t:label>
+						</span>
+						<span class="s-mr_10">
+							<t:radio class="css-radio" t:id="placePupilFalse" t:value="false" />
+							<t:label for="placePupilFalse" class="css-label">Нет</t:label>
+						</span>
+					</t:radiogroup>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Комментарии по выезду (например район, дальность от метро (при наличии) и др.)</label>
+				<div>
+					<textarea class="form-control placeholder-no-fix" name="placePupilInfo"	t:id="placePupilInfo" t:clientId="placePupilInfo" />
+					<t:error for="placePupilInfo" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Проводите ли Вы занятия по skype</label>
+				<div class="input-icon">
+					
+					<t:radiogroup t:value="repetitor.placeOnline">
+						<span class="s-mr_10">
+							<t:radio class="css-radio" t:id="placeOnlineTrue" t:value="true" />
+							<t:label for="placeOnlineTrue" class="css-label">Да</t:label>
+						</span>
+						<span class="s-mr_10">
+							<t:radio class="css-radio" t:id="placeOnlineFalse" t:value="false" />
+							<t:label for="placeOnlineFalse" class="css-label">Нет</t:label>
+						</span>
+					</t:radiogroup>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Комментарии по удаленным занятиям</label>
+				<div>
+					<textarea class="form-control placeholder-no-fix" name="placeOnlineInfo" t:id="placeOnlineInfo" t:clientId="placeOnlineInfo" />
+					<t:error for="placeOnlineInfo" />
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<label class="control-label">Стоимость часа занятия</label>
+				<div class="input-icon">
+					<i class="fa fa-rub"></i>
+					<input class="form-control placeholder-no-fix" type="text" placeholder="Стоимость часа занятия" name="hourPrice" t:id="hourPrice" t:clientId="hourPrice" />
+					<t:error for="hourPrice" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Начало репетиторского стажа</label>
+				<div class="input-icon">
+					<i class="fa fa-clock-o"></i>
+					<input data-provide="datepicker" class="form-control placeholder-no-fix" type="text" autocomplete="off" 
+						placeholder="Начало репетиторского стажа" name="stageSince" t:id="stageSince"  t:clientId="stageSince" 
+						data-format="dd.mm.yyyy" />
+					<t:error for="stageSince" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Ваш статус</label>
+				<div class="input-icon">
+					<i class="fa fa-info"></i>
+					<select class="form-control placeholder-no-fix" autocomplete="off" placeholder="Ваш статус" name="degree" t:id="degree" t:clientId="degree" />
+					<t:error for="degree" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">Ваше образование (укажите ВУЗ и факультет, год окончания/на каком курсе учитесь), ученая степень и др.*</label>
+				<div class="input-icon">
+					<i class="fa fa-home"></i>
+					<select class="form-control placeholder-no-fix" autocomplete="off" name="education" t:id="education" t:clientId="education" />
+					<t:error for="education" />
+				</div>
+			</div>
+			<p>
+				Укажите данные для входа:
+			</p>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Имя пользователя</label>
+				<div class="input-icon">
+					<i class="fa fa-user"></i>
+					<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Имя пользователя" name="username" t:id="username" t:clientId="username" />
+					<t:error for="username" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Пароль</label>
+				<div class="input-icon">
+					<i class="fa fa-lock"></i>
+					<input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="register_password" placeholder="Пароль" name="password" t:id="password" t:clientId="password" />
+					<t:error for="password" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label visible-ie8 visible-ie9">Повторите ввод пароля</label>
+				<div class="controls">
+					<div class="input-icon">
+						<i class="fa fa-check"></i>
+						<input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Повторите ввод пароля" name="rpassword" t:id="password2" t:clientId="password2" />
+						<t:error for="password2" />
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label>
+					<a href="#">Общие условия оказания информационных услуг</a>
+				</label>
+				<div id="register_tnc_error">
+				</div>
+			</div>
+			<div class="form-actions">
+				<button id="register-back-btn" type="button" class="btn">
+					<i class="fa fa-arrow-circle-o-left"></i>
+					Назад
+				</button>
+				<t:LinkSubmit id="register-submit-btn" class="btn blue pull-right">
+					Я принимаю условия
+					<i class="fa fa-arrow-circle-o-right"></i>
+				</t:LinkSubmit>
+			</div>
+		</form>
+	</div>
+
+</t:container>
