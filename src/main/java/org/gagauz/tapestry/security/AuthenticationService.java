@@ -30,8 +30,8 @@ public class AuthenticationService {
     private Request request;
 
     public <U extends User> U login(Credentials credentials) {
-        U newUser = userProvider.findByCredentials(credentials);
         LoginResult result = null;
+        User newUser = userProvider.findByCredentials(credentials);
         if (null != newUser) {
             UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
             if (null == userSet) {
@@ -42,7 +42,6 @@ public class AuthenticationService {
             userSet.add(newUser);
             applicationStateManager.set(UserSet.class, userSet);
             result = new LoginResult(newUser, credentials);
-            //            result.setLastUser(lastUser);
         } else {
             result = new LoginResult(credentials);
         }
@@ -50,12 +49,12 @@ public class AuthenticationService {
             handler.handleLogin(result);
         }
 
-        return newUser;
+        return (U) result.getUser();
     }
 
     public void logout() {
 
-        UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
+        UserSet<User> userSet = applicationStateManager.getIfExists(UserSet.class);
 
         for (AuthenticationHandler handler : handlers) {
             for (User user : userSet) {
