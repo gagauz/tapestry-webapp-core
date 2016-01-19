@@ -1,5 +1,18 @@
 package org.gagauz.tapestry.hibernate;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
@@ -10,20 +23,15 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.services.ComponentEventRequestFilter;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
-import org.apache.tapestry5.services.RequestFilter;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
-import java.util.*;
+import org.apache.tapestry5.services.PageRenderRequestFilter;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
 
 public class HibernateModule {
 
@@ -31,7 +39,13 @@ public class HibernateModule {
         binder.bind(HibernateCommonRequestFilter.class);
     }
 
-    public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
+    @Contribute(ComponentEventRequestHandler.class)
+    public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
+        configuration.add("HibernateFilter", hibernateFilter, "before:*");
+    }
+
+    @Contribute(PageRenderRequestHandler.class)
+    public void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
         configuration.add("HibernateFilter", hibernateFilter, "before:*");
     }
 

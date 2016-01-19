@@ -1,8 +1,21 @@
 package org.gagauz.tapestry.web.services;
 
-import org.apache.tapestry5.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Local;
@@ -11,11 +24,35 @@ import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.Ajax;
+import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.BindingFactory;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.EditBlockContribution;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.ExceptionReporter;
+import org.apache.tapestry5.services.Html5Support;
+import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.MarkupRendererFilter;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.RequestExceptionHandler;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ResponseRenderer;
+import org.apache.tapestry5.services.Traditional;
+import org.apache.tapestry5.services.URLEncoder;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.webresources.modules.WebResourcesModule;
-import org.gagauz.tapestry.binding.*;
+import org.gagauz.tapestry.binding.CondBindingFactory;
+import org.gagauz.tapestry.binding.DateBindingFactory;
+import org.gagauz.tapestry.binding.DeclineBindingFactory;
+import org.gagauz.tapestry.binding.FormatBindingFactory;
+import org.gagauz.tapestry.binding.MsgBindingFactory;
+import org.gagauz.tapestry.binding.PageBindingFactory;
 import org.gagauz.tapestry.hibernate.HibernateModule;
 import org.gagauz.tapestry.security.SecurityModule;
 import org.gagauz.tapestry.validate.NonLatinCharsValidator;
@@ -23,11 +60,6 @@ import org.gagauz.tapestry.web.services.annotation.GetParamTransformer;
 import org.gagauz.tapestry.web.services.annotation.LongCacheTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry,
@@ -65,10 +97,8 @@ public class CoreWebappModule {
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration) {
-        configuration
-                .add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry"));
-        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY,
-                "org.gagauz.tapestry.security"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.web"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.security"));
     }
 
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource, TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {

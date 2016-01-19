@@ -37,29 +37,12 @@
 	</t:block>
 
 	<t:block id="date">
-		<t:label class="col-sm-3 control-label" for="textField0" />
-		<div class="col-sm-1">
-			<input class="form-control" 
-				t:type="TextField" 
-				t:id="textField0" 
-				value="context.propertyValue"
-				label="prop:context.label"
-                translate="date"
-                validate="prop:textFieldValidator"
-				clientId="prop:context.propertyId"
-				annotationProvider="context"
-				data-provide="datepicker" />
-			<t:error for="textField0"/>
-		</div>
-	</t:block>
-	
-	<t:if test="false">
 		<t:label class="col-sm-3 control-label" for="dateField" />
 		<div class="col-sm-9">
 			<input class="form-control" t:id="dateField" data-provide="datepicker" />
 			<t:error for="dateField"/>
 		</div>
-	</t:if>
+	</t:block>
 
 	<t:block id="calendar">
 		<t:label class="col-sm-3 control-label" for="calendarField" />
