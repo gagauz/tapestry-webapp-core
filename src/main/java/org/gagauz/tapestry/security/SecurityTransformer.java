@@ -28,11 +28,11 @@ public class SecurityTransformer implements ComponentClassTransformWorker2 {
     private AccessAttributeExtractorChecker accessAttributeExtractorChecker;
 
     @Override
-    public void transform(PlasticClass plasticClass, TransformationSupport support,
-                          MutableComponentModel model) {
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model) {
         final AccessAttribute attribute = accessAttributeExtractorChecker.extract(plasticClass);
 
         if (null != attribute) {
+
             support.addEventHandler(EventConstants.ACTIVATE, 0,
                     "SecurityTransformer activate event handler", new ComponentEventHandler() {
                         @Override
@@ -40,6 +40,14 @@ public class SecurityTransformer implements ComponentClassTransformWorker2 {
                             accessAttributeExtractorChecker.check(attribute);
                         }
                     });
+
+            /*
+            PlasticMethod setupRender = plasticClass.introduceMethod(new MethodDescription(Modifier.PUBLIC, "boolean", setupRender, RENDER_PHASE_METHOD_PARAMETERS, null, null););
+            
+            decorateMethod(componentClass, model, setupRender, annotation);
+            
+            model.addRenderPhase(SetupRender.class);
+            */
         }
         for (PlasticMethod plasticMethod : plasticClass.getMethods()) {
             final AccessAttribute attribute1 = accessAttributeExtractorChecker.extract(plasticClass,

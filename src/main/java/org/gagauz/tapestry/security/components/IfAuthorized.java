@@ -18,11 +18,8 @@ public class IfAuthorized extends AbstractConditional {
 
     @Override
     protected boolean test() {
-        AccessAttribute accessAttribute = null == attribute
-                ? AccessAttribute.EMPTY_ATTRIBUTE
-                : attribute;
         try {
-            accessAttributeChecker.check(accessAttribute);
+            accessAttributeChecker.check(attribute);
         } catch (AccessDeniedException e) {
             return false;
         }
