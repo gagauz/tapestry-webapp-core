@@ -1,7 +1,5 @@
 package org.gagauz.hibernate.types;
 
-import org.gagauz.hibernate.model.base.Serializer;
-
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +9,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.gagauz.hibernate.model.base.Serializer;
+import org.gagauz.utils.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.ParameterizedType;
@@ -22,8 +22,8 @@ public abstract class CollectionType<T> implements UserType, ParameterizedType {
     public static final String SERIALIZER = "serializer";
 
     private static final int SQL_TYPE = Types.VARCHAR;
-    private static final int[] SQL_TYPES = new int[] { SQL_TYPE };
-    private static final String SEPARATOR_STRING = ",";
+    private static final int[] SQL_TYPES = new int[] {SQL_TYPE};
+    private static final String SEPARATOR_STRING = new Character((char) 0x1F).toString();
 
     // Default is string collection
     private Class<T> entityClass;
@@ -52,6 +52,8 @@ public abstract class CollectionType<T> implements UserType, ParameterizedType {
             } catch (Exception e) {
                 throw new IllegalArgumentException("Serializer class " + serializerName + " not found", e);
             }
+        } else {
+            throw new IllegalStateException("No serializer is defined for class " + entityClass);
         }
     }
 
@@ -66,6 +68,10 @@ public abstract class CollectionType<T> implements UserType, ParameterizedType {
         final String string = resultSet.getString(names[0]);
         if (resultSet.wasNull()) {
             return null;
+        }
+
+        if (StringUtils.isEmpty(string)) {
+            return createCollection(entityClass, 0);
         }
         String[] strings = string.split(SEPARATOR_STRING);
         Collection<T> result = createCollection(entityClass, strings.length);

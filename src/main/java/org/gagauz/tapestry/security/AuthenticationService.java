@@ -1,5 +1,7 @@
 package org.gagauz.tapestry.security;
 
+import java.util.List;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
@@ -10,8 +12,6 @@ import org.gagauz.tapestry.security.api.User;
 import org.gagauz.tapestry.security.api.UserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class AuthenticationService {
 
@@ -41,6 +41,8 @@ public class AuthenticationService {
             }
             userSet.add(newUser);
             applicationStateManager.set(UserSet.class, userSet);
+            Class<U> userClass = (Class<U>) newUser.getClass();
+            applicationStateManager.set(userClass, newUser);
             result = new LoginResult(newUser, credentials);
         } else {
             result = new LoginResult(credentials);
@@ -59,6 +61,7 @@ public class AuthenticationService {
         for (AuthenticationHandler handler : handlers) {
             for (User user : userSet) {
                 handler.handleLogout(user);
+                applicationStateManager.set(user.getClass(), null);
             }
         }
 
