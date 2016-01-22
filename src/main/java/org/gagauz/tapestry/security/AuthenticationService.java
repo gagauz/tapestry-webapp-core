@@ -29,9 +29,9 @@ public class AuthenticationService {
     @Inject
     private Request request;
 
-    public <U extends User> U login(Credentials credentials) {
+    public <U extends User, C extends Credentials> U login(C credentials) {
         LoginResult result = null;
-        User newUser = userProvider.fromCredentials(credentials);
+        U newUser = userProvider.fromCredentials(credentials);
         if (null != newUser) {
             UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
             if (null == userSet) {
@@ -49,7 +49,7 @@ public class AuthenticationService {
             handler.handleLogin(result);
         }
 
-        return (U) result.getUser();
+        return newUser;
     }
 
     public void logout() {
