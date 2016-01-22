@@ -1,12 +1,15 @@
 package org.gagauz.tapestry.security;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.gagauz.tapestry.security.api.AccessDeniedHandler;
@@ -31,21 +34,23 @@ public class SecurityModule {
         binder.bind(RememberMeFilter.class);
     }
 
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void setupDefaultSymbols(MappedConfiguration<String, Object> configuration) {
+        configuration.add(SecuritySymbols.REMEMBER_ME_COOKIE, "_RMC_");
+        configuration.add(SecuritySymbols.REMEMBER_ME_COOKIE_AGE, 365 * 24 * 3600);
+    }
+
     @Contribute(ComponentClassTransformWorker2.class)
-    public void contributeComponentClassTransformWorker2(
-                                                         OrderedConfiguration<ComponentClassTransformWorker2> configuration) {
+    public void contributeComponentClassTransformWorker2(OrderedConfiguration<ComponentClassTransformWorker2> configuration) {
         configuration.addInstance("SecurityTransformer", SecurityTransformer.class);
     }
 
-    public void contributeComponentEventRequestHandler(
-                                                       OrderedConfiguration<ComponentEventRequestFilter> configuration,
-                                                       @Local AccessDeniedExceptionInterceptorFilter filter) {
+    public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration, @Local AccessDeniedExceptionInterceptorFilter filter) {
         configuration.add("AccessDeniedExceptionInterceptorFilterComponent", filter, "after:*");
     }
 
-    public void contributePageRenderRequestHandler(
-                                                   OrderedConfiguration<PageRenderRequestFilter> configuration,
-                                                   @Local AccessDeniedExceptionInterceptorFilter filter) {
+    public void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration, @Local AccessDeniedExceptionInterceptorFilter filter) {
         configuration.add("AccessDeniedExceptionInterceptorFilterPage", filter, "after:*");
     }
 
@@ -59,15 +64,12 @@ public class SecurityModule {
         configuration.add("PageRenderRememberMeHandler", handler);
     }
 
-    public CookieEncryptorDecryptor buildSecurityEncryptor(
-                                                           @Inject @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase) {
+    public CookieEncryptorDecryptor buildSecurityEncryptor(@Inject @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase) {
         return new CookieEncryptorDecryptor(passphrase, "salt");
     }
 
     @Contribute(AuthenticationService.class)
-    public void contributeAuthenticationService(OrderedConfiguration<AuthenticationHandler> configuration,
-                                                @Inject RememberMeHandler rememberMeHandler,
-                                                @Inject final Response response, @Inject final Cookies cookies) {
+    public void contributeAuthenticationService(OrderedConfiguration<AuthenticationHandler> configuration, @Inject RememberMeHandler rememberMeHandler, @Inject final Response response, @Inject final Cookies cookies) {
         configuration.add("RememberMeLoginHandler", rememberMeHandler, "before:*");
         configuration.add("RedirectHandler", new AuthenticationHandler() {
 
@@ -94,14 +96,10 @@ public class SecurityModule {
     }
 
     @Contribute(AccessDeniedExceptionInterceptorFilter.class)
-    public static void contributeSecurityExceptionInterceptorFilter(
-                                                                    OrderedConfiguration<AccessDeniedHandler> configuration,
-                                                                    @Inject final Request request, @Inject final Response response,
-                                                                    @Inject final Cookies cookies) {
+    public static void contributeSecurityExceptionInterceptorFilter(OrderedConfiguration<AccessDeniedHandler> configuration, @Inject final Request request, @Inject final Response response, @Inject final Cookies cookies) {
         configuration.add("redirector", new AccessDeniedHandler() {
             @Override
-            public void handleException(AbstractCommonHandlerWrapper handlerWrapper,
-                                        AccessDeniedException cause) {
+            public void handleException(AbstractCommonHandlerWrapper handlerWrapper, AccessDeniedException cause) {
                 String page = null;
                 if (handlerWrapper.getComponentEventRequestParameters() != null) {
                     page = handlerWrapper.getComponentEventRequestParameters().getActivePageName();

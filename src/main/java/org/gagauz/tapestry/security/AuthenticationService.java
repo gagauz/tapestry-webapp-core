@@ -31,7 +31,7 @@ public class AuthenticationService {
 
     public <U extends User> U login(Credentials credentials) {
         LoginResult result = null;
-        User newUser = userProvider.findByCredentials(credentials);
+        User newUser = userProvider.fromCredentials(credentials);
         if (null != newUser) {
             UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
             if (null == userSet) {
@@ -54,7 +54,7 @@ public class AuthenticationService {
 
     public void logout() {
 
-        UserSet<User> userSet = applicationStateManager.getIfExists(UserSet.class);
+        UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
 
         for (AuthenticationHandler handler : handlers) {
             for (User user : userSet) {
@@ -74,4 +74,5 @@ public class AuthenticationService {
             }
         }
     }
+
 }

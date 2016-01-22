@@ -1,12 +1,12 @@
 package org.gagauz.tapestry.security;
 
-import org.gagauz.tapestry.security.impl.LoginFormCredentials;
-
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Cookies;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
 import org.gagauz.tapestry.security.api.User;
-import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
+import org.gagauz.tapestry.security.api.UserProvider;
+import org.gagauz.tapestry.security.impl.CookieCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,18 +14,23 @@ public class RememberMeHandler implements AuthenticationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RememberMeHandler.class);
 
-    static final String REMEMBER_ME_COOKIE_NAME = "rememberme";
-    static final int REMEMBER_ME_COOKIE_AGE = 31536000;
+    @Inject
+    @Symbol(SecuritySymbols.REMEMBER_ME_COOKIE)
+    private String cookieName;
+
+    @Inject
+    @Symbol(SecuritySymbols.REMEMBER_ME_COOKIE_AGE)
+    private int cookieAge;
 
     @Inject
     private Cookies cookies;
 
     @Inject
-    private CookieEncryptorDecryptor cookieEncryptor;
+    private UserProvider userProvider;
 
     @Override
     public void handleLogout(User user) {
-        cookies.removeCookieValue(REMEMBER_ME_COOKIE_NAME);
+        cookies.removeCookieValue(cookieName);
     }
 
     @Override
@@ -33,13 +38,13 @@ public class RememberMeHandler implements AuthenticationHandler {
         log.info("Handle login!");
 
         if (result.isSuccess()
-                && result.getCredentials() instanceof LoginFormCredentials) {
-            LoginFormCredentials credentials = (LoginFormCredentials) result.getCredentials();
-            String oldValue = cookies.readCookieValue(REMEMBER_ME_COOKIE_NAME);
-            String hash = cookieEncryptor.encryptArray(credentials.getUsername(),
-                    credentials.getPassword());
-            if (null == oldValue || !oldValue.equals(hash)) {
-                cookies.getBuilder(REMEMBER_ME_COOKIE_NAME, hash).setMaxAge(REMEMBER_ME_COOKIE_AGE).write();
+                && !(result.getCredentials() instanceof CookieCredentials)) {
+            String oldValue = cookies.readCookieValue(cookieName);
+
+            CookieCredentials cookie = userProvider.toCredentials(result.getUser(), CookieCredentials.class);
+
+            if (null == oldValue || !oldValue.equals(cookie.getValue())) {
+                cookies.getBuilder(cookieName, cookie.getValue()).setMaxAge(cookieAge).write();
             }
         }
     }

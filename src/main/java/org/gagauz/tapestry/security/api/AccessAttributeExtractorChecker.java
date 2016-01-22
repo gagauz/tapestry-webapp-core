@@ -2,14 +2,12 @@ package org.gagauz.tapestry.security.api;
 
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticMethod;
-import org.gagauz.tapestry.security.AccessDeniedException;
+import org.gagauz.tapestry.security.UserSet;
 
-public interface AccessAttributeExtractorChecker<A extends AccessAttribute> {
+public interface AccessAttributeExtractorChecker {
 
-    A extract(PlasticClass plasticClass);
+    <A extends AccessAttribute> A extract(PlasticClass plasticClass, PlasticMethod plasticMethod);
 
-    A extract(PlasticClass plasticClass, PlasticMethod plasticMethod);
-
-    void check(A attribute) throws AccessDeniedException;
+    <A extends AccessAttribute> boolean check(UserSet users, A attribute);
 
 }

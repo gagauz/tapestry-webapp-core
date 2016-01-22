@@ -1,15 +1,14 @@
 package org.gagauz.tapestry.security;
 
-import org.gagauz.tapestry.web.services.LoginDetailsImpl;
-
-import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
-
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Cookies;
 import org.gagauz.tapestry.security.api.User;
+import org.gagauz.tapestry.security.impl.CookieCredentials;
 import org.gagauz.tapestry.utils.AbstractCommonHandlerWrapper;
 import org.gagauz.tapestry.utils.AbstractCommonRequestFilter;
+import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +18,9 @@ public class RememberMeFilter extends AbstractCommonRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(RememberMeFilter.class);
 
-    static final String REMEMBER_ME_COOKIE_NAME = "auth_repetitor";
-    static final int REMEMBER_ME_COOKIE_AGE = 31536000;
+    @Inject
+    @Symbol(SecuritySymbols.REMEMBER_ME_COOKIE)
+    private String cookieName;
 
     @Inject
     private Cookies cookies;
@@ -38,19 +38,17 @@ public class RememberMeFilter extends AbstractCommonRequestFilter {
     public void handleInternal(AbstractCommonHandlerWrapper handlerWrapper) throws IOException {
         User user = applicationStateManager.getIfExists(User.class);
         if (null == user) {
-            String cookieValue = cookies.readCookieValue(REMEMBER_ME_COOKIE_NAME);
+            String cookieValue = cookies.readCookieValue(cookieName);
             if (null != cookieValue) {
                 log.info("Handle remember me cookie [{}]", cookieValue);
                 try {
-                    String[] credentials = cookieDecryptor.decryptArray(cookieValue);
-                    user = authService.login(new LoginDetailsImpl(credentials[0],
-                            credentials[1], true, false));
+                    user = authService.login(new CookieCredentials(cookieValue));
                     if (null == user) {
                         throw new RuntimeException("remove cookie");
                     }
                 } catch (Exception e) {
                     log.error("Failed to login with cookie. Remove it.", e);
-                    cookies.removeCookieValue(REMEMBER_ME_COOKIE_NAME);
+                    cookies.removeCookieValue(cookieName);
                 }
             }
         }
