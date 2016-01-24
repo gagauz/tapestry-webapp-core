@@ -1,29 +1,18 @@
 package org.gagauz.tapestry.web.services;
 
-
-import org.gagauz.hibernate.model.Model;
-
-import org.gagauz.hibernate.dao.AbstractDao;
-
-import javax.persistence.metamodel.IdentifiableType;
+import java.io.Serializable;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.gagauz.hibernate.dao.AbstractDao;
+import org.gagauz.hibernate.model.Model;
 
-public class CommonEntityValueEncoderFactory<E extends Model, Dao extends AbstractDao<Integer, E>> implements
-        ValueEncoderFactory<E> {
-
-    private static final String NULL = "null";
-
-    private static boolean isNull(String arg0) {
-        return null == arg0 || NULL.equals(arg0);
-    }
+public class CommonEntityValueEncoderFactory<E extends Model, Dao extends AbstractDao<Serializable, E>> implements ValueEncoderFactory<E> {
 
     private final Dao dao;
 
     public CommonEntityValueEncoderFactory(Dao dao) {
         this.dao = dao;
-
     }
 
     @Override
@@ -31,12 +20,23 @@ public class CommonEntityValueEncoderFactory<E extends Model, Dao extends Abstra
         return new ValueEncoder<E>() {
             @Override
             public String toClient(E arg0) {
-                return null == arg0 ? NULL : String.valueOf(arg0.getId());
+                return null == arg0 ? null : String.valueOf(arg0.getId());
             }
 
             @Override
             public E toValue(String arg0) {
-                return isNull(arg0) ? null : dao.findById(Integer.parseInt(arg0));
+                if (null != arg0) {
+                    if (dao.idClass.equals(Integer.class)) {
+                        Serializable id = Integer.parseInt(arg0);
+                        return dao.findById(id);
+                    } else if (dao.idClass.equals(Long.class)) {
+                        Serializable id = Long.parseLong(arg0);
+                        return dao.findById(id);
+                    } else if (dao.idClass.equals(String.class)) {
+                        return dao.findById(arg0);
+                    }
+                }
+                return null;
             }
         };
     }

@@ -1,39 +1,44 @@
 package org.gagauz.hibernate.dao;
 
-import org.gagauz.hibernate.utils.QueryParameter;
-
-import org.gagauz.hibernate.utils.HqlEntityFilter;
-
-import org.gagauz.hibernate.utils.EntityFilter;
-
-import org.gagauz.utils.Function;
-import org.hibernate.*;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//@Transactional
-public class AbstractDao<I extends Serializable, E> {
+import org.gagauz.hibernate.utils.EntityFilter;
+import org.gagauz.hibernate.utils.HqlEntityFilter;
+import org.gagauz.hibernate.utils.QueryParameter;
+import org.gagauz.utils.Function;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
-    public static final Map<Class<?>, AbstractDao<?, ?>> daoMap = new HashMap<Class<?>, AbstractDao<?, ?>>();
+//@Transactional
+public class AbstractDao<Id extends Serializable, Entity> {
+
+    @SuppressWarnings("rawtypes")
+    public static final Map<Class, AbstractDao> DAO_MAP = new HashMap<Class, AbstractDao>();
 
     @Autowired
     private SessionFactory sessionFactory;
 
-    protected Class<E> entityClass;
+    public final Class<Id> idClass;
+    public final Class<Entity> entityClass;
 
     @SuppressWarnings("unchecked")
     public AbstractDao() {
-        entityClass = (Class<E>) ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[1];
-        daoMap.put(entityClass, this);
+        Type[] parameters = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
+        idClass = (Class<Id>) parameters[0];
+        entityClass = (Class<Entity>) parameters[1];
+        DAO_MAP.put(entityClass, this);
     }
 
     protected Session getSession() {
@@ -45,17 +50,17 @@ public class AbstractDao<I extends Serializable, E> {
     }
 
     @SuppressWarnings("unchecked")
-    public I getIdentifier(E entity) {
-        return (I) getSession().getIdentifier(entity);
+    public Id getIdentifier(Entity entity) {
+        return (Id) getSession().getIdentifier(entity);
     }
 
     @SuppressWarnings("unchecked")
-    public E findById(I id) {
-        return (E) getSession().get(entityClass, id);
+    public Entity findById(Id id) {
+        return (Entity) getSession().get(entityClass, id);
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> findByIds(Collection<I> ids) {
+    public List<Entity> findByIds(Collection<Id> ids) {
         return getSession().createCriteria(entityClass).add(Restrictions.in("id", ids)).list();
     }
 
@@ -68,12 +73,12 @@ public class AbstractDao<I extends Serializable, E> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> findAll() {
+    public List<Entity> findAll() {
         return getSession().createCriteria(entityClass).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> findByFilter(final EntityFilter filter) {
+    public List<Entity> findByFilter(final EntityFilter filter) {
         return filter.setCriteria(getSession().createCriteria(entityClass)).list();
     }
 
@@ -82,7 +87,7 @@ public class AbstractDao<I extends Serializable, E> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<E> findByFilter(final String sql, final HqlEntityFilter filter) {
+    public List<Entity> findByFilter(final String sql, final HqlEntityFilter filter) {
         Query query = filter.createQuery(new Function<String, Query>() {
             @Override
             public Query call(String arg0) {
@@ -106,31 +111,31 @@ public class AbstractDao<I extends Serializable, E> {
         return query.list();
     }
 
-    public void merge(E entity) {
+    public void merge(Entity entity) {
         getSession().merge(entity);
     }
 
-    public void saveNoCommit(E entity) {
+    public void saveNoCommit(Entity entity) {
         getSession().saveOrUpdate(entity);
     }
 
-    public void save(E entity) {
+    public void save(Entity entity) {
         getSession().saveOrUpdate(entity);
         getSession().flush();
     }
 
-    public void save(Collection<E> entities) {
-        for (E entity : entities) {
+    public void save(Collection<Entity> entities) {
+        for (Entity entity : entities) {
             getSession().saveOrUpdate(entity);
         }
         getSession().flush();
     }
 
-    public void delete(E entity) {
+    public void delete(Entity entity) {
         getSession().delete(entity);
     }
 
-    public void evict(E entity) {
+    public void evict(Entity entity) {
         getSession().evict(entity);
     }
 

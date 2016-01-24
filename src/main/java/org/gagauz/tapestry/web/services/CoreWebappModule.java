@@ -20,7 +20,6 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
@@ -78,22 +77,6 @@ public class CoreWebappModule {
         binder.bind(ToolsService.class);
         binder.bind(RequestMessagesPipeline.class);
         binder.bind(CookieService.class);
-    }
-
-    @ApplicationDefaults
-    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration) {
-        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "ru");
-        configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
-        configuration.add(SymbolConstants.ENABLE_HTML5_SUPPORT, true);
-        //        configuration.add(SymbolConstants.ENABLE_PAGELOADING_MASK, "true");
-        // configuration.add(SymbolConstants.DEFAULT_STYLESHEET,
-        // null/*"org/repetitor/web/stack/app/default.css"*/);
-        configuration.add(SymbolConstants.COMBINE_SCRIPTS, true);
-        configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, false);
-        configuration.add(SymbolConstants.SECURE_ENABLED, true);
-        configuration.add(SymbolConstants.JAVASCRIPT_INFRASTRUCTURE_PROVIDER, "jquery");
-        configuration.add(SymbolConstants.FORM_FIELD_CSS_CLASS, "");
-        configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "Error500");
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration) {

@@ -44,7 +44,7 @@ public class RememberMeHandler implements AuthenticationHandler {
             CookieCredentials cookie = userProvider.toCredentials(result.getUser(), CookieCredentials.class);
 
             if (null == oldValue || !oldValue.equals(cookie.getValue())) {
-                cookies.getBuilder(cookieName, cookie.getValue()).setMaxAge(cookieAge).write();
+                cookies.getBuilder(cookieName, cookie.getValue()).setPath("/").setMaxAge(cookieAge).write();
             }
         }
     }
