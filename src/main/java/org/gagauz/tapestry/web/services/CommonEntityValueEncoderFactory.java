@@ -1,11 +1,11 @@
 package org.gagauz.tapestry.web.services;
 
-import java.io.Serializable;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.gagauz.hibernate.dao.AbstractDao;
 import org.gagauz.hibernate.model.Model;
+
+import java.io.Serializable;
 
 public class CommonEntityValueEncoderFactory<E extends Model, Dao extends AbstractDao<Serializable, E>> implements ValueEncoderFactory<E> {
 
@@ -25,7 +25,7 @@ public class CommonEntityValueEncoderFactory<E extends Model, Dao extends Abstra
 
             @Override
             public E toValue(String arg0) {
-                if (null != arg0) {
+                if (null != arg0 && !"null".equalsIgnoreCase(arg0)) {
                     if (dao.idClass.equals(Integer.class)) {
                         Serializable id = Integer.parseInt(arg0);
                         return dao.findById(id);
