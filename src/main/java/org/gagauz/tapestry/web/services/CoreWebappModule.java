@@ -2,6 +2,7 @@ package org.gagauz.tapestry.web.services;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -202,12 +203,14 @@ public class CoreWebappModule {
 
     public static void contributeDefaultDataTypeAnalyzer(@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) {
         configuration.override(String.class, "string");
+        configuration.add(BigDecimal.class, "bigDecimal");
     }
 
     public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration) {
         // configuration.add(new DisplayBlockContribution("string",
         // "AppPropertyBlocks", "string"));
         configuration.add(new EditBlockContribution("string", "AppPropertyBlocks", "string"));
+        configuration.add(new EditBlockContribution("bigDecimal", "AppPropertyBlocks", "bigDecimal"));
     }
 
     /**

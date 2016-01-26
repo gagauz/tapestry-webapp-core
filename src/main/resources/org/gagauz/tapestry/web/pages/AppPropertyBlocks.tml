@@ -16,5 +16,13 @@
 			</p:else>
 		</t:if>
 	</t:block>
+	
+	<t:block id="bigDecimal">
+		<t:label class="col-sm-3 control-label" for="bigDecimalField" />
+		<div class="col-sm-9">
+			<input class="form-control" t:id="bigDecimalField" />
+			<t:error for="bigDecimalField"/>
+		</div>
+	</t:block>
 
 </div>

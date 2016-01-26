@@ -1,5 +1,8 @@
 package org.gagauz.tapestry.web.pages;
 
+import javax.persistence.Column;
+import javax.persistence.Lob;
+
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.ValueEncoder;
@@ -13,9 +16,6 @@ import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-
 public class AppPropertyBlocks {
 
     @Component(parameters = {"value=context.propertyValue", "label=prop:context.label",
@@ -28,6 +28,11 @@ public class AppPropertyBlocks {
             "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
             "annotationProvider=context"})
     private TextArea textArea;
+
+    @Component(parameters = {"value=context.propertyValue", "label=prop:context.label",
+            "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+            "clientId=prop:context.propertyId", "annotationProvider=context", "type=text"})
+    private TextField bigDecimalField;
 
     @Inject
     private TypeCoercer typeCoercer;
@@ -48,6 +53,14 @@ public class AppPropertyBlocks {
 
     public FieldValidator getTextFieldValidator() {
         return context.getValidator(textField);
+    }
+
+    public FieldTranslator getBigDecimalTranslator() {
+        return context.getTranslator(bigDecimalField);
+    }
+
+    public FieldValidator getBigDecimalValidator() {
+        return context.getValidator(bigDecimalField);
     }
 
     public FieldTranslator getTextAreaTranslator() {
