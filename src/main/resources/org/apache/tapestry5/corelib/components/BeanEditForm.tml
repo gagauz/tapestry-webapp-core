@@ -1,4 +1,4 @@
-<form t:id="form" validate="object" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" class="form-horizontal">
+<form t:id="form" validate="object" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" class="${className}">
 	<t:errors class="literal:alert alert-danger" role="literal:alert"/>
 	
 	<t:BeanEditor t:id="editor" object="object" model="model" overrides="this" />
