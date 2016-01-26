@@ -1,8 +1,5 @@
 package org.gagauz.tapestry.web.pages;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.ValueEncoder;
@@ -15,6 +12,10 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.util.EnumValueEncoder;
+import org.gagauz.tapestry.web.components.BigDecimalField;
+
+import javax.persistence.Column;
+import javax.persistence.Lob;
 
 public class AppPropertyBlocks {
 
@@ -31,8 +32,8 @@ public class AppPropertyBlocks {
 
     @Component(parameters = {"value=context.propertyValue", "label=prop:context.label",
             "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context", "type=text"})
-    private TextField bigDecimalField;
+            "clientId=prop:context.propertyId", "annotationProvider=context"})
+    private BigDecimalField bigDecimalField;
 
     @Inject
     private TypeCoercer typeCoercer;

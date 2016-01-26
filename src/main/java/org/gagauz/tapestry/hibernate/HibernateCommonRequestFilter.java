@@ -1,19 +1,7 @@
 package org.gagauz.tapestry.hibernate;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ComponentEventRequestFilter;
-import org.apache.tapestry5.services.ComponentEventRequestHandler;
-import org.apache.tapestry5.services.ComponentEventRequestParameters;
-import org.apache.tapestry5.services.PageRenderRequestFilter;
-import org.apache.tapestry5.services.PageRenderRequestHandler;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.Response;
-import org.hibernate.AssertionFailure;
+import org.apache.tapestry5.services.*;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -23,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.io.IOException;
 
 public class HibernateCommonRequestFilter implements RequestFilter, PageRenderRequestFilter, ComponentEventRequestFilter {
 
@@ -86,16 +76,12 @@ public class HibernateCommonRequestFilter implements RequestFilter, PageRenderRe
                     logger.warn("session: {} has no active transaction!", session);
                 }
                 session.close();
-            } catch (HibernateException e) {
+            } catch (Exception e) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
                 logger.error("Failed to close session", e);
-            } catch (AssertionFailure af) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                af.printStackTrace();
+                throw e;
             }
         } else {
             logger.warn("session: {} is already closed!", session);

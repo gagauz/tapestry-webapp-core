@@ -2,14 +2,14 @@
 
 	<t:block id="string">
 		<t:if test="long">
-			<t:label class="col-sm-3 control-label" for="textarea" />
-			<div class="col-sm-9">
+			<t:label class="col-xs-12 col-sm-3 control-label" for="textarea" />
+			<div class="col-xs-12 col-sm-9">
 				<textarea class="form-control" t:id="textarea" rows="6" />
 				<t:error for="textarea"/>
 			</div>
 			<p:else>
-				<t:label class="col-sm-3 control-label" for="textField" />
-				<div class="col-sm-9">
+				<t:label class="col-xs-12 col-sm-3 control-label" for="textField" />
+				<div class="col-xs-12 col-sm-9">
 					<input class="form-control" t:id="textField" />
 					<t:error for="textField"/>
 				</div>
@@ -18,8 +18,8 @@
 	</t:block>
 	
 	<t:block id="bigDecimal">
-		<t:label class="col-sm-3 control-label" for="bigDecimalField" />
-		<div class="col-sm-9">
+		<t:label class="col-xs-12 col-sm-3 control-label" for="bigDecimalField" />
+		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
 			<input class="form-control" t:id="bigDecimalField" />
 			<t:error for="bigDecimalField"/>
 		</div>
