@@ -1,13 +1,14 @@
 package org.gagauz.tapestry.web.services.annotation;
 
-
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.internal.transform.ReadOnlyComponentFieldConduit;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.FieldHandle;
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.runtime.Component;
@@ -50,57 +51,53 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
         List<PlasticField> fields = plasticClass.getFieldsWithAnnotation(GetParam.class);
         for (PlasticField field : fields) {
             final GetParam fieldAnnotation = field.getAnnotation(GetParam.class);
-
+            field.setConduit(createFieldValueConduitProvider(fieldAnnotation, field));
             final String parameterName = "".equals(fieldAnnotation.value())
                     ? field.getName()
                     : fieldAnnotation.value();
-
-            // Assumption: the field type is not one that's loaded by the
-            // component class loader, so it's safe
-            // to convert to a hard type during class transformation.
-
-            Class<?> fieldType = classCache.forName(field.getTypeName());
-
-            final ValueEncoder<?> encoder = valueEncoderSource.getValueEncoder(fieldType);
-
-            final FieldHandle handle = field.getHandle();
-
-            String fieldName = String.format("%s.%s", field.getPlasticClass().getClassName(),
-                    field.getName());
-
-            ComponentEventHandler eventHandler = new ComponentEventHandler() {
-                @Override
-                public void handleEvent(Component instance, ComponentEvent event) {
-
-                    String clientValue = requestGlobals.getHTTPServletRequest().getParameter(parameterName);
-
-                    if (clientValue == null) {
-                        return;
-                    }
-
-                    clientValue = urlEncoder.decode(clientValue);
-                    Object value = encoder.toValue(clientValue);
-                    handle.set(instance, value);
-                }
-            };
-
-            support.addEventHandler(EventConstants.ACTIVATE, 0, String.format(
-                    "Restoring field %s from query parameter '%s'", fieldName, parameterName),
-                    eventHandler);
-
-            support.addEventHandler(EventConstants.SUBMIT, 0, String.format(
-                    "Restoring field %s from query parameter '%s'", fieldName, parameterName),
-                    eventHandler);
-
-            support.addEventHandler(EventConstants.ACTION, 0, String.format(
-                    "Restoring field %s from query parameter '%s'", fieldName, parameterName),
-                    eventHandler);
-
-            // decorateLinks(support, fieldName, handle, parameterName, encoder,
-            // urlEncoder);
-
             preallocateName(support, parameterName);
+            field.claim(fieldAnnotation);
         }
+    }
+
+    private FieldConduit<Object> createFieldValueConduitProvider(GetParam fieldAnnotation, PlasticField field) {
+        final String fieldName = field.getName();
+        final String fieldTypeName = field.getTypeName();
+
+        return new ReadOnlyComponentFieldConduit(fieldName) {
+            @Override
+            public Object get(Object instance, InstanceContext context) {
+
+                final Class<?> fieldType = classCache.forName(fieldTypeName);
+                final String parameterName = "".equals(fieldAnnotation.value())
+                        ? fieldName
+                        : fieldAnnotation.value();
+
+                String[] clientValues = requestGlobals.getHTTPServletRequest().getParameterValues(parameterName);
+                if (clientValues == null) {
+                    return null;
+                }
+                final ValueEncoder<?> encoder = valueEncoderSource.getValueEncoder(fieldType);
+                Object value = null;
+
+                for (int i = 0; i < clientValues.length; i++) {
+                    clientValues[i] = urlEncoder.decode(clientValues[i]);
+                    value = encoder.toValue(clientValues[i]);
+                }
+
+                if (!fieldType.isInstance(value)) {
+                    String message = String.format(
+                            "Object %s (type %s) is not assignable to field %s (of type %s).",
+                            value, value.getClass().getName(),
+                            fieldName, fieldTypeName);
+
+                    throw new RuntimeException(message);
+                }
+
+                return value;
+            }
+        };
+
     }
 
     private static void preallocateName(TransformationSupport support, final String parameterName) {

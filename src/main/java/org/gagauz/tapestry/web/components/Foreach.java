@@ -1,6 +1,7 @@
 package org.gagauz.tapestry.web.components;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Parameter;
@@ -27,6 +28,9 @@ public class Foreach<T> {
 
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String separator;
+
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private Block empty;
 
     @Parameter
     private int index;
@@ -60,7 +64,7 @@ public class Foreach<T> {
         return iterator.hasNext();
     }
 
-    void beginRender() {
+    void beginRender(MarkupWriter mw) {
         value = iterator.next();
     }
 
