@@ -1,7 +1,12 @@
 package org.gagauz.tapestry.hibernate;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentRequestFilter;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -12,9 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.io.IOException;
-
-public class HibernateCommonRequestFilter implements RequestFilter, PageRenderRequestFilter, ComponentEventRequestFilter {
+public class HibernateCommonRequestFilter implements ComponentRequestFilter {
 
     @Inject
     private SessionFactory sessionFactory;
@@ -88,20 +91,24 @@ public class HibernateCommonRequestFilter implements RequestFilter, PageRenderRe
         }
     }
 
-    @Override
-    public boolean service(Request request, Response response, RequestHandler handler) throws IOException {
-        if (request.getPath().startsWith("/assets/") || request.getPath().startsWith("/modules/")) {
-            return handler.service(request, response);
-        }
-
+    public void handle(ComponentEventRequestParameters parameters1, PageRenderRequestParameters parameters2, ComponentRequestHandler handler)
+            throws IOException {
         boolean commit = true;
         boolean insideTransaction = openSession();
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println((request.isXHR() ? "AJAX: " : "") + request.getPath());
+        if (null != parameters1) {
+            System.out.println(parameters1.getContainingPageName() + "." + parameters1.getNestedComponentId() + ":" + parameters1.getEventType());
+        } else {
+            System.out.println(parameters2.getLogicalPageName());
+        }
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
         try {
-            return handler.service(request, response);
+            if (null != parameters1) {
+                handler.handleComponentEvent(parameters1);
+            } else {
+                handler.handlePageRender(parameters2);
+            }
         } catch (Exception e) {
             logger.error(
                     "Catched exception during request handling, mark transaction to rollback!", e);
@@ -117,51 +124,12 @@ public class HibernateCommonRequestFilter implements RequestFilter, PageRenderRe
     }
 
     @Override
-    public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler) throws IOException {
-
-        boolean commit = true;
-        boolean insideTransaction = openSession();
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(parameters.getActivePageName());
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-        try {
-            handler.handle(parameters);
-        } catch (Exception e) {
-            logger.error(
-                    "Catched exception during request handling, mark transaction to rollback!", e);
-            commit = false;
-            throw new IOException(e);
-        } finally {
-            if (insideTransaction) {
-                logger.warn("Session used in OpenSessionInViewFilter for {} still open!");
-            } else {
-                closeSession(commit);
-            }
-        }
+    public void handleComponentEvent(ComponentEventRequestParameters parameters, ComponentRequestHandler handler) throws IOException {
+        handle(parameters, null, handler);
     }
 
     @Override
-    public void handle(PageRenderRequestParameters parameters, PageRenderRequestHandler handler) throws IOException {
-        boolean commit = true;
-        boolean insideTransaction = openSession();
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        System.out.println(parameters.getLogicalPageName());
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-        try {
-            handler.handle(parameters);
-        } catch (Exception e) {
-            logger.error(
-                    "Catched exception during request handling, mark transaction to rollback!", e);
-            commit = false;
-            throw new IOException(e);
-        } finally {
-            if (insideTransaction) {
-                logger.warn("Session used in OpenSessionInViewFilter for {} still open!");
-            } else {
-                closeSession(commit);
-            }
-        }
+    public void handlePageRender(PageRenderRequestParameters parameters, ComponentRequestHandler handler) throws IOException {
+        handle(null, parameters, handler);
     }
 }

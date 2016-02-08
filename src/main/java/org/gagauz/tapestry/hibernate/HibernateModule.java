@@ -25,13 +25,11 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Match;
-import org.apache.tapestry5.services.ComponentEventRequestFilter;
-import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.ComponentRequestFilter;
+import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
-import org.apache.tapestry5.services.PageRenderRequestFilter;
-import org.apache.tapestry5.services.PageRenderRequestHandler;
 
 public class HibernateModule {
 
@@ -39,13 +37,8 @@ public class HibernateModule {
         binder.bind(HibernateCommonRequestFilter.class);
     }
 
-    @Contribute(ComponentEventRequestHandler.class)
-    public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
-        configuration.add("HibernateFilter", hibernateFilter, "before:*");
-    }
-
-    @Contribute(PageRenderRequestHandler.class)
-    public void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
+    @Contribute(ComponentRequestHandler.class)
+    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
         configuration.add("HibernateFilter", hibernateFilter, "before:*");
     }
 
