@@ -31,7 +31,7 @@ public class AppPropertyBlocks {
     private TextArea textArea;
 
     @Component(parameters = {"value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+            "translate=prop:bigDecimalTranslator", "validate=prop:bigDecimalValidator",
             "clientId=prop:context.propertyId", "annotationProvider=context"})
     private BigDecimalField bigDecimalField;
 
