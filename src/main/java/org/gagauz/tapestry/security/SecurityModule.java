@@ -1,5 +1,7 @@
 package org.gagauz.tapestry.security;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -10,15 +12,19 @@ import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventRequestFilter;
+import org.apache.tapestry5.services.ComponentEventRequestHandler;
+import org.apache.tapestry5.services.Cookies;
+import org.apache.tapestry5.services.PageRenderRequestFilter;
+import org.apache.tapestry5.services.PageRenderRequestHandler;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.gagauz.tapestry.security.api.AccessDeniedHandler;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
 import org.gagauz.tapestry.security.api.User;
 import org.gagauz.tapestry.utils.AbstractCommonHandlerWrapper;
 import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
-
-import java.io.IOException;
 
 /**
  * The Class SecurityModule.
@@ -100,6 +106,7 @@ public class SecurityModule {
         configuration.add("redirector", new AccessDeniedHandler() {
             @Override
             public void handleException(AbstractCommonHandlerWrapper handlerWrapper, AccessDeniedException cause) {
+                cause.printStackTrace();
                 String page = null;
                 if (handlerWrapper.getComponentEventRequestParameters() != null) {
                     page = handlerWrapper.getComponentEventRequestParameters().getActivePageName();

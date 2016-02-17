@@ -1,5 +1,7 @@
 package org.gagauz.tapestry.web.services.annotation;
 
+import java.util.List;
+
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
@@ -13,13 +15,15 @@ import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventHandler;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.URLEncoder;
+import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * The Class SecurityTransformer.
@@ -60,7 +64,7 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
         }
     }
 
-    private FieldConduit<Object> createFieldValueConduitProvider(GetParam fieldAnnotation, PlasticField field) {
+    private FieldConduit<Object> createFieldValueConduitProvider(final GetParam fieldAnnotation, PlasticField field) {
         final String fieldName = field.getName();
         final String fieldTypeName = field.getTypeName();
 

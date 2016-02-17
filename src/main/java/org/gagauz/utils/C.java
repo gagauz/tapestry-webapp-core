@@ -99,6 +99,15 @@ public class C {
         return null;
     }
 
+    public static <E> boolean has(Collection<E> iterable, Filter<E> filter) {
+        for (E element : iterable) {
+            if (filter.apply(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Map<Object, Object> newHashMap(Object... keyAndValues) {
         Map<Object, Object> map = newHashMap();
         for (int i = 0; i + 1 < keyAndValues.length; i = i + 2)
