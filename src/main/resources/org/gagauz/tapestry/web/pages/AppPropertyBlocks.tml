@@ -24,5 +24,11 @@
 			<t:error for="bigDecimalField"/>
 		</div>
 	</t:block>
+	
+	<t:block id="dateDisplay">
+		<t:if test="outputContext.getPropertyValue()">
+		${date:outputContext.getPropertyValue(),dd.MM.yyyy HH:mm:ss}
+		</t:if>
+	</t:block>
 
 </div>

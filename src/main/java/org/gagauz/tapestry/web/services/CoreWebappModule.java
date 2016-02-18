@@ -144,10 +144,13 @@ public class CoreWebappModule {
     }
 
     public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration) {
-        // configuration.add(new DisplayBlockContribution("string",
-        // "AppPropertyBlocks", "string"));
         configuration.add(new EditBlockContribution("string", "AppPropertyBlocks", "string"));
         configuration.add(new EditBlockContribution("bigDecimal", "AppPropertyBlocks", "bigDecimal"));
+    }
+
+    @Contribute(BeanBlockOverrideSource.class)
+    public static void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration) {
+        configuration.add(new DisplayBlockContribution("date", "AppPropertyBlocks", "dateDisplay"));
     }
 
     /**

@@ -11,6 +11,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PropertyEditContext;
+import org.apache.tapestry5.services.PropertyOutputContext;
 import org.apache.tapestry5.util.EnumValueEncoder;
 import org.gagauz.tapestry.web.components.BigDecimalField;
 
@@ -44,8 +45,15 @@ public class AppPropertyBlocks {
     @Environmental
     private PropertyEditContext context;
 
+    @Environmental
+    private PropertyOutputContext outputContext;
+
     public PropertyEditContext getContext() {
         return context;
+    }
+
+    public PropertyOutputContext getOutputContext() {
+        return outputContext;
     }
 
     public FieldTranslator getTextFieldTranslator() {

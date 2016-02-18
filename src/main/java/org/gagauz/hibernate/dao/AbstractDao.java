@@ -1,5 +1,14 @@
 package org.gagauz.hibernate.dao;
 
+import org.gagauz.hibernate.utils.EntityFilter;
+import org.gagauz.hibernate.utils.HqlEntityFilter;
+import org.gagauz.hibernate.utils.QueryParameter;
+import org.gagauz.utils.Function;
+import org.hibernate.*;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -7,19 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.gagauz.hibernate.utils.EntityFilter;
-import org.gagauz.hibernate.utils.HqlEntityFilter;
-import org.gagauz.hibernate.utils.QueryParameter;
-import org.gagauz.utils.Function;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
 
 //@Transactional
 public class AbstractDao<Id extends Serializable, Entity> {
@@ -57,6 +53,11 @@ public class AbstractDao<Id extends Serializable, Entity> {
     @SuppressWarnings("unchecked")
     public Entity findById(Id id) {
         return (Entity) getSession().get(entityClass, id);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Entity loadById(Id id) {
+        return (Entity) getSession().load(entityClass, id);
     }
 
     @SuppressWarnings("unchecked")

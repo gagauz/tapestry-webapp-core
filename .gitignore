@@ -1,5 +1,4 @@
-/target
-target
-.svn
-*.prefs
 /bin
+/target
+*.prefs
+/.*
