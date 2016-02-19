@@ -194,7 +194,7 @@
 	<reporting />
 	<properties>
 		<servlet-api-release.version>3.1.0</servlet-api-release.version>
-		<tapestry-release.version>5.4-rc-1</tapestry-release.version>
+		<tapestry-release.version>5.4.0</tapestry-release.version>
 		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
 		<spring-release.version>4.0.2.RELEASE</spring-release.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,14 +1,18 @@
 package org.gagauz.hibernate.utils;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.gagauz.utils.C;
+import org.gagauz.utils.Function;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 public class EntityFilter {
     public static enum OrderMode {
@@ -30,66 +34,100 @@ public class EntityFilter {
     protected int indexTo = -1;
     private Map<String, OrderMode> orderBy = new LinkedHashMap<String, OrderMode>();
     private List<Alias> aliases = C.newArrayList();
-    private List<Criterion> criterias = C.newArrayList();
+    private Criterion criteria = null;
+
+    private final Function<Criterion, EntityFilter> OR = new Function<Criterion, EntityFilter>() {
+
+        @Override
+        public EntityFilter call(Criterion criterion) {
+            or(criterion);
+            return EntityFilter.this;
+        }
+    };
+
+    private final Function<Criterion, EntityFilter> AND = new Function<Criterion, EntityFilter>() {
+
+        @Override
+        public EntityFilter call(Criterion criterion) {
+            and(criterion);
+            return EntityFilter.this;
+        }
+    };
+
+    private Function<Criterion, EntityFilter> mode = AND;
+
+    public EntityFilter or() {
+        mode = OR;
+        return this;
+    }
+
+    public EntityFilter and() {
+        mode = AND;
+        return this;
+    }
+
+    private void and(Criterion criterion) {
+        if (null == criteria) {
+            criteria = criterion;
+        } else {
+            criteria = Restrictions.and(criteria, criterion);
+        }
+    }
+
+    private void or(Criterion criterion) {
+        if (null == criteria) {
+            criteria = criterion;
+        } else {
+            criteria = Restrictions.or(criteria, criterion);
+        }
+    }
 
     public EntityFilter in(String name, Collection<?> value) {
-        criterias.add(Restrictions.in(name, value));
-        return this;
+        return mode.call(Restrictions.in(name, value));
     }
 
     public EntityFilter eq(String name, Object value) {
-        criterias.add(Restrictions.eq(name, value));
-        return this;
+        return mode.call(Restrictions.eq(name, value));
     }
 
     public EntityFilter ne(String name, Object value) {
-        criterias.add(Restrictions.ne(name, value));
-        return this;
+        return mode.call(Restrictions.ne(name, value));
     }
 
     public EntityFilter like(String name, Object value) {
-        criterias.add(Restrictions.like(name, value));
-        return this;
+        return mode.call(Restrictions.like(name, value));
     }
 
     public EntityFilter ge(String name, Object value) {
-        criterias.add(Restrictions.ge(name, value));
-        return this;
+        return mode.call(Restrictions.ge(name, value));
     }
 
     public EntityFilter le(String name, Object value) {
-        criterias.add(Restrictions.le(name, value));
-        return this;
+        return mode.call(Restrictions.le(name, value));
     }
 
     public EntityFilter gt(String name, Object value) {
-        criterias.add(Restrictions.gt(name, value));
-        return this;
+        return mode.call(Restrictions.gt(name, value));
     }
 
     public EntityFilter lt(String name, Object value) {
-        criterias.add(Restrictions.lt(name, value));
-        return this;
+        return mode.call(Restrictions.lt(name, value));
     }
 
     public EntityFilter between(String name, Object value1, Object value2) {
-        criterias.add(Restrictions.between(name, value1, value2));
-        return this;
+        return mode.call(Restrictions.between(name, value1, value2));
     }
 
     public EntityFilter isNull(String name) {
-        criterias.add(Restrictions.isNull(name));
-        return this;
+        return mode.call(Restrictions.isNull(name));
     }
 
     public EntityFilter isNotNull(String name) {
-        criterias.add(Restrictions.isNotNull(name));
-        return this;
+        return mode.call(Restrictions.isNotNull(name));
     }
 
     public EntityFilter sql(String sql) {
-        criterias.add(Restrictions.sqlRestriction(sql));
-        return this;
+        return mode.call(Restrictions.sqlRestriction(sql));
     }
 
     public EntityFilter limit(int limit) {
@@ -118,28 +156,25 @@ public class EntityFilter {
         return this;
     }
 
-    public Criteria setCriteria(Criteria criteria) {
+    public Criteria setCriteria(Criteria source) {
         for (Alias a : aliases) {
-            criteria.createAlias(a.path, a.alias);
+            source.createAlias(a.path, a.alias);
         }
 
-        for (Criterion c : criterias) {
-            criteria.add(c);
-        }
+        source.add(criteria);
 
         if (indexTo > 0 && indexFrom >= 0) {
-            criteria.setFirstResult(indexFrom);
-            criteria.setMaxResults(indexTo - indexFrom + 1);
+            source.setFirstResult(indexFrom);
+            source.setMaxResults(indexTo - indexFrom + 1);
         } else if (indexTo > 0) {
-            criteria.setMaxResults(indexTo);
+            source.setMaxResults(indexTo);
         }
 
         for (Entry<String, OrderMode> p : orderBy.entrySet()) {
-            criteria.addOrder(p.getValue() == OrderMode.ASC ? Order.asc(p.getKey()) : Order.desc(p
-                    .getKey()));
+            source.addOrder(p.getValue() == OrderMode.ASC ? Order.asc(p.getKey()) : Order.desc(p.getKey()));
         }
 
-        return criteria.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
+        return source.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
     }
 
     public void clearIndex() {
