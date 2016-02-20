@@ -7,6 +7,7 @@ import org.gagauz.utils.Function;
 import org.hibernate.*;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -144,4 +145,8 @@ public class AbstractDao<Id extends Serializable, Entity> {
         getSession().flush();
     }
 
+    public Entity unproxy(Entity proxied) {
+        Session session = getSession();
+        return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(proxied);
+    }
 }
