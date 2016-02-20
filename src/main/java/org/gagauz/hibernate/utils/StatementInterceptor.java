@@ -1,15 +1,16 @@
 package org.gagauz.hibernate.utils;
 
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.JDBC4Connection;
 import com.mysql.jdbc.ResultSetInternalMethods;
 import com.mysql.jdbc.Statement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.util.Properties;
 
 public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor {
 
@@ -45,17 +46,17 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
             LOGGER.debug(conn_id + s);
         } else {
             String content = statement.toString();
-            LOGGER.debug("-------------------\n" + conn_id
-                    + content.substring(content.indexOf(':')) + "\n-----------------"/*,
-                                                                                     new RuntimeException()*/);
+            LOGGER.debug(conn_id + content.substring(content.indexOf(':')));
+            if (LOGGER.isTraceEnabled()) {
+                Thread.dumpStack();
+            }
         }
 
         return null;
     }
 
     @Override
-    public ResultSetInternalMethods postProcess(String s, Statement statement,
-                                                ResultSetInternalMethods resultSetInternalMethods, Connection connection)
+    public ResultSetInternalMethods postProcess(String s, Statement statement, ResultSetInternalMethods resultSetInternalMethods, Connection connection)
             throws SQLException {
         SQLWarning warning;
         if (resultSetInternalMethods != null

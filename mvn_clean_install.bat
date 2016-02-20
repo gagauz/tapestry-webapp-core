@@ -1,4 +1,3 @@
-set JAVA_HOME=E:\JAVA\jdk18
-rem set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_65\
-call mvn -e clean source:jar install
+call ./setenv.bat
+call mvn -e clean source:jar install clean compile
 pause

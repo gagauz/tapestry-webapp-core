@@ -1,27 +1,61 @@
 package org.gagauz.tapestry.hibernate;
 
-import org.apache.tapestry5.services.*;
+import java.io.IOException;
+
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentRequestFilter;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.support.OpenSessionInViewFilter;
+import org.springframework.orm.hibernate4.SessionHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+public class HibernateCommonRequestFilter implements ComponentRequestFilter {
 
-import java.io.IOException;
-
-public class HibernateCommonRequestFilter extends OpenSessionInViewFilter implements ComponentRequestFilter {
+    @Inject
+    private SessionFactory sessionFactory;
 
     protected Logger logger = LoggerFactory.getLogger(HibernateCommonRequestFilter.class);
 
-    @Autowired
-    private RequestGlobals requestGlobals;
+    protected SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    protected void closeSession(boolean commit) throws HibernateException {
+        SessionFactory sessionFactory = getSessionFactory();
+        SessionHolder sessionHolder = (SessionHolder) TransactionSynchronizationManager
+                .unbindResource(sessionFactory);
+        logger.debug("Closing Hibernate Session");
+        closeSession(sessionHolder.getSession(), commit);
+    }
+
+    protected Session openSession(SessionFactory sessionFactory) throws HibernateException {
+        Session session = sessionFactory.openSession();
+        session.setFlushMode(FlushMode.MANUAL);
+        session.beginTransaction();
+        logger.debug("begin transaction: {} in session: {}", session.getTransaction(), session);
+        return session;
+    }
+
+    protected boolean openSession() throws HibernateException {
+        SessionFactory sessionFactory = getSessionFactory();
+        if (TransactionSynchronizationManager.hasResource(sessionFactory)) {
+            // Do not modify the Session: just set the participate flag.
+            logger.warn("Use existing Hibernate Session");
+            return true;
+        }
+        logger.debug("Opening Hibernate Session");
+        Session session = openSession(sessionFactory);
+        TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
+        return false;
+    }
 
     protected void closeSession(Session session, boolean commit) {
         if (session.isOpen()) {
@@ -57,8 +91,10 @@ public class HibernateCommonRequestFilter extends OpenSessionInViewFilter implem
         }
     }
 
-    public void handle(final ComponentEventRequestParameters parameters1, final PageRenderRequestParameters parameters2, final ComponentRequestHandler handler)
-            throws IOException, ServletException {
+    public void handle(ComponentEventRequestParameters parameters1, PageRenderRequestParameters parameters2, ComponentRequestHandler handler)
+            throws IOException {
+        boolean commit = true;
+        boolean insideTransaction = openSession();
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         if (null != parameters1) {
             System.out.println(parameters1.getContainingPageName() + "." + parameters1.getNestedComponentId() + ":" + parameters1.getEventType());
@@ -67,34 +103,33 @@ public class HibernateCommonRequestFilter extends OpenSessionInViewFilter implem
         }
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
-        super.doFilterInternal(requestGlobals.getHTTPServletRequest(), requestGlobals.getHTTPServletResponse(), new FilterChain() {
-
-            @Override
-            public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-                if (null != parameters1) {
-                    handler.handleComponentEvent(parameters1);
-                } else {
-                    handler.handlePageRender(parameters2);
-                }
+        try {
+            if (null != parameters1) {
+                handler.handleComponentEvent(parameters1);
+            } else {
+                handler.handlePageRender(parameters2);
             }
-        });
+        } catch (Exception e) {
+            logger.error(
+                    "Catched exception during request handling, mark transaction to rollback!", e);
+            commit = false;
+            throw new IOException(e);
+        } finally {
+            if (insideTransaction) {
+                logger.warn("Session used in OpenSessionInViewFilter for {} still open!");
+            } else {
+                closeSession(commit);
+            }
+        }
     }
 
     @Override
     public void handleComponentEvent(ComponentEventRequestParameters parameters, ComponentRequestHandler handler) throws IOException {
-        try {
-            handle(parameters, null, handler);
-        } catch (ServletException e) {
-            throw new IOException(e);
-        }
+        handle(parameters, null, handler);
     }
 
     @Override
     public void handlePageRender(PageRenderRequestParameters parameters, ComponentRequestHandler handler) throws IOException {
-        try {
-            handle(null, parameters, handler);
-        } catch (ServletException e) {
-            throw new IOException(e);
-        }
+        handle(null, parameters, handler);
     }
 }
