@@ -1,5 +1,8 @@
 package org.gagauz.tapestry.web.pages;
 
+import javax.persistence.Column;
+import javax.persistence.Lob;
+
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.ValueEncoder;
@@ -14,9 +17,6 @@ import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.services.PropertyOutputContext;
 import org.apache.tapestry5.util.EnumValueEncoder;
 import org.gagauz.tapestry.web.components.BigDecimalField;
-
-import javax.persistence.Column;
-import javax.persistence.Lob;
 
 public class AppPropertyBlocks {
 
@@ -94,9 +94,6 @@ public class AppPropertyBlocks {
     //    }
 
     public boolean isLong() {
-        if (getContext().getPropertyValue() != null) {
-            return getContext().getPropertyValue().toString().length() > 100;
-        }
         Column column = getContext().getAnnotation(Column.class);
         Lob lob = getContext().getAnnotation(Lob.class);
         return (null != column && column.length() > 255) || null != lob;
