@@ -88,6 +88,11 @@ public class AbstractDao<Id extends Serializable, Entity> {
         return filter.setCriteria(getSession().createCriteria(entityClass)).list();
     }
 
+    @SuppressWarnings("unchecked")
+    public Entity findOneByFilter(final EntityFilter filter) {
+        return (Entity) filter.setCriteria(getSession().createCriteria(entityClass)).uniqueResult();
+    }
+
     public long countByFilter(final EntityFilter filter) {
         return (Long) filter.setCriteria(getSession().createCriteria(entityClass).setProjection(Projections.rowCount())).uniqueResult();
     }

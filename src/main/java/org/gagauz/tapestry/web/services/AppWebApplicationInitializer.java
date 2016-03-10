@@ -16,12 +16,14 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 public abstract class AppWebApplicationInitializer implements WebApplicationInitializer {
 
+    protected AnnotationConfigWebApplicationContext rootContext;
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         servletContext.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, getUseExternalSpringContext().toString());
         servletContext.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, getTapestryAppPackage());
 
-        AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
+        rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(getConfigClasses());
 
         servletContext.addListener(new ContextLoaderListener(rootContext));
