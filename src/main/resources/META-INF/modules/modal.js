@@ -1,8 +1,12 @@
 (function(){
 	define(["jquery", "bootstrap/modal"], function($, modal) {
-		var showModal = function(id) {
-			$('#'+id).modal('show');
+		return {
+			showModal: function(id) {
+				$('#'+id).modal('show');
+			},
+			hideModal: function(id) {
+				$('#'+id).modal('hide');
+			}
 		};
-		return {showModal: showModal};
 	});
 }).call(this);
