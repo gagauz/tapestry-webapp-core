@@ -22,13 +22,12 @@ public class MsgBindingFactory implements BindingFactory {
     }
 
     @Override
-    public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component,
-                              final String expression, final Location location) {
+    public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component, final String expression, final Location location) {
 
         return new AbstractContextBinding(bindingSource, resolver, description, container) {
             @Override
             public Object get() {
-                Object value = getValue(expression, BindingConstants.PROP, String.class);
+                Object value = getValue(expression, BindingConstants.PROP, Object.class);
                 if (null != value && value.getClass().isEnum()) {
                     value = value.getClass().getSimpleName() + "." + value;
                 }
