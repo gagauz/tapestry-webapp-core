@@ -1,5 +1,7 @@
 package org.gagauz.tapestry.security;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ApplicationStateManager;
@@ -11,8 +13,6 @@ import org.gagauz.tapestry.utils.AbstractCommonRequestFilter;
 import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class RememberMeFilter extends AbstractCommonRequestFilter {
 
@@ -36,13 +36,13 @@ public class RememberMeFilter extends AbstractCommonRequestFilter {
 
     @Override
     public void handleInternal(AbstractCommonHandlerWrapper handlerWrapper) throws IOException {
-        User user = applicationStateManager.getIfExists(User.class);
-        if (null == user) {
+        UserSet users = applicationStateManager.getIfExists(UserSet.class);
+        if (null == users || users.isEmpty()) {
             String cookieValue = cookies.readCookieValue(cookieName);
             if (null != cookieValue) {
                 log.info("Handle remember me cookie [{}]", cookieValue);
                 try {
-                    user = authService.login(new CookieCredentials(cookieValue));
+                    User user = authService.login(new CookieCredentials(cookieValue));
                     if (null == user) {
                         throw new RuntimeException("remove cookie");
                     }
