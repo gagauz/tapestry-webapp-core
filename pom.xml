@@ -168,6 +168,17 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.12</version>
 		</dependency>
+		<!-- Tomcat -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-core</artifactId>
+			<version>${embedded-tomcat.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-logging-log4j</artifactId>
+			<version>${embedded-tomcat.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>tapestry-webapp-core</finalName>
@@ -213,5 +224,6 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<lucene.version>5.1.0</lucene.version>
+		<embedded-tomcat.version>7.0.55</embedded-tomcat.version>
 	</properties>
 </project>
