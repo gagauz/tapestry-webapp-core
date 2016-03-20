@@ -1,6 +1,13 @@
 package org.gagauz.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class C {
     public static <K, V> HashMap<K, V> newHashMap() {
@@ -17,6 +24,13 @@ public class C {
 
     public static <E> HashSet<E> newHashSet(Collection<E> source) {
         return new HashSet<E>(source);
+    }
+
+    public static <E> HashSet<E> newHashSet(E e, @SuppressWarnings("unchecked") E... source) {
+        HashSet<E> set = new HashSet<E>();
+        set.add(e);
+        set.addAll(Arrays.asList(source));
+        return set;
     }
 
     public static <E> ArrayList<E> newArrayList() {
