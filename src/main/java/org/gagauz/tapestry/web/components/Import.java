@@ -67,7 +67,7 @@ public class Import {
         if (null != stylesheet) {
             libraries = StringUtils.split(stylesheet, ',');
             for (String stylesheet : libraries) {
-                javaScriptSupport.importStylesheet(new StylesheetLink(stylesheet));
+                javaScriptSupport.importStylesheet(new StylesheetLink(assetSource.getExpandedAsset(stylesheet)));
             }
         }
         if (null != module) {
