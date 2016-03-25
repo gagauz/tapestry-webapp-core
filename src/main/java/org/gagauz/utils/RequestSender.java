@@ -12,7 +12,10 @@ import java.io.OutputStreamWriter;
 import java.net.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class RequestSender {
@@ -22,6 +25,7 @@ public class RequestSender {
     private String url;
     private Map<String, String> headers;
     private Map<String, String> params;
+    private String rawData;
     private int connectTimeout = 5000;
     private int readTimeout = 5000;
 
@@ -74,6 +78,11 @@ public class RequestSender {
             params = new HashMap<String, String>();
         }
         params.putAll(data);
+        return this;
+    }
+
+    public RequestSender setRawData(String value) {
+        this.rawData = value;
         return this;
     }
 
@@ -141,6 +150,9 @@ public class RequestSender {
                     url += dataBuff.toString();
                 }
             }
+            if (null != rawData) {
+                dataBuff = new StringBuilder(rawData);
+            }
 
             URL url1 = new URL(url);
             connection = url1.openConnection();
@@ -169,6 +181,7 @@ public class RequestSender {
                 System.out.println("\tContentLength: " + dataBuff.length());
                 connection.setDoOutput(true);
                 OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                System.out.println(dataBuff);
                 writer.write(dataBuff.toString());
                 writer.flush();
                 writer.close();
@@ -202,7 +215,7 @@ public class RequestSender {
             }
 
         } catch (Exception e) {
-            LOG.error("Request Sending Error: ", e);
+            System.err.println("Request Sending Error: " + e.getMessage());
         } finally {
             if (null != connection) {
             }
@@ -213,9 +226,9 @@ public class RequestSender {
 
     /**
      * Workaround of JDK-6521495 : Lift 1024-bit long prime restriction on Diffie-Hellman
-     * Sun's JCE implementation imposes an artificial restriction on Diffie-Hellman primes. 
-     * When passing a DHParameterSpec generated with a 2048-bit long modulus, 
-     * class DHKeyPairGenerator will throw an exception indicating that 
+     * Sun's JCE implementation imposes an artificial restriction on Diffie-Hellman primes.
+     * When passing a DHParameterSpec generated with a 2048-bit long modulus,
+     * class DHKeyPairGenerator will throw an exception indicating that
      * "Prime size must be multiple of 64, and can only range from 512 to 1024 (inclusive)."
      */
     private static SSLSocketFactory getSSLSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {

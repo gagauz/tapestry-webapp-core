@@ -1,6 +1,5 @@
 package org.gagauz.utils;
 
-import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,6 +8,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 public class HttpData implements javax.servlet.Filter {
     private static final ThreadLocal<HttpServletRequest> REQUEST = new ThreadLocal<>();
