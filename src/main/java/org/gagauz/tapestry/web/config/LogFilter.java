@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.services;
+package org.gagauz.tapestry.web.config;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

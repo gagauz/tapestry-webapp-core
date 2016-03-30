@@ -51,6 +51,7 @@ import org.gagauz.tapestry.hibernate.HibernateModule;
 import org.gagauz.tapestry.security.SecurityModule;
 import org.gagauz.tapestry.validate.FileExtensionValidator;
 import org.gagauz.tapestry.validate.NonLatinCharsValidator;
+import org.gagauz.tapestry.web.services.*;
 import org.gagauz.tapestry.web.services.annotation.GetParamTransformer;
 import org.gagauz.tapestry.web.services.annotation.LongCacheTransformer;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.services;
+package org.gagauz.tapestry.web.config;
 
 import java.util.EnumSet;
 
@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.spring.SpringConstants;
+import org.gagauz.tapestry.web.services.ContextRegistryTapestryFilter;
 import org.gagauz.utils.HttpData;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;

@@ -1,27 +1,20 @@
 package org.gagauz.hibernate.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.gagauz.hibernate.utils.EntityFilter;
 import org.gagauz.hibernate.utils.HqlEntityFilter;
 import org.gagauz.hibernate.utils.QueryParameter;
 import org.gagauz.utils.Function;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class AbstractDao<Id extends Serializable, Entity> {
 
@@ -67,6 +60,9 @@ public class AbstractDao<Id extends Serializable, Entity> {
 
     @SuppressWarnings("unchecked")
     public List<Entity> findByIds(Collection<Id> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
         return getSession().createCriteria(entityClass).add(Restrictions.in("id", ids)).list();
     }
 
