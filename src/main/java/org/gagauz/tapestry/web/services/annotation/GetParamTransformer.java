@@ -25,7 +25,7 @@ import org.apache.tapestry5.services.URLEncoder;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-import org.gagauz.utils.HttpData;
+import org.gagauz.utils.RootFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +95,7 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 					return fieldValue.get();
 				}
 
-				String[] clientValues = HttpData.getRequest().getParameterValues(parameterName);
+				String[] clientValues = RootFilter.getRequest().getParameterValues(parameterName);
 				if (clientValues == null) {
 					if (fieldType.isPrimitive()) {
 						if (isArray) {

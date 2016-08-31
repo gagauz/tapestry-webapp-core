@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.spring.SpringConstants;
 import org.gagauz.tapestry.web.services.ContextRegistryTapestryFilter;
-import org.gagauz.utils.HttpData;
+import org.gagauz.utils.RootFilter;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -32,8 +32,8 @@ public abstract class AppWebApplicationInitializer implements WebApplicationInit
         FilterRegistration.Dynamic staticFilter = servletContext.addFilter("static", StaticFilter.class);
         staticFilter.addMappingForUrlPatterns(null, false, "/static/*");
 
-        FilterRegistration.Dynamic httpDataFilter = servletContext.addFilter("httpdata", HttpData.class);
-        httpDataFilter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST), false, "/*");
+        servletContext.addFilter(RootFilter.class.getName(), RootFilter.class)
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.ASYNC, DispatcherType.REQUEST), false, "/*");
 
         FilterRegistration.Dynamic appFilter = servletContext.addFilter("app", ContextRegistryTapestryFilter.class);
         appFilter.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, getTapestryAppPackage());
