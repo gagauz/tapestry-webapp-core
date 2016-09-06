@@ -29,9 +29,9 @@ public class AuthenticationService {
     @Inject
     private Request request;
 
-    public <U extends User, C extends Credentials> U login(C credentials) {
+    public <USER extends User, CREDENTIALS extends Credentials> USER login(CREDENTIALS credentials) {
         LoginResult result = null;
-        U newUser = userProvider.fromCredentials(credentials);
+        USER newUser = userProvider.findByCredentials(credentials);
         if (null != newUser) {
             UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
             if (null == userSet) {
@@ -41,7 +41,8 @@ public class AuthenticationService {
             }
             userSet.add(newUser);
             applicationStateManager.set(UserSet.class, userSet);
-            Class<U> userClass = (Class<U>) newUser.getClass();
+            @SuppressWarnings("unchecked")
+            Class<USER> userClass = (Class<USER>) newUser.getClass();
             applicationStateManager.set(userClass, newUser);
             result = new LoginResult(newUser, credentials);
         } else {

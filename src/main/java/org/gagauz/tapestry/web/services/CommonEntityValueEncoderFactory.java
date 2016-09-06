@@ -1,18 +1,42 @@
 package org.gagauz.tapestry.web.services;
 
+import java.io.Serializable;
+import java.util.function.Function;
+
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.gagauz.hibernate.dao.AbstractDao;
-import org.gagauz.hibernate.model.Model;
 
-import java.io.Serializable;
+public class CommonEntityValueEncoderFactory<I extends Serializable, E, DAO extends AbstractDao<I, E>> implements ValueEncoderFactory<E> {
 
-public class CommonEntityValueEncoderFactory<E extends Model, Dao extends AbstractDao<Serializable, E>> implements ValueEncoderFactory<E> {
+    private static final Function<String, Integer> INT_RESOLVER = new Function<String, Integer>() {
 
-    private final Dao dao;
+        @Override
+        public Integer apply(String t) {
+            return Integer.parseInt(t);
+        }
+    };
 
-    public CommonEntityValueEncoderFactory(Dao dao) {
-        this.dao = dao;
+    private static final Function<String, Long> LONG_RESOLVER = new Function<String, Long>() {
+
+        @Override
+        public Long apply(String t) {
+            return Long.parseLong(t);
+        }
+    };
+
+    private static final Function<String, String> STRING_RESOLVER = new Function<String, String>() {
+
+        @Override
+        public String apply(String t) {
+            return t;
+        }
+    };
+
+    private final DAO dao;
+
+    public CommonEntityValueEncoderFactory(Class<E> entityClass) {
+        this.dao = AbstractDao.getDao(entityClass);
     }
 
     @Override
@@ -20,21 +44,13 @@ public class CommonEntityValueEncoderFactory<E extends Model, Dao extends Abstra
         return new ValueEncoder<E>() {
             @Override
             public String toClient(E arg0) {
-                return null == arg0 ? null : String.valueOf(arg0.getId());
+                return dao.serializeId(dao.getIdentifier(arg0));
             }
 
             @Override
             public E toValue(String arg0) {
                 if (null != arg0 && !"null".equalsIgnoreCase(arg0)) {
-                    if (dao.idClass.equals(Integer.class)) {
-                        Serializable id = Integer.parseInt(arg0);
-                        return dao.findById(id);
-                    } else if (dao.idClass.equals(Long.class)) {
-                        Serializable id = Long.parseLong(arg0);
-                        return dao.findById(id);
-                    } else if (dao.idClass.equals(String.class)) {
-                        return dao.findById(arg0);
-                    }
+                    return dao.findById(dao.deserializeId(arg0));
                 }
                 return null;
             }

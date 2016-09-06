@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.gagauz.hibernate.utils.EntityFilter;
 import org.gagauz.hibernate.utils.HqlEntityFilter;
 import org.gagauz.hibernate.utils.QueryParameter;
-import org.gagauz.utils.Function;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -25,140 +25,184 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractDao<Id extends Serializable, Entity> {
 
-	@SuppressWarnings("rawtypes")
-	public static final Map<Class, AbstractDao> DAO_MAP = new HashMap<Class, AbstractDao>();
+    private static final Function<String, Integer> INT_RESOLVER = new Function<String, Integer>() {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+        @Override
+        public Integer apply(String t) {
+            return Integer.parseInt(t);
+        }
+    };
 
-	public final Class<Id> idClass;
-	public final Class<Entity> entityClass;
+    private static final Function<String, Long> LONG_RESOLVER = new Function<String, Long>() {
 
-	@SuppressWarnings("unchecked")
-	public AbstractDao() {
-		Type[] parameters = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
-		idClass = (Class<Id>) parameters[0];
-		entityClass = (Class<Entity>) parameters[1];
-		DAO_MAP.put(entityClass, this);
-	}
+        @Override
+        public Long apply(String t) {
+            return Long.parseLong(t);
+        }
+    };
 
-	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
-	}
+    private static final Function<String, String> STRING_RESOLVER = new Function<String, String>() {
 
-	public void setSession(Session session) {
+        @Override
+        public String apply(String t) {
+            return t;
+        }
+    };
 
-	}
+    @SuppressWarnings("rawtypes")
+    public static final Map<Class, AbstractDao> DAO_MAP = new HashMap<Class, AbstractDao>();
 
-	@SuppressWarnings("unchecked")
-	public Id getIdentifier(Entity entity) {
-		return (Id) getSession().getIdentifier(entity);
-	}
+    @Autowired
+    private SessionFactory sessionFactory;
 
-	@SuppressWarnings("unchecked")
-	public Entity findById(Id id) {
-		return (Entity) getSession().get(entityClass, id);
-	}
+    public final Class<Id> idClass;
+    public final Class<Entity> entityClass;
+    public final Function<String, Id> deserialiser;
 
-	@SuppressWarnings("unchecked")
-	public Entity loadById(Id id) {
-		return (Entity) getSession().load(entityClass, id);
-	}
+    @SuppressWarnings("unchecked")
+    public AbstractDao() {
+        Type[] parameters = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
+        idClass = (Class<Id>) parameters[0];
+        entityClass = (Class<Entity>) parameters[1];
+        DAO_MAP.put(entityClass, this);
 
-	@SuppressWarnings("unchecked")
-	public List<Entity> findByIds(Collection<Id> ids) {
-		if (ids.isEmpty()) {
-			return Collections.emptyList();
-		}
-		return getSession().createCriteria(entityClass).add(Restrictions.in("id", ids)).list();
-	}
+        deserialiser = idClass.equals(Integer.class)
+                ? INT_RESOLVER
+                : idClass.equals(Long.class)
+                        ? LONG_RESOLVER
+                        : STRING_RESOLVER;
+    }
 
-	public Query createQuery(String queryString) {
-		return getSession().createQuery(queryString);
-	}
+    protected Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
-	public SQLQuery createSQLQuery(String queryString) {
-		return getSession().createSQLQuery(queryString);
-	}
+    public void setSession(Session session) {
 
-	@SuppressWarnings("unchecked")
-	public List<Entity> findAll() {
-		return getSession().createCriteria(entityClass).list();
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Entity> findByFilter(final EntityFilter filter) {
-		return filter.setCriteria(getSession().createCriteria(entityClass)).list();
-	}
+    @SuppressWarnings("unchecked")
+    public Id getIdentifier(Entity entity) {
+        return (Id) getSession().getIdentifier(entity);
+    }
 
-	@SuppressWarnings("unchecked")
-	public Entity findOneByFilter(final EntityFilter filter) {
-		return (Entity) filter.setCriteria(getSession().createCriteria(entityClass)).uniqueResult();
-	}
+    @SuppressWarnings("unchecked")
+    public Entity findById(Id id) {
+        return (Entity) getSession().get(entityClass, id);
+    }
 
-	public long countByFilter(final EntityFilter filter) {
-		return (Long) filter.setCriteria(getSession().createCriteria(entityClass).setProjection(Projections.rowCount())).uniqueResult();
-	}
+    @SuppressWarnings("unchecked")
+    public Entity loadById(Id id) {
+        return (Entity) getSession().load(entityClass, id);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Entity> findByFilter(final String sql, final HqlEntityFilter filter) {
-		Query query = filter.createQuery(new Function<String, Query>() {
-			@Override
-			public Query call(String arg0) {
-				return createQuery(arg0);
-			}
-		}, sql);
+    @SuppressWarnings("unchecked")
+    public List<Entity> findByIds(Collection<Id> ids) {
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return getSession().createCriteria(entityClass).add(Restrictions.in("id", ids)).list();
+    }
 
-		return query.list();
-	}
+    public Query createQuery(String queryString) {
+        return getSession().createQuery(queryString);
+    }
 
-	public Criteria createCriteria() {
-		return getSession().createCriteria(entityClass);
-	}
+    public SQLQuery createSQLQuery(String queryString) {
+        return getSession().createSQLQuery(queryString);
+    }
 
-	@SuppressWarnings("rawtypes")
-	public List findByQuery(String hql, QueryParameter... params) {
-		Query query = getSession().createQuery(hql);
-		for (QueryParameter param : params) {
-			param.updateQuery(query);
-		}
-		return query.list();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Entity> findAll() {
+        return getSession().createCriteria(entityClass).list();
+    }
 
-	public void merge(Entity entity) {
-		getSession().merge(entity);
-	}
+    @SuppressWarnings("unchecked")
+    public List<Entity> findByFilter(final EntityFilter filter) {
+        return filter.setCriteria(getSession().createCriteria(entityClass)).list();
+    }
 
-	public void saveNoCommit(Entity entity) {
-		getSession().saveOrUpdate(entity);
-	}
+    @SuppressWarnings("unchecked")
+    public Entity findOneByFilter(final EntityFilter filter) {
+        return (Entity) filter.setCriteria(getSession().createCriteria(entityClass)).uniqueResult();
+    }
 
-	public void save(Entity entity) {
-		getSession().saveOrUpdate(entity);
-		getSession().flush();
-	}
+    public long countByFilter(final EntityFilter filter) {
+        return (Long) filter.setCriteria(getSession().createCriteria(entityClass).setProjection(Projections.rowCount())).uniqueResult();
+    }
 
-	public void save(Collection<Entity> entities) {
-		for (Entity entity : entities) {
-			getSession().saveOrUpdate(entity);
-		}
-		getSession().flush();
-	}
+    @SuppressWarnings("unchecked")
+    public List<Entity> findByFilter(final String sql, final HqlEntityFilter filter) {
+        Query query = filter.createQuery(new Function<String, Query>() {
+            @Override
+            public Query call(String arg0) {
+                return createQuery(arg0);
+            }
+        }, sql);
 
-	public void delete(Entity entity) {
-		getSession().delete(entity);
-	}
+        return query.list();
+    }
 
-	public void evict(Entity entity) {
-		getSession().evict(entity);
-	}
+    public Criteria createCriteria() {
+        return getSession().createCriteria(entityClass);
+    }
 
-	public void flush() {
-		getSession().flush();
-	}
+    @SuppressWarnings("rawtypes")
+    public List findByQuery(String hql, QueryParameter... params) {
+        Query query = getSession().createQuery(hql);
+        for (QueryParameter param : params) {
+            param.updateQuery(query);
+        }
+        return query.list();
+    }
 
-	public Entity unproxy(Entity proxied) {
-		Session session = getSession();
-		return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(proxied);
-	}
+    public void merge(Entity entity) {
+        getSession().merge(entity);
+    }
+
+    public void saveNoCommit(Entity entity) {
+        getSession().saveOrUpdate(entity);
+    }
+
+    public void save(Entity entity) {
+        getSession().saveOrUpdate(entity);
+        getSession().flush();
+    }
+
+    public void save(Collection<Entity> entities) {
+        for (Entity entity : entities) {
+            getSession().saveOrUpdate(entity);
+        }
+        getSession().flush();
+    }
+
+    public void delete(Entity entity) {
+        getSession().delete(entity);
+    }
+
+    public void evict(Entity entity) {
+        getSession().evict(entity);
+    }
+
+    public void flush() {
+        getSession().flush();
+    }
+
+    public Entity unproxy(Entity proxied) {
+        Session session = getSession();
+        return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(proxied);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <ID extends Serializable, ENTITY, DAO extends AbstractDao<ID, ENTITY>> DAO getDao(Class<ENTITY> entityClass) {
+        return (DAO) DAO_MAP.get(entityClass);
+    }
+
+    public String serializeId(Id id) {
+        return null == id ? null : id.toString();
+    }
+
+    public Id deserializeId(String string) {
+        return null == string ? null : ;
+    }
 }
