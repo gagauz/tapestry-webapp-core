@@ -1,4 +1,4 @@
-<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
 
 	<t:block id="text">
 		<t:label class="col-sm-3 control-label" for="textField" />

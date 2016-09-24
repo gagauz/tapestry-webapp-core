@@ -7,7 +7,33 @@
 	<version>1.0</version>
 	<packaging>jar</packaging>
 	<name>Tapestry Webapp core</name>
+
+	<properties>
+		<tapestry-release.version>5.4.1</tapestry-release.version>
+		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
+		<spring-release.version>4.0.2.RELEASE</spring-release.version>
+		<servlet-api.version>3.1.0</servlet-api.version>
+		<tomcat-embedded.version>8.5.5</tomcat-embedded.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+
 	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Tomcat -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-core</artifactId>
+			<version>${tomcat-embedded.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-core</artifactId>
@@ -70,14 +96,6 @@
 			<version>${tapestry-release.version}</version>
 		</dependency>
 		-->
-		<!-- Provided by the servlet container, but sometimes referenced in the 
-			application code.  -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${servlet-api-release.version}</version>
-			<scope>provided</scope>
-		</dependency>
 		
 		<!-- Provide dependency to the Tapestry javadoc taglet which replaces the 
 			Maven component report -->
@@ -168,17 +186,6 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.12</version>
 		</dependency>
-		<!-- Tomcat -->
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-core</artifactId>
-			<version>${embedded-tomcat.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-logging-log4j</artifactId>
-			<version>${embedded-tomcat.version}</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>tapestry-webapp-core</finalName>
@@ -215,15 +222,4 @@
 		</plugins>
 	</build>
 	<reporting />
-	<properties>
-		<servlet-api-release.version>3.1.0</servlet-api-release.version>
-		<tapestry-release.version>5.4.0</tapestry-release.version>
-		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
-		<spring-release.version>4.0.2.RELEASE</spring-release.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<lucene.version>5.1.0</lucene.version>
-		<embedded-tomcat.version>7.0.55</embedded-tomcat.version>
-	</properties>
 </project>
