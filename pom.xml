@@ -8,16 +8,6 @@
 	<packaging>jar</packaging>
 	<name>Tapestry Webapp core</name>
 
-	<properties>
-		<tapestry-release.version>5.4.1</tapestry-release.version>
-		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
-		<spring-release.version>4.0.2.RELEASE</spring-release.version>
-		<servlet-api.version>3.1.0</servlet-api.version>
-		<tomcat-embedded.version>8.5.5</tomcat-embedded.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
 
 
 	<dependencies>
@@ -222,4 +212,16 @@
 		</plugins>
 	</build>
 	<reporting />
+
+	<properties>
+		<tapestry-release.version>5.4.1</tapestry-release.version>
+		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
+		<spring-release.version>4.0.2.RELEASE</spring-release.version>
+		<servlet-api.version>3.1.0</servlet-api.version>
+		<tomcat-embedded.version>8.5.5</tomcat-embedded.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
 </project>

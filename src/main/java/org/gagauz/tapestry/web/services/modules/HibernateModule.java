@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.hibernate;
+package org.gagauz.tapestry.web.services.modules;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
@@ -30,6 +30,7 @@ import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
+import org.gagauz.tapestry.hibernate.HibernateCommonRequestFilter;
 
 public class HibernateModule {
 

@@ -1,15 +1,15 @@
 package org.gagauz.tapestry.security;
 
 import org.gagauz.tapestry.security.api.Credentials;
-import org.gagauz.tapestry.security.api.User;
+import org.gagauz.tapestry.security.api.IUser;
 
 public class LoginResult {
-    private final User user;
+    private final IUser user;
     private final boolean success;
     private final Credentials credentials;
-    private User lastUser;
+    private IUser lastUser;
 
-    public LoginResult(User user, Credentials credentials) {
+    public LoginResult(IUser user, Credentials credentials) {
         this.user = user;
         this.credentials = credentials;
         this.success = true;
@@ -21,7 +21,7 @@ public class LoginResult {
         this.success = false;
     }
 
-    public User getUser() {
+    public IUser getUser() {
         return user;
     }
 
@@ -33,11 +33,11 @@ public class LoginResult {
         return credentials;
     }
 
-    public User getLastUser() {
+    public IUser getLastUser() {
         return lastUser;
     }
 
-    public void setLastUser(User lastUser) {
+    public void setLastUser(IUser lastUser) {
         this.lastUser = lastUser;
     }
 

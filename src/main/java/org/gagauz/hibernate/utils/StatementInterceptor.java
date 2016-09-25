@@ -42,13 +42,15 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
         if (!initialized) {
             init(connection, properties);
         }
-        if (s != null) {
-            LOGGER.debug(conn_id + s);
-        } else {
-            String content = statement.toString();
-            LOGGER.debug(conn_id + content.substring(content.indexOf(':')));
-            if (LOGGER.isTraceEnabled()) {
-                Thread.dumpStack();
+        if (LOGGER.isDebugEnabled()) {
+            if (s != null) {
+                LOGGER.debug(conn_id + s);
+            } else {
+                String content = statement.toString();
+                LOGGER.debug(conn_id + content.substring(content.indexOf(':')));
+                if (LOGGER.isTraceEnabled()) {
+                    Thread.dumpStack();
+                }
             }
         }
 

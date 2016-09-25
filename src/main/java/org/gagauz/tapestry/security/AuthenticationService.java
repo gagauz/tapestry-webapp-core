@@ -8,7 +8,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
 import org.gagauz.tapestry.security.api.Credentials;
-import org.gagauz.tapestry.security.api.User;
+import org.gagauz.tapestry.security.api.IUser;
 import org.gagauz.tapestry.security.api.UserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class AuthenticationService {
     @Inject
     private Request request;
 
-    public <USER extends User, CREDENTIALS extends Credentials> USER login(CREDENTIALS credentials) {
+    public <USER extends IUser, CREDENTIALS extends Credentials> USER login(CREDENTIALS credentials) {
         LoginResult result = null;
         USER newUser = userProvider.findByCredentials(credentials);
         if (null != newUser) {
@@ -60,7 +60,7 @@ public class AuthenticationService {
         UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
 
         for (AuthenticationHandler handler : handlers) {
-            for (User user : userSet) {
+            for (IUser user : userSet) {
                 handler.handleLogout(user);
                 applicationStateManager.set(user.getClass(), null);
             }

@@ -1,3 +1,3 @@
 call ./setenv.bat
-call mvn -e clean compile
+call mvn -e -X clean compile
 pause

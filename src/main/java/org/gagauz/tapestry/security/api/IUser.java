@@ -1,4 +1,4 @@
 package org.gagauz.tapestry.security.api;
 
-public interface User {
+public interface IUser {
 }

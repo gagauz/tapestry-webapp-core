@@ -5,5 +5,5 @@ import org.gagauz.tapestry.security.LoginResult;
 public interface AuthenticationHandler {
     void handleLogin(LoginResult result);
 
-    void handleLogout(User user);
+    void handleLogout(IUser user);
 }

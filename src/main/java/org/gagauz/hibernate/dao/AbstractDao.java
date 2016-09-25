@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.gagauz.hibernate.utils.EntityFilter;
@@ -25,52 +26,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractDao<Id extends Serializable, Entity> {
 
-    private static final Function<String, Integer> INT_RESOLVER = new Function<String, Integer>() {
+    private static final Map<Class<?>, Function<String, ?>> idResolverMap = new HashMap<>();
 
-        @Override
-        public Integer apply(String t) {
-            return Integer.parseInt(t);
-        }
-    };
-
-    private static final Function<String, Long> LONG_RESOLVER = new Function<String, Long>() {
-
-        @Override
-        public Long apply(String t) {
-            return Long.parseLong(t);
-        }
-    };
-
-    private static final Function<String, String> STRING_RESOLVER = new Function<String, String>() {
-
-        @Override
-        public String apply(String t) {
+    static {
+        idResolverMap.put(Byte.class, t -> {
+            return null == t ? null : Byte.parseByte(t);
+        });
+        idResolverMap.put(Long.class, t -> {
+            return null == t ? null : Long.parseLong(t);
+        });
+        idResolverMap.put(Integer.class, t -> {
+            return null == t ? null : Integer.parseInt(t);
+        });
+        idResolverMap.put(String.class, t -> {
             return t;
-        }
-    };
-
+        });
+    }
     @SuppressWarnings("rawtypes")
-    public static final Map<Class, AbstractDao> DAO_MAP = new HashMap<Class, AbstractDao>();
+    protected static final Map<Class, AbstractDao> instanceMap = new HashMap<Class, AbstractDao>();
 
     @Autowired
-    private SessionFactory sessionFactory;
+    protected SessionFactory sessionFactory;
 
-    public final Class<Id> idClass;
-    public final Class<Entity> entityClass;
-    public final Function<String, Id> deserialiser;
+    protected final Class<Id> idClass;
+    protected final Class<Entity> entityClass;
+    private final Function<String, Id> idDeserialiser;
 
     @SuppressWarnings("unchecked")
     public AbstractDao() {
         Type[] parameters = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
         idClass = (Class<Id>) parameters[0];
         entityClass = (Class<Entity>) parameters[1];
-        DAO_MAP.put(entityClass, this);
+        instanceMap.put(entityClass, this);
+        idDeserialiser = getIdDeserializer();
+    }
 
-        deserialiser = idClass.equals(Integer.class)
-                ? INT_RESOLVER
-                : idClass.equals(Long.class)
-                        ? LONG_RESOLVER
-                        : STRING_RESOLVER;
+
+    @SuppressWarnings("unchecked")
+    protected Function<String, Id> getIdDeserializer() {
+
+        Function<String, ?> function = idResolverMap.get(idClass);
+        if (null != function) {
+            return (Function<String, Id>) function;
+        }
+        throw new IllegalStateException(
+                "Please override getIdDeserializer() method to provide deserializer for id " + idClass);
+    }
+
+    public Id stringToId(String string) {
+        return idDeserialiser.apply(string);
+    }
+
+    public String idToString(Id id) {
+        return null == id ? null : id.toString();
     }
 
     protected Session getSession() {
@@ -133,11 +141,8 @@ public class AbstractDao<Id extends Serializable, Entity> {
 
     @SuppressWarnings("unchecked")
     public List<Entity> findByFilter(final String sql, final HqlEntityFilter filter) {
-        Query query = filter.createQuery(new Function<String, Query>() {
-            @Override
-            public Query call(String arg0) {
-                return createQuery(arg0);
-            }
+        Query query = filter.createQuery(arg0 -> {
+            return createQuery(arg0);
         }, sql);
 
         return query.list();
@@ -188,21 +193,20 @@ public class AbstractDao<Id extends Serializable, Entity> {
         getSession().flush();
     }
 
+    @SuppressWarnings("unchecked")
     public Entity unproxy(Entity proxied) {
         Session session = getSession();
         return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(proxied);
     }
 
     @SuppressWarnings("unchecked")
-    public static <ID extends Serializable, ENTITY, DAO extends AbstractDao<ID, ENTITY>> DAO getDao(Class<ENTITY> entityClass) {
-        return (DAO) DAO_MAP.get(entityClass);
+    public static <I extends Serializable, E, D extends AbstractDao<I, E>> D getDao(Class<E> entityClass) {
+        return (D) instanceMap.get(entityClass);
     }
 
-    public String serializeId(Id id) {
-        return null == id ? null : id.toString();
+    @SuppressWarnings("rawtypes")
+    public static Set<Class> getRegisteredEntities() {
+        return Collections.unmodifiableSet(instanceMap.keySet());
     }
 
-    public Id deserializeId(String string) {
-        return null == string ? null : ;
-    }
 }

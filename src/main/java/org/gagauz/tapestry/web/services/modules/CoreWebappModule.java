@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.services;
+package org.gagauz.tapestry.web.services.modules;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +27,7 @@ import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockOverrideSource;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.DisplayBlockContribution;
@@ -47,25 +48,19 @@ import org.gagauz.tapestry.binding.DeclineBindingFactory;
 import org.gagauz.tapestry.binding.FormatBindingFactory;
 import org.gagauz.tapestry.binding.MsgBindingFactory;
 import org.gagauz.tapestry.binding.PageBindingFactory;
-import org.gagauz.tapestry.hibernate.HibernateModule;
-import org.gagauz.tapestry.security.SecurityModule;
 import org.gagauz.tapestry.validate.FileExtensionValidator;
 import org.gagauz.tapestry.validate.NonLatinCharsValidator;
-import org.gagauz.tapestry.web.services.*;
+import org.gagauz.tapestry.web.services.CookieService;
+import org.gagauz.tapestry.web.services.CustomHttpResponse;
+import org.gagauz.tapestry.web.services.EmailRegexpAndHostValidator;
+import org.gagauz.tapestry.web.services.RequestMessagesPipeline;
+import org.gagauz.tapestry.web.services.ToolsService;
 import org.gagauz.tapestry.web.services.annotation.GetParamTransformer;
 import org.gagauz.tapestry.web.services.annotation.LongCacheTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This module is automatically included as part of the Tapestry IoC Registry,
- * it's a good place to configure and extend Tapestry, or to place your own
- * service definitions.
- */
-@ImportModule({HibernateModule.class,
-        TypeCoercerModule.class,
-        SecurityModule.class/*,
-                            WebResourcesModule.class*/})
+@ImportModule({ HibernateModule.class, TypeCoercerModule.class, SecurityModule.class })
 public class CoreWebappModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoreWebappModule.class);
@@ -76,9 +71,10 @@ public class CoreWebappModule {
         binder.bind(CookieService.class);
     }
 
+    @Contribute(ComponentClassResolver.class)
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration) {
         configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.web"));
-        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.security"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org/gagauz/tapestry/security"));
     }
 
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource, TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {
@@ -122,20 +118,20 @@ public class CoreWebappModule {
     public static void contributeHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class, ComponentEventResultProcessor> configuration, final Response response) {
         configuration.add(CustomHttpResponse.class,
                 new ComponentEventResultProcessor<CustomHttpResponse>() {
-                    @Override
-                    public void processResultValue(CustomHttpResponse value) throws IOException {
-                        String pageUrl = "";
-                        if (null != value.getUrl()) {
-                            if (!value.getUrl().startsWith("/")) {
-                                pageUrl = "/";
-                            }
-                            pageUrl += value.getUrl();
-                            response.setHeader("Location", pageUrl);
-                        }
-
-                        response.sendError(value.getCode(), value.getMessage());
+            @Override
+            public void processResultValue(CustomHttpResponse value) throws IOException {
+                String pageUrl = "";
+                if (null != value.getUrl()) {
+                    if (!value.getUrl().startsWith("/")) {
+                        pageUrl = "/";
                     }
-                });
+                    pageUrl += value.getUrl();
+                    response.setHeader("Location", pageUrl);
+                }
+
+                response.sendError(value.getCode(), value.getMessage());
+            }
+        });
     }
 
     @Ajax
@@ -143,24 +139,24 @@ public class CoreWebappModule {
     public static void contributeAjaxHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class<CustomHttpResponse>, ComponentEventResultProcessor<CustomHttpResponse>> configuration, final Response response, @Symbol(SymbolConstants.CHARSET) final String outputEncoding) {
         configuration.add(CustomHttpResponse.class,
                 new ComponentEventResultProcessor<CustomHttpResponse>() {
-                    @Override
-                    public void processResultValue(CustomHttpResponse value) throws IOException {
-                        String pageUrl = "";
-                        if (null != value.getUrl()) {
-                            if (!value.getUrl().startsWith("/")) {
-                                pageUrl = "/";
-                            }
-                            pageUrl += value.getUrl();
-                        }
-                        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
-                        PrintWriter writer = response.getPrintWriter(contentType.toString());
-                        JSONObject json = new JSONObject();
-                        json.put("redirectURL", pageUrl);
-                        json.print(writer);
-                        writer.flush();
-                        response.setStatus(value.getCode());
+            @Override
+            public void processResultValue(CustomHttpResponse value) throws IOException {
+                String pageUrl = "";
+                if (null != value.getUrl()) {
+                    if (!value.getUrl().startsWith("/")) {
+                        pageUrl = "/";
                     }
-                });
+                    pageUrl += value.getUrl();
+                }
+                ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
+                PrintWriter writer = response.getPrintWriter(contentType.toString());
+                JSONObject json = new JSONObject();
+                json.put("redirectURL", pageUrl);
+                json.print(writer);
+                writer.flush();
+                response.setStatus(value.getCode());
+            }
+        });
     }
 
     public static void contributeDefaultDataTypeAnalyzer(@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) {
@@ -201,7 +197,7 @@ public class CoreWebappModule {
                         "Unhandled exception! Method = " + request.getMethod() + ", Url = " + request.getServletPath() + " Referer = "
                                 + request.getHeader("Referer") + " User-Agent = "
                                 + request.getHeader("User-Agent") + ", RemoteAddr = " + request.getRemoteAddr(),
-                        exception);
+                                exception);
 
                 response.setStatus(500);
                 try {

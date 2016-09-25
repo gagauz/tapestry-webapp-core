@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.security;
+package org.gagauz.tapestry.web.services.modules;
 
 import java.io.IOException;
 
@@ -20,9 +20,17 @@ import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.gagauz.tapestry.security.AccessDeniedException;
+import org.gagauz.tapestry.security.AccessDeniedExceptionInterceptorFilter;
+import org.gagauz.tapestry.security.AuthenticationService;
+import org.gagauz.tapestry.security.LoginResult;
+import org.gagauz.tapestry.security.RememberMeFilter;
+import org.gagauz.tapestry.security.RememberMeHandler;
+import org.gagauz.tapestry.security.SecuritySymbols;
+import org.gagauz.tapestry.security.SecurityTransformer;
 import org.gagauz.tapestry.security.api.AccessDeniedHandler;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
-import org.gagauz.tapestry.security.api.User;
+import org.gagauz.tapestry.security.api.IUser;
 import org.gagauz.tapestry.utils.AbstractCommonHandlerWrapper;
 import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
 
@@ -81,7 +89,7 @@ public class SecurityModule {
 
             @Override
             public void handleLogin(LoginResult loginResult) {
-                User user = loginResult.getUser();
+                IUser user = loginResult.getUser();
                 if (null != user) {
                     String redirect = cookies.readCookieValue(REDIRECT_PAGE);
                     cookies.removeCookieValue(REDIRECT_PAGE);
@@ -96,7 +104,7 @@ public class SecurityModule {
             }
 
             @Override
-            public void handleLogout(User user) {
+            public void handleLogout(IUser user) {
             }
         }, "after:*");
     }

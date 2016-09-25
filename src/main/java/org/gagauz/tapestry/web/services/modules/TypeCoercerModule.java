@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.services;
+package org.gagauz.tapestry.web.services.modules;
 
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
