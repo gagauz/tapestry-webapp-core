@@ -1,5 +1,7 @@
 package org.gagauz.tapestry.binding;
 
+import java.util.Properties;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -14,6 +16,7 @@ public class MsgBindingFactory implements BindingFactory {
     private final BindingSource bindingSource;
     private final TypeCoercer resolver;
     private final Messages messages;
+    private final Properties properties;
 
     public MsgBindingFactory(BindingSource bindingSource, TypeCoercer resolver, Messages messages) {
         this.bindingSource = bindingSource;

@@ -8,6 +8,7 @@ public class AccessDeniedException extends RuntimeException {
 
     public AccessDeniedException(AccessAttribute accessAttribute) {
         this.accessAttribute = accessAttribute;
+
     }
 
     public AccessAttribute getNeedRoles() {

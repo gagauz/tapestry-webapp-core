@@ -31,4 +31,5 @@ public class IfAuthorized extends AbstractConditional {
         }
         return true;
     }
+
 }
