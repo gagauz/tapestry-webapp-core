@@ -1,6 +1,6 @@
 package org.gagauz.utils;
 
-public interface IJavaProperty<E extends Enum<E>> {
+public interface IAppProperty<E extends Enum<E>> {
 
     String getDefaultValue();
 

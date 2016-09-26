@@ -23,48 +23,50 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 public abstract class AbstractWebApplicationInitializer implements WebApplicationInitializer {
 
-    protected AbstractRefreshableWebApplicationContext rootContext;
-    protected ServletContext servletContext;
 
-    @Override
-    public final void onStartup(ServletContext servletContext) throws ServletException {
-        this.servletContext = servletContext;
-        this.rootContext = createWebContext();
-        this.rootContext.setConfigLocations(getConfigLocations());
+	protected AbstractRefreshableWebApplicationContext rootContext;
+	protected ServletContext servletContext;
 
-        String appModule = getAppModuleClass().getName();
-        Deque<String> deque = new ArrayDeque<>(Arrays.asList(appModule.split("\\.")));
-        deque.removeLast();
-        deque.removeLast();
-        final String tapestryAppPackage = StringUtils.join(deque, '.');
+	@Override
+	public final void onStartup(ServletContext servletContext) throws ServletException {
+		this.servletContext = servletContext;
+		this.rootContext = createWebContext();
+		this.rootContext.setConfigLocations(getConfigLocations());
 
-        servletContext.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT,
-                String.valueOf(getUseExternalSpringContext()));
-        servletContext.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
-        servletContext.addListener(new ContextLoaderListener(this.rootContext));
+		String appModule = getAppModuleClass().getName();
+		Deque<String> deque = new ArrayDeque<>(Arrays.asList(appModule.split("\\.")));
+		deque.removeLast();
+		deque.removeLast();
+		final String tapestryAppPackage = StringUtils.join(deque, '.');
 
-        addFilter(StaticFilter.class, "/static/*");
-        addFilter(RootFilter.class, "/*");
+		servletContext.setAttribute(ContextRegistryTapestryFilter.APP_MODULE_CLASS, getAppModuleClass());
+		servletContext.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT,
+				String.valueOf(getUseExternalSpringContext()));
+		servletContext.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
+		servletContext.addListener(new ContextLoaderListener(this.rootContext));
 
-        FilterRegistration.Dynamic appFilter = addFilter(ContextRegistryTapestryFilter.class, "/*");
-        appFilter.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
-        appFilter.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT,
-                String.valueOf(getUseExternalSpringContext()));
-    }
+		addFilter(StaticFilter.class, "/static/*");
+		addFilter(RootFilter.class, "/*");
 
-    protected abstract Class<?> getAppModuleClass();
+		FilterRegistration.Dynamic appFilter = addFilter(ContextRegistryTapestryFilter.class, "/*");
+		appFilter.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
+		appFilter.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT,
+				String.valueOf(getUseExternalSpringContext()));
+	}
 
-    protected abstract String[] getConfigLocations();
+	protected abstract Class<?> getAppModuleClass();
 
-    protected abstract boolean getUseExternalSpringContext();
+	protected abstract String[] getConfigLocations();
 
-    protected final FilterRegistration.Dynamic addFilter(Class<? extends Filter> filterClass, String... urlMappings) {
-        FilterRegistration.Dynamic filter = this.servletContext.addFilter(filterClass.getName(), filterClass);
-        filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, urlMappings);
-        return filter;
-    }
+	protected abstract boolean getUseExternalSpringContext();
 
-    protected AbstractRefreshableWebApplicationContext createWebContext() {
-        return new AnnotationConfigWebApplicationContext();
-    }
+	protected final FilterRegistration.Dynamic addFilter(Class<? extends Filter> filterClass, String... urlMappings) {
+		FilterRegistration.Dynamic filter = this.servletContext.addFilter(filterClass.getSimpleName(), filterClass);
+		filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, urlMappings);
+		return filter;
+	}
+
+	protected AbstractRefreshableWebApplicationContext createWebContext() {
+		return new AnnotationConfigWebApplicationContext();
+	}
 }
