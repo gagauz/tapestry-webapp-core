@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.spring.SpringConstants;
+import org.gagauz.tapestry.web.filter.StaticFilter;
 import org.gagauz.tapestry.web.services.ContextRegistryTapestryFilter;
 import org.gagauz.utils.RootFilter;
 import org.gagauz.utils.StringUtils;
@@ -25,11 +26,10 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
 
 
     protected AbstractRefreshableWebApplicationContext rootContext;
-    protected ServletContext servletContext;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        this.servletContext = servletContext;
+        Global.servletContext = servletContext;
         this.rootContext = createWebContext();
         this.rootContext.setConfigLocations(getConfigLocations());
 
@@ -61,7 +61,7 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
     protected abstract boolean getUseExternalSpringContext();
 
     protected final FilterRegistration.Dynamic addFilter(Class<? extends Filter> filterClass, String... urlMappings) {
-        FilterRegistration.Dynamic filter = this.servletContext.addFilter(filterClass.getSimpleName(), filterClass);
+        FilterRegistration.Dynamic filter = Global.servletContext.addFilter(filterClass.getSimpleName(), filterClass);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, urlMappings);
         return filter;
     }

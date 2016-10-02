@@ -73,7 +73,7 @@ public class AbstractDao<Id extends Serializable, Entity> {
                 "Please override getIdDeserializer() method to provide deserializer for id " + idClass);
     }
 
-    public Id stringToId(String string) {
+    public final Id stringToId(String string) {
         return idDeserialiser.apply(string);
     }
 

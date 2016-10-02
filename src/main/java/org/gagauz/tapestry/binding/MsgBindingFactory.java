@@ -22,7 +22,15 @@ public class MsgBindingFactory implements BindingFactory {
         this.bindingSource = bindingSource;
         this.resolver = resolver;
         this.messages = messages;
+        this.properties = new Properties();
+        try {
+            properties.load(getClass().getResource("classpath:/app.properties").openStream());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component, final String expression, final Location location) {

@@ -19,7 +19,9 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Ajax;
@@ -63,157 +65,163 @@ import org.slf4j.LoggerFactory;
 @ImportModule({ HibernateModule.class, TypeCoercerModule.class, SecurityModule.class })
 public class CoreWebappModule {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CoreWebappModule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreWebappModule.class);
 
-	public static void bind(ServiceBinder binder) {
-		binder.bind(ToolsService.class);
-		binder.bind(RequestMessagesPipeline.class);
-		binder.bind(CookieService.class);
-	}
+    public static void bind(ServiceBinder binder) {
+        binder.bind(ToolsService.class);
+        binder.bind(RequestMessagesPipeline.class);
+        binder.bind(CookieService.class);
+    }
 
-	@Contribute(ComponentClassResolver.class)
-	public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration) {
-		configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.web"));
-		configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.security"));
-	}
+    @FactoryDefaults
+    @Contribute(SymbolProvider.class)
+    public static void factoryDefaults(MappedConfiguration<String, Object> configuration) {
+        configuration.override(SymbolConstants.APPLICATION_CATALOG, "context:/WEB-INF/app.properties");
+    }
 
-	public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource, TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {
-		configuration.add("cond", new CondBindingFactory(bindingSource, typeCoercer));
-		configuration.add("date", new DateBindingFactory(bindingSource, typeCoercer));
-		configuration.add("msg", new MsgBindingFactory(bindingSource, typeCoercer, messages));
-		configuration.add("format", new FormatBindingFactory(bindingSource, typeCoercer));
-		configuration.add("page", new PageBindingFactory());
-		configuration.add("decline", new DeclineBindingFactory(bindingSource, typeCoercer,
-				toolsService));
-	}
+    @Contribute(ComponentClassResolver.class)
+    public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration) {
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.web"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.security"));
+    }
 
-	public static void contributeFieldValidatorSource(@SuppressWarnings("rawtypes") MappedConfiguration<String, Validator> configuration, Messages messages, JavaScriptSupport javaScriptSupport, Html5Support html5Support) {
-		configuration.add("emailhost", new EmailRegexpAndHostValidator(javaScriptSupport, html5Support));
-		configuration.add("latin", new NonLatinCharsValidator(javaScriptSupport));
-		configuration.add("extension", new FileExtensionValidator(javaScriptSupport));
-	}
+    public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource, TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {
+        configuration.add("cond", new CondBindingFactory(bindingSource, typeCoercer));
+        configuration.add("date", new DateBindingFactory(bindingSource, typeCoercer));
+        configuration.add("msg", new MsgBindingFactory(bindingSource, typeCoercer, messages));
+        configuration.add("format", new FormatBindingFactory(bindingSource, typeCoercer));
+        configuration.add("page", new PageBindingFactory());
+        configuration.add("decline", new DeclineBindingFactory(bindingSource, typeCoercer,
+                toolsService));
+    }
 
-	@Contribute(ServiceOverride.class)
-	public static void overrideUrlEncoder(MappedConfiguration<Class<?>, Object> configuration) {
-		configuration.add(URLEncoder.class, new URLEncoder() {
+    public static void contributeFieldValidatorSource(@SuppressWarnings("rawtypes") MappedConfiguration<String, Validator> configuration, Messages messages, JavaScriptSupport javaScriptSupport, Html5Support html5Support) {
+        configuration.add("emailhost", new EmailRegexpAndHostValidator(javaScriptSupport, html5Support));
+        configuration.add("latin", new NonLatinCharsValidator(javaScriptSupport));
+        configuration.add("extension", new FileExtensionValidator(javaScriptSupport));
+    }
 
-			@Override
-			public String decode(String input) {
-				return input;
-			}
+    @Contribute(ServiceOverride.class)
+    public static void overrideUrlEncoder(MappedConfiguration<Class<?>, Object> configuration) {
+        configuration.add(URLEncoder.class, new URLEncoder() {
 
-			@Override
-			public String encode(String input) {
-				return input;
-			}
-		});
-	}
+            @Override
+            public String decode(String input) {
+                return input;
+            }
 
-	/**
-	 * Tapestry sends 302 redirect by default. Adding custom event result
-	 * processor we can send various response codes.
-	 */
-	@Traditional
-	@Contribute(ComponentEventResultProcessor.class)
-	public static void contributeHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class, ComponentEventResultProcessor> configuration, final Response response) {
-		configuration.add(CustomHttpResponse.class,
-				new ComponentEventResultProcessor<CustomHttpResponse>() {
-			@Override
-			public void processResultValue(CustomHttpResponse value) throws IOException {
-				String pageUrl = "";
-				if (null != value.getUrl()) {
-					if (!value.getUrl().startsWith("/")) {
-						pageUrl = "/";
-					}
-					pageUrl += value.getUrl();
-					response.setHeader("Location", pageUrl);
-				}
+            @Override
+            public String encode(String input) {
+                return input;
+            }
+        });
+    }
 
-				response.sendError(value.getCode(), value.getMessage());
-			}
-		});
-	}
+    /**
+     * Tapestry sends 302 redirect by default. Adding custom event result
+     * processor we can send various response codes.
+     */
+    @Traditional
+    @Contribute(ComponentEventResultProcessor.class)
+    public static void contributeHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class, ComponentEventResultProcessor> configuration, final Response response) {
+        configuration.add(CustomHttpResponse.class,
+                new ComponentEventResultProcessor<CustomHttpResponse>() {
+            @Override
+            public void processResultValue(CustomHttpResponse value) throws IOException {
+                String pageUrl = "";
+                if (null != value.getUrl()) {
+                    if (!value.getUrl().startsWith("/")) {
+                        pageUrl = "/";
+                    }
+                    pageUrl += value.getUrl();
+                    response.setHeader("Location", pageUrl);
+                }
 
-	@Ajax
-	@Contribute(ComponentEventResultProcessor.class)
-	public static void contributeAjaxHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class<CustomHttpResponse>, ComponentEventResultProcessor<CustomHttpResponse>> configuration, final Response response, @Symbol(SymbolConstants.CHARSET) final String outputEncoding) {
-		configuration.add(CustomHttpResponse.class,
-				new ComponentEventResultProcessor<CustomHttpResponse>() {
-			@Override
-			public void processResultValue(CustomHttpResponse value) throws IOException {
-				String pageUrl = "";
-				if (null != value.getUrl()) {
-					if (!value.getUrl().startsWith("/")) {
-						pageUrl = "/";
-					}
-					pageUrl += value.getUrl();
-				}
-				ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
-				PrintWriter writer = response.getPrintWriter(contentType.toString());
-				JSONObject json = new JSONObject();
-				json.put("redirectURL", pageUrl);
-				json.print(writer);
-				writer.flush();
-				response.setStatus(value.getCode());
-			}
-		});
-	}
+                response.sendError(value.getCode(), value.getMessage());
+            }
+        });
+    }
 
-	public static void contributeDefaultDataTypeAnalyzer(@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) {
-		configuration.override(String.class, "string");
-		configuration.add(BigDecimal.class, "bigDecimal");
-	}
+    @Ajax
+    @Contribute(ComponentEventResultProcessor.class)
+    public static void contributeAjaxHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class<CustomHttpResponse>, ComponentEventResultProcessor<CustomHttpResponse>> configuration, final Response response, @Symbol(SymbolConstants.CHARSET) final String outputEncoding) {
+        configuration.add(CustomHttpResponse.class,
+                new ComponentEventResultProcessor<CustomHttpResponse>() {
+            @Override
+            public void processResultValue(CustomHttpResponse value) throws IOException {
+                String pageUrl = "";
+                if (null != value.getUrl()) {
+                    if (!value.getUrl().startsWith("/")) {
+                        pageUrl = "/";
+                    }
+                    pageUrl += value.getUrl();
+                }
+                ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
+                PrintWriter writer = response.getPrintWriter(contentType.toString());
+                JSONObject json = new JSONObject();
+                json.put("redirectURL", pageUrl);
+                json.print(writer);
+                writer.flush();
+                response.setStatus(value.getCode());
+            }
+        });
+    }
 
-	public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration) {
-		configuration.add(new EditBlockContribution("string", "AppPropertyBlocks", "string"));
-		configuration.add(new EditBlockContribution("bigDecimal", "AppPropertyBlocks", "bigDecimal"));
-	}
+    public static void contributeDefaultDataTypeAnalyzer(@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) {
+        configuration.override(String.class, "string");
+        configuration.add(BigDecimal.class, "bigDecimal");
+    }
 
-	@Contribute(BeanBlockOverrideSource.class)
-	public static void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration) {
-		configuration.add(new DisplayBlockContribution("date", "AppPropertyBlocks", "dateDisplay"));
-	}
+    public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration) {
+        configuration.add(new EditBlockContribution("string", "AppPropertyBlocks", "string"));
+        configuration.add(new EditBlockContribution("bigDecimal", "AppPropertyBlocks", "bigDecimal"));
+    }
 
-	/**
-	 * Contribute component class transform worker2.
-	 *
-	 * @param configuration
-	 *            the configuration
-	 */
-	@Contribute(ComponentClassTransformWorker2.class)
-	public void contributeComponentClassTransformWorker2(OrderedConfiguration<ComponentClassTransformWorker2> configuration) {
-		configuration.addInstance("GetParamTransformer", GetParamTransformer.class);
-		configuration.addInstance("LongCacheTransformer", LongCacheTransformer.class);
-	}
+    @Contribute(BeanBlockOverrideSource.class)
+    public static void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration) {
+        configuration.add(new DisplayBlockContribution("date", "AppPropertyBlocks", "dateDisplay"));
+    }
 
-	public RequestExceptionHandler buildAppRequestExceptionHandler(final ResponseRenderer renderer, final ComponentSource componentSource, final HttpServletRequest request, final Response response) {
-		return new RequestExceptionHandler() {
-			@Override
-			public void handleRequestException(Throwable exception) throws IOException {
+    /**
+     * Contribute component class transform worker2.
+     *
+     * @param configuration
+     *            the configuration
+     */
+    @Contribute(ComponentClassTransformWorker2.class)
+    public void contributeComponentClassTransformWorker2(OrderedConfiguration<ComponentClassTransformWorker2> configuration) {
+        configuration.addInstance("GetParamTransformer", GetParamTransformer.class);
+        configuration.addInstance("LongCacheTransformer", LongCacheTransformer.class);
+    }
 
-				String exceptionPage = "Error500";
+    public RequestExceptionHandler buildAppRequestExceptionHandler(final ResponseRenderer renderer, final ComponentSource componentSource, final HttpServletRequest request, final Response response) {
+        return new RequestExceptionHandler() {
+            @Override
+            public void handleRequestException(Throwable exception) throws IOException {
 
-				LOG.error(
-						"Unhandled exception! Method = " + request.getMethod() + ", Url = " + request.getServletPath() + " Referer = "
-								+ request.getHeader("Referer") + " User-Agent = "
-								+ request.getHeader("User-Agent") + ", RemoteAddr = " + request.getRemoteAddr(),
-								exception);
+                String exceptionPage = "Error500";
 
-				response.setStatus(500);
-				try {
-					ExceptionReporter index = (ExceptionReporter) componentSource.getPage(exceptionPage);
-					LOG.info("reporting exception on " + index.getClass().getName());
-					index.reportException(exception);
-				} catch (Throwable ex) {
-					LOG.error("got error while reporting exception", ex);
-				}
+                LOG.error(
+                        "Unhandled exception! Method = " + request.getMethod() + ", Url = " + request.getServletPath() + " Referer = "
+                                + request.getHeader("Referer") + " User-Agent = "
+                                + request.getHeader("User-Agent") + ", RemoteAddr = " + request.getRemoteAddr(),
+                                exception);
 
-				renderer.renderPageMarkupResponse(exceptionPage);
-			}
-		};
-	}
+                response.setStatus(500);
+                try {
+                    ExceptionReporter index = (ExceptionReporter) componentSource.getPage(exceptionPage);
+                    LOG.info("reporting exception on " + index.getClass().getName());
+                    index.reportException(exception);
+                } catch (Throwable ex) {
+                    LOG.error("got error while reporting exception", ex);
+                }
 
-	public void contributeServiceOverride(MappedConfiguration<Class, Object> configuration, @Local RequestExceptionHandler handler) {
-		configuration.add(RequestExceptionHandler.class, handler);
-	}
+                renderer.renderPageMarkupResponse(exceptionPage);
+            }
+        };
+    }
+
+    public void contributeServiceOverride(MappedConfiguration<Class, Object> configuration, @Local RequestExceptionHandler handler) {
+        configuration.add(RequestExceptionHandler.class, handler);
+    }
 }

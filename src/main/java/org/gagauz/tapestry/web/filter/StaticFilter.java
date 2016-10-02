@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.web.config;
+package org.gagauz.tapestry.web.filter;
 
 import javax.servlet.*;
 
