@@ -4,7 +4,7 @@ import javax.servlet.*;
 
 import java.io.IOException;
 
-public class StaticFilter implements Filter {
+public class StaticInterceptorFilter implements Filter {
 
     private RequestDispatcher defaultRequestDispatcher;
 

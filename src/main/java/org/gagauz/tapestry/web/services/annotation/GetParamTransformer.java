@@ -25,7 +25,7 @@ import org.apache.tapestry5.services.URLEncoder;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-import org.gagauz.utils.RootFilter;
+import org.gagauz.tapestry.web.config.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +63,7 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 		for (PlasticField field : fields) {
 			final GetParam fieldAnnotation = field.getAnnotation(GetParam.class);
 			field.setConduit(createFieldValueConduitProvider(fieldAnnotation, field));
-			final String parameterName = "".equals(fieldAnnotation.value())
-					? field.getName()
-					: fieldAnnotation.value();
+			final String parameterName = "".equals(fieldAnnotation.value()) ? field.getName() : fieldAnnotation.value();
 			preallocateName(support, parameterName);
 			field.claim(fieldAnnotation);
 		}
@@ -75,10 +73,8 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 		final String fieldName = field.getName();
 		final String fieldTypeName = field.getTypeName();
 
-		Class<?> fieldType0 = classCache.forName(fieldTypeName);
-		final String parameterName = "".equals(fieldAnnotation.value())
-				? fieldName
-				: fieldAnnotation.value();
+		Class<?> fieldType0 = this.classCache.forName(fieldTypeName);
+		final String parameterName = "".equals(fieldAnnotation.value()) ? fieldName : fieldAnnotation.value();
 
 		final boolean isArray = fieldType0.isArray();
 		final Class<?> fieldType = isArray ? fieldType0.getComponentType() : fieldType0;
@@ -89,29 +85,29 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 
 			@Override
 			public Object get(Object instance, InstanceContext context) {
-				if (null == fieldValue) {
-					fieldValue = perthreadManager.createValue();
-				} else if (fieldValue.exists()) {
-					return fieldValue.get();
+				if (null == this.fieldValue) {
+					this.fieldValue = GetParamTransformer.this.perthreadManager.createValue();
+				} else if (this.fieldValue.exists()) {
+					return this.fieldValue.get();
 				}
 
-				String[] clientValues = RootFilter.getRequest().getParameterValues(parameterName);
+				String[] clientValues = Global.getRequest().getParameterValues(parameterName);
 				if (clientValues == null) {
 					if (fieldType.isPrimitive()) {
 						if (isArray) {
 							Object array = Array.newInstance(fieldType, 1);
 							Array.set(array, 0, 0);
-							fieldValue.set(array);
+							this.fieldValue.set(array);
 						} else {
-							fieldValue.set(0);
+							this.fieldValue.set(0);
 						}
 					}
 				} else {
-					final ValueEncoder<?> encoder = valueEncoderSource.getValueEncoder(fieldType);
+					final ValueEncoder<?> encoder = GetParamTransformer.this.valueEncoderSource.getValueEncoder(fieldType);
 					Object value = isArray ? Array.newInstance(fieldType, clientValues.length) : null;
 
 					for (int i = 0; i < clientValues.length; i++) {
-						clientValues[i] = urlEncoder.decode(clientValues[i]);
+						clientValues[i] = GetParamTransformer.this.urlEncoder.decode(clientValues[i]);
 						if (isArray) {
 							Array.set(value, i, encoder.toValue(clientValues[i]));
 						} else {
@@ -120,7 +116,7 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 						}
 					}
 
-					fieldValue.set(value);
+					this.fieldValue.set(value);
 
 					// if (null != value &&
 					// !fieldType.isAssignableFrom(value.getClass())) {
@@ -134,12 +130,12 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 					// }
 				}
 
-				return fieldValue.get();
+				return this.fieldValue.get();
 			}
 
 			@Override
 			public void set(Object instance, InstanceContext context, Object newValue) {
-				fieldValue.set(newValue);
+				this.fieldValue.set(newValue);
 			}
 
 		};
@@ -157,8 +153,6 @@ public class GetParamTransformer implements ComponentClassTransformWorker2 {
 		};
 
 		support.addEventHandler(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, 1,
-				"ActivationRequestParameterWorker preallocate form control name '" + parameterName
-						+ "' event handler",
-				handler);
+				"ActivationRequestParameterWorker preallocate form control name '" + parameterName + "' event handler", handler);
 	}
 }
