@@ -1,80 +1,134 @@
 package org.gagauz.tapestry.web.components;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
-
-import java.util.Arrays;
-import java.util.Iterator;
 
 @SupportsInformalParameters
 public class Foreach<T> {
 
-    @Parameter
-    private Iterable<T> source;
+	private static Iterator emptyIterator = new Iterator() {
 
-    @Parameter(required = true, principal = true)
-    private Object value;
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
 
-    @Parameter(required = false, value = "2147483647", defaultPrefix = BindingConstants.LITERAL)
-    private int limit;
+		@Override
+		public Object next() {
+			throw new NoSuchElementException();
+		}
+	};
 
-    @Parameter(required = false, value = "0", defaultPrefix = BindingConstants.LITERAL)
-    private int offset;
+	@Parameter
+	private Iterable<T> source;
 
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private String separator;
+	@Parameter(required = true, principal = true)
+	private T value;
 
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
-    private Block empty;
+	@Parameter(defaultPrefix = BindingConstants.LITERAL)
+	private String element;
 
-    @Parameter
-    private int index;
+	@Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
+	private Integer limit;
 
-    private Iterator<?> iterator;
+	@Parameter(required = false, value = "0", defaultPrefix = BindingConstants.LITERAL)
+	private int offset;
 
-    @Inject
-    private ComponentResources resources;
+	@Parameter(defaultPrefix = BindingConstants.LITERAL)
+	private String separator;
 
-    boolean setupRender() {
+	@Parameter(defaultPrefix = BindingConstants.LITERAL)
+	private Block empty;
 
-        if (!resources.isBound("source")) {
-            Class<T> valueType = resources.getBoundType("value");
+	@Parameter(defaultPrefix = BindingConstants.LITERAL)
+	private Block ellipsis;
 
-            if (valueType != null && Enum.class.isAssignableFrom(valueType)) {
-                source = Arrays.asList(valueType.getEnumConstants());
-            }
-        }
+	@Parameter
+	private int index;
 
-        if (source == null) {
-            return false;
-        }
+	private Iterator<T> iterator;
 
-        index = offset;
-        iterator = source.iterator();
+	@Inject
+	private ComponentResources resources;
 
-        for (int i = 0; i < offset && iterator.hasNext(); i++) {
-            iterator.next();
-        }
+	private Block cleanupBlock;
 
-        return iterator.hasNext();
-    }
+	private Iterator<T> getIterator() {
+		if (null == this.iterator) {
+			this.iterator = (null == this.source) ? emptyIterator : this.source.iterator();
+		}
+		return this.iterator;
+	}
 
-    void beginRender(MarkupWriter mw) {
-        value = iterator.next();
-    }
+	private boolean canAdvance() {
+		return (null == this.limit || this.index < this.limit) && getIterator().hasNext();
+	}
 
-    boolean afterRender(MarkupWriter mw) {
-        ++index;
-        boolean continueRender = iterator.hasNext() && (index < limit);
-        if (continueRender && separator != null) {
-            mw.write(separator);
-        }
-        return !continueRender;
-    }
+	@SetupRender
+	boolean start() {
+		this.iterator = null;
+		this.index = 0;
+		if (!this.resources.isBound("source")) {
+			Class<T> valueType = this.resources.getBoundType("value");
 
+			if (valueType != null && valueType.isEnum()) {
+				this.source = Arrays.asList(valueType.getEnumConstants());
+			}
+		}
+
+		if (getIterator().hasNext()) {
+			for (int i = 0; i < this.offset && getIterator().hasNext(); i++) {
+				getIterator().next();
+			}
+			this.index = this.offset;
+			return true;
+		}
+		this.cleanupBlock = this.empty;
+		return false;
+	}
+
+	@BeginRender
+	void bodyStart(MarkupWriter writer) {
+		this.value = getIterator().next(); // get next value
+
+		if (this.element != null) {
+			writer.element(this.element);
+			this.resources.renderInformalParameters(writer);
+		}
+	}
+
+	@AfterRender
+	boolean bodyEnd(MarkupWriter writer) {
+		if (this.element != null) {
+			writer.end();
+		}
+		this.index++;
+		if (canAdvance()) {
+			if (null != this.separator) {
+				writer.writeRaw(this.separator);
+			}
+			return false;
+		} else if (getIterator().hasNext()) {
+			this.cleanupBlock = this.ellipsis;
+		}
+		return true;
+	}
+
+	@CleanupRender
+	Block cleanupRender() {
+		return this.cleanupBlock;
+	}
 }

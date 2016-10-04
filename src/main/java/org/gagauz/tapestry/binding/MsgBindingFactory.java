@@ -28,11 +28,16 @@ public class MsgBindingFactory implements BindingFactory {
 		return new AbstractContextBinding(this.bindingSource, this.resolver, description, container) {
 			@Override
 			public Object get() {
-				Object value = getValue(expression, BindingConstants.PROP, Object.class);
+				Object value = getValue(expression, BindingConstants.LITERAL, Object.class);
+
 				if (null != value && value.getClass().isEnum()) {
 					value = value.getClass().getSimpleName() + "." + value;
 				}
-				return MsgBindingFactory.this.messages.get(String.valueOf(value));
+				String key = String.valueOf(value);
+				if (MsgBindingFactory.this.messages.contains(key)) {
+					return MsgBindingFactory.this.messages.get(key);
+				}
+				return key;
 			}
 		};
 	}
