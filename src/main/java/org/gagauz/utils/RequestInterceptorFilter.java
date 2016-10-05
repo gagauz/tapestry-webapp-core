@@ -19,13 +19,11 @@ public class RequestInterceptorFilter implements javax.servlet.Filter {
 	}
 
 	private static Handler beforeChain = (request, response) -> {
-		Global.setRequest((HttpServletRequest) request);
-		Global.setResponse((HttpServletResponse) response);
+		Global.init((HttpServletRequest) request, (HttpServletResponse) response);
 	};
 
 	private static Handler afterChain = (request, response) -> {
-		Global.setRequest(null);
-		Global.setResponse(null);
+		Global.clear();
 	};
 
 	@Override
