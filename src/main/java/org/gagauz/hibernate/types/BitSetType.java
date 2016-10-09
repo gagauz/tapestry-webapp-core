@@ -1,9 +1,5 @@
 package org.gagauz.hibernate.types;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.UserType;
-
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.BitSet;
 import java.util.EnumSet;
+
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.usertype.UserType;
 
 public class BitSetType implements UserType {
 
@@ -25,9 +25,10 @@ public class BitSetType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-        long value = rs.getLong(names[0]);
-        if (rs.wasNull()) {
+    public Object nullSafeGet(ResultSet resultSet, String[] names, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
+        long value = resultSet.getLong(names[0]);
+        if (resultSet.wasNull()) {
             return null;
         }
         final BitSet result = new BitSet(32);
@@ -79,7 +80,8 @@ public class BitSetType implements UserType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, sqlTypes()[0]);
         } else {

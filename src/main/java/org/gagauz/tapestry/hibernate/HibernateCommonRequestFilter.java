@@ -2,6 +2,8 @@ package org.gagauz.tapestry.hibernate;
 
 import java.io.IOException;
 
+import javax.persistence.FlushModeType;
+
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.ComponentRequestFilter;
@@ -14,7 +16,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate4.SessionHolder;
+import org.springframework.orm.hibernate5.SessionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 public class HibernateCommonRequestFilter implements ComponentRequestFilter {
@@ -38,7 +40,7 @@ public class HibernateCommonRequestFilter implements ComponentRequestFilter {
 
     protected Session openSession(SessionFactory sessionFactory) throws HibernateException {
         Session session = sessionFactory.openSession();
-        session.setFlushMode(FlushMode.MANUAL);
+        session.setHibernateFlushMode(FlushMode.MANUAL);
         session.beginTransaction();
         logger.debug("begin transaction: {} in session: {}", session.getTransaction(), session);
         return session;
@@ -59,7 +61,7 @@ public class HibernateCommonRequestFilter implements ComponentRequestFilter {
 
     protected void closeSession(Session session, boolean commit) {
         if (session.isOpen()) {
-            if (commit && session.getFlushMode() == FlushMode.MANUAL) {
+            if (commit && session.getFlushMode() == FlushModeType.COMMIT) {
                 session.flush();
             }
             Transaction transaction = null;

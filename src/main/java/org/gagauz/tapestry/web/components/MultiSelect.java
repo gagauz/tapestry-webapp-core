@@ -1,6 +1,7 @@
 package org.gagauz.tapestry.web.components;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.Binding;
@@ -10,9 +11,9 @@ import org.apache.tapestry5.FieldValidationSupport;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.SelectModelVisitor;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.ValueEncoder;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
@@ -38,19 +40,6 @@ import org.apache.tapestry5.services.ValueEncoderSource;
  */
 public class MultiSelect extends AbstractField {
 
-    private final ValueEncoder<Object> emptyEncoder = new ValueEncoder<Object>() {
-
-        @Override
-        public String toClient(Object value) {
-            return null;
-        }
-
-        @Override
-        public Object toValue(String clientValue) {
-            return null;
-        }
-    };
-
     protected class Renderer extends SelectModelRenderer {
 
         public Renderer(MarkupWriter writer, ValueEncoder encoder) {
@@ -59,7 +48,7 @@ public class MultiSelect extends AbstractField {
 
         @Override
         public boolean isOptionSelected(OptionModel optionModel, String clientValue) {
-            return isSelected(clientValue);
+            return isSelected(optionModel.getValue());
         }
     }
 
@@ -98,7 +87,7 @@ public class MultiSelect extends AbstractField {
     protected FieldValidator<Object> validate;
 
     @Parameter(required = true, principal = true, autoconnect = true)
-    protected Collection value;
+    protected Object value;
 
     @Inject
     private FieldValidationSupport fieldValidationSupport;
@@ -109,14 +98,25 @@ public class MultiSelect extends AbstractField {
     @Inject
     private ValueEncoderSource valueEncoderSource;
 
-    protected boolean isSelected(String clientValue) {
-        return value != null && value.contains(getEncoder().toValue(clientValue));
+    protected boolean isSelected(Object optionValue) {
+        return value != null && (
+                (Collection.class.isAssignableFrom(value.getClass()) && ((Collection) value).contains(optionValue)))
+                || Objects.equals(value, optionValue);
     }
 
     @Override
     protected void processSubmission(String controlName) {
         String[] params = request.getParameters(controlName);
-        Collection submittedValue = toValue(null == params ? new String[0] : params);
+        Object submittedValue = null;
+        Collection submittedValueCollection = toValue(null == params ? new String[0] : params);
+        Class type = resources.getBoundType("value");
+        if (null != type) {
+            if (Collection.class.isAssignableFrom(type)) {
+                submittedValue = submittedValueCollection;
+            } else if (!submittedValueCollection.isEmpty()) {
+                submittedValue = submittedValueCollection.iterator().next();
+            }
+        }
 
         putPropertyNameIntoBeanValidationContext("value");
 
@@ -144,7 +144,10 @@ public class MultiSelect extends AbstractField {
                 sizeA++;
             }
         }
-        writer.element("select", "name", getControlName(), "id", getClientId(), "multiple", true, "size", sizeA);
+        Element element = writer.element("select", "name", getControlName(), "id", getClientId(), "size", sizeA);
+        if (sizeA > 1) {
+            element.forceAttributes("multiple", "true");
+        }
 
         putPropertyNameIntoBeanValidationContext("value");
 
@@ -174,19 +177,36 @@ public class MultiSelect extends AbstractField {
 
     private ValueEncoder getEncoder() {
         if (null == encoderValue) {
-            if (null != encoder && emptyEncoder != encoder) {
-                return encoderValue = encoder;
+            if (null != model) {
+                if (null != model.getOptions()) {
+                    for (OptionModel option : model.getOptions()) {
+                        if (null != option.getValue()) {
+                            encoderValue = valueEncoderSource.getValueEncoder(option.getValue().getClass());
+                            break;
+                        }
+                    }
+                }
+                if (null != model.getOptionGroups()) {
+                    for (OptionGroupModel group : model.getOptionGroups()) {
+                        for (OptionModel option : group.getOptions()) {
+                            if (null != option.getValue()) {
+                                encoderValue = valueEncoderSource.getValueEncoder(option.getValue().getClass());
+                                break;
+                            }
+                        }
+                    }
+                }
             }
-            if (null == model || model.getOptions().isEmpty()) {
-                return emptyEncoder;
+            if (null == encoderValue) {
+                Class<?> valueClass = resources.getBoundType("value");
+                encoderValue = valueEncoderSource.getValueEncoder(valueClass);
             }
-            return encoderValue = valueEncoderSource.getValueEncoder(model.getOptions().get(0).getValue().getClass());
         }
         return encoderValue;
     }
 
     ValueEncoder defaultEncoder() {
-        return emptyEncoder;
+        return getEncoder();
     }
 
     Binding defaultValidate() {
@@ -206,14 +226,14 @@ public class MultiSelect extends AbstractField {
     }
 
     @BeforeRenderTemplate
-    protected void options(MarkupWriter writer) {
+    protected void options(final MarkupWriter writer) {
+
+        Renderer renderer = new Renderer(writer, getEncoder());
         if (showBlankOption()) {
             writer.element("option", "value", getEncoder().toClient(null));
             writer.write(blankLabel);
             writer.end();
         }
-
-        SelectModelVisitor renderer = new Renderer(writer, getEncoder());
 
         model.visit(renderer);
     }
@@ -241,10 +261,6 @@ public class MultiSelect extends AbstractField {
     void setModel(SelectModel model) {
         this.model = model;
         blankOption = BlankOption.NEVER;
-    }
-
-    void setValue(Collection value) {
-        this.value = value;
     }
 
     void setValidationTracker(ValidationTracker tracker) {
