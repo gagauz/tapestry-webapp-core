@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.spring.SpringConstants;
+import org.gagauz.tapestry.web.filter.LogFilter;
 import org.gagauz.tapestry.web.filter.StaticInterceptorFilter;
 import org.gagauz.tapestry.web.services.ContextRegistryTapestryFilter;
 import org.gagauz.utils.RequestInterceptorFilter;
@@ -46,6 +47,7 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
 		servletContext.addListener(new ContextLoaderListener(this.rootContext));
 
 		addFilter(StaticInterceptorFilter.class, getStaticResourcePathPrefix());
+		addFilter(LogFilter.class, getServletMapping());
 		addFilter(RequestInterceptorFilter.class, getServletMapping());
 
 		FilterRegistration.Dynamic appFilter = addFilter(ContextRegistryTapestryFilter.class, getServletMapping());
