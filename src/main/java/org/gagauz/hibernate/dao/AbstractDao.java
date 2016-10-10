@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 import org.gagauz.hibernate.utils.EntityFilter;
 import org.gagauz.hibernate.utils.HqlEntityFilter;
 import org.gagauz.hibernate.utils.QueryParameter;
@@ -19,6 +21,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.TransientObjectException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -86,22 +89,29 @@ public class AbstractDao<Id extends Serializable, Entity> {
     }
 
     public void setSession(Session session) {
+    }
 
+    protected CriteriaBuilder getCriteriaBuilder() {
+        return getSession().getCriteriaBuilder();
     }
 
     @SuppressWarnings("unchecked")
     public Id getIdentifier(Entity entity) {
-        return (Id) getSession().getIdentifier(entity);
+        try {
+            return (Id) getSession().getIdentifier(entity);
+        } catch (TransientObjectException e) {
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
     public Entity findById(Id id) {
-        return (Entity) getSession().get(entityClass, id);
+        return getSession().get(entityClass, id);
     }
 
     @SuppressWarnings("unchecked")
     public Entity loadById(Id id) {
-        return (Entity) getSession().load(entityClass, id);
+        return getSession().load(entityClass, id);
     }
 
     @SuppressWarnings("unchecked")
@@ -208,5 +218,4 @@ public class AbstractDao<Id extends Serializable, Entity> {
     public static Set<Class> getRegisteredEntities() {
         return Collections.unmodifiableSet(instanceMap.keySet());
     }
-
 }

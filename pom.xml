@@ -134,6 +134,11 @@
 			<version>${spring-release.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring-release.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.24</version>
@@ -214,9 +219,9 @@
 	<reporting />
 
 	<properties>
-		<tapestry-release.version>5.4.0</tapestry-release.version>
-		<hibernate-release.version>4.2.19.Final</hibernate-release.version>
-		<spring-release.version>4.0.2.RELEASE</spring-release.version>
+		<tapestry-release.version>5.4.1</tapestry-release.version>
+		<hibernate-release.version>5.2.2.Final</hibernate-release.version>
+		<spring-release.version>4.3.3.RELEASE</spring-release.version>
 		<servlet-api.version>3.1.0</servlet-api.version>
 		<tomcat-embedded.version>8.5.5</tomcat-embedded.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

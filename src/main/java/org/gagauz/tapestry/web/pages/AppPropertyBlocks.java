@@ -1,13 +1,17 @@
 package org.gagauz.tapestry.web.pages;
 
+import java.util.Collections;
+
 import javax.persistence.Column;
 import javax.persistence.Lob;
 
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.corelib.components.Select;
 import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -15,6 +19,7 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.services.PropertyOutputContext;
+import org.apache.tapestry5.services.SelectModelFactory;
 import org.apache.tapestry5.util.EnumValueEncoder;
 import org.gagauz.tapestry.web.components.BigDecimalField;
 
@@ -28,7 +33,7 @@ public class AppPropertyBlocks {
     @Component(parameters = {"value=context.propertyValue", "label=prop:context.label",
             "translate=prop:textAreaTranslator",
             "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
-            "annotationProvider=context"})
+    "annotationProvider=context"})
     private TextArea textArea;
 
     @Component(parameters = {"value=context.propertyValue", "label=prop:context.label",
@@ -36,11 +41,19 @@ public class AppPropertyBlocks {
             "clientId=prop:context.propertyId", "annotationProvider=context"})
     private BigDecimalField bigDecimalField;
 
+    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+            "model=prop:commonEntityModel", "validate=prop:commonEntityValidator",
+            "clientId=prop:context.propertyId", "annotationProvider=context" })
+    private Select commonEntity;
+
     @Inject
     private TypeCoercer typeCoercer;
 
     @Inject
     private FieldValidatorSource fieldValidatorSource;
+
+    @Inject
+    private SelectModelFactory selectModelFactory;
 
     @Environmental
     private PropertyEditContext context;
@@ -80,12 +93,20 @@ public class AppPropertyBlocks {
         return context.getValidator(textArea);
     }
 
+    public FieldValidator getCommonEntityValidator() {
+        return context.getValidator(commonEntity);
+    }
+
     /**
-    * Provide a value encoder for an enum type.
-    */
+     * Provide a value encoder for an enum type.
+     */
     @SuppressWarnings("unchecked")
     public ValueEncoder getValueEncoderForProperty() {
         return new EnumValueEncoder(typeCoercer, context.getPropertyType());
+    }
+
+    public SelectModel getCommonEntityModel() {
+        return selectModelFactory.create(Collections.emptyList());
     }
 
     //    public FieldValidator getNotNullValidator() {

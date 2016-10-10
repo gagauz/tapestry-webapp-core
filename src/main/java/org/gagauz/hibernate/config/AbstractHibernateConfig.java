@@ -2,11 +2,12 @@ package org.gagauz.hibernate.config;
 
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -20,7 +21,7 @@ public abstract class AbstractHibernateConfig {
     public abstract DataSource dataSource();
 
     @Bean(autowire = Autowire.BY_NAME)
-    public abstract LocalSessionFactoryBean sessionFactory();
+    public abstract FactoryBean<SessionFactory> sessionFactory();
 
     @Bean(autowire = Autowire.BY_NAME)
     public PlatformTransactionManager transactionManager() {
