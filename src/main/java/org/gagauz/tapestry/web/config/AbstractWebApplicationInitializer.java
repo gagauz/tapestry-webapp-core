@@ -48,6 +48,7 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
         servletContext.addListener(new ContextLoaderListener(rootContext));
 
         addFilter(StaticInterceptorFilter.class, getStaticResourcePathPrefix());
+		addFilter(LogFilter.class, getServletMapping());
         addFilter(RequestInterceptorFilter.class, getServletMapping());
         addFilter(LogFilter.class, getServletMapping());
         addFilter(UploadFilter.class, getServletMapping());

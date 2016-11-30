@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class LogFilter implements Filter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LogFilter.class);
-	private static final String SEPARATOR = "---------------------------------------\n";
+	private static final String SEPARATOR = "\n---------------------------------------\n";
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -30,11 +31,15 @@ public class LogFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			HttpServletRequest request0 = (HttpServletRequest) request;
-			StringBuilder sb = new StringBuilder("Exception while processing request:");
-			sb.append(request0.getProtocol()).append(' ').append(request0.getMethod()).append(' ').append(request0.getPathInfo());
+			HttpServletResponse response0 = (HttpServletResponse) response;
+			StringBuilder sb = new StringBuilder("Exception while processing request\n");
+			sb.append(request0.getProtocol()).append(' ').append(request0.getMethod()).append(' ').append(request0.getRequestURI());
 			if (null != request0.getQueryString()) {
-				sb.append('?').append(request0.getQueryString()).append('\n');
+				sb.append('?').append(request0.getQueryString());
 			}
+			sb.append(SEPARATOR);
+			sb.append("Remote addr: ").append(request0.getRemoteAddr()).append('\n');
+			sb.append("Server name: ").append(request0.getServerName());
 			sb.append(SEPARATOR);
 			Enumeration<String> names = request0.getHeaderNames();
 			while (names.hasMoreElements()) {
