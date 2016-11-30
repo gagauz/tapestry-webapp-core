@@ -1,5 +1,7 @@
 package org.gagauz.tapestry.web.components;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -14,6 +16,7 @@ import org.apache.tapestry5.NullFieldStrategy;
 import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.ValueEncoder;
@@ -30,6 +33,7 @@ import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValueEncoderSource;
@@ -73,6 +77,10 @@ public class MultiSelect extends AbstractField {
 
     @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "1")
     protected int size;
+
+    @Inject
+    @Symbol(SymbolConstants.FORM_FIELD_CSS_CLASS)
+    protected String cssClass;
 
     @Inject
     private Request request;
@@ -144,7 +152,7 @@ public class MultiSelect extends AbstractField {
                 sizeA++;
             }
         }
-        Element element = writer.element("select", "name", getControlName(), "id", getClientId(), "size", sizeA);
+        Element element = writer.element("select", "name", getControlName(), "id", getClientId(), "size", sizeA, "class", cssClass);
         if (sizeA > 1) {
             element.forceAttributes("multiple", "true");
         }
@@ -198,7 +206,18 @@ public class MultiSelect extends AbstractField {
                 }
             }
             if (null == encoderValue) {
-                Class<?> valueClass = resources.getBoundType("value");
+                Type type = resources.getBoundGenericType("value");
+                Class<?> valueClass = null;
+                if (null != type && type instanceof ParameterizedType) {
+                    try {
+                        valueClass = Class.forName(((ParameterizedType) type).getActualTypeArguments()[0].getTypeName());
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (null == valueClass) {
+                    valueClass = resources.getBoundType("value");
+                }
                 encoderValue = valueEncoderSource.getValueEncoder(valueClass);
             }
         }
@@ -230,7 +249,8 @@ public class MultiSelect extends AbstractField {
 
         Renderer renderer = new Renderer(writer, getEncoder());
         if (showBlankOption()) {
-            writer.element("option", "value", getEncoder().toClient(null));
+            Element el = writer.element("option");
+            el.attribute("value", "");
             writer.write(blankLabel);
             writer.end();
         }

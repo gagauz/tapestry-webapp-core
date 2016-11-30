@@ -1,12 +1,18 @@
 package org.gagauz.hibernate.utils;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.gagauz.utils.C;
 import org.gagauz.utils.Function;
-import org.hibernate.Query;
-
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
 
 public class HqlEntityFilter {
     public static enum OrderMode {
@@ -43,8 +49,8 @@ public class HqlEntityFilter {
 
     protected int indexFrom = -1;
     protected int indexTo = -1;
-    private Map<String, OrderMode> orderBy = new LinkedHashMap<String, OrderMode>();
-    private List<Triple> criterias = C.newArrayList();
+    private Map<String, OrderMode> orderBy = new LinkedHashMap<>();
+    private List<Triple> criterias = C.arrayList();
 
     public HqlEntityFilter in(String name, Collection<?> value) {
         criterias.add(new Triple(SqlOp.IN, name, value));
@@ -107,23 +113,23 @@ public class HqlEntityFilter {
     }
 
     public HqlEntityFilter limit(int limit) {
-        this.indexTo = limit;
+        indexTo = limit;
         return this;
     }
 
     public HqlEntityFilter limit(int from, int limit) {
-        this.indexFrom = from;
-        this.indexTo = from + limit;
+        indexFrom = from;
+        indexTo = from + limit;
         return this;
     }
 
     public HqlEntityFilter orderAsc(String column) {
-        this.orderBy.put(column, OrderMode.ASC);
+        orderBy.put(column, OrderMode.ASC);
         return this;
     }
 
     public HqlEntityFilter orderDecs(String column) {
-        this.orderBy.put(column, OrderMode.DESC);
+        orderBy.put(column, OrderMode.DESC);
         return this;
     }
 
@@ -202,13 +208,15 @@ public class HqlEntityFilter {
                     if (null == c.value[i]) {
                         q.setParameter("p" + n, null);
                     } else if (c.value[i] instanceof Integer) {
-                        q.setInteger("p" + n, (Integer) c.value[i]);
+                        q.setParameter("p" + n, c.value[i], StandardBasicTypes.INTEGER);
                     } else if (c.value[i] instanceof Long) {
-                        q.setLong("p" + n, (Long) c.value[i]);
+                        q.setParameter("p" + n, c.value[i], StandardBasicTypes.LONG);
                     } else if (c.value[i] instanceof BigDecimal) {
-                        q.setBigDecimal("p" + n, (BigDecimal) c.value[i]);
+                        q.setParameter("p" + n, c.value[i], StandardBasicTypes.BIG_DECIMAL);
+                    } else if (c.value[i] instanceof BigInteger) {
+                        q.setParameter("p" + n, c.value[i], StandardBasicTypes.BIG_INTEGER);
                     } else if (c.value[i] instanceof Double) {
-                        q.setDouble("p" + n, (Double) c.value[i]);
+                        q.setParameter("p" + n, c.value[i], StandardBasicTypes.DOUBLE);
                     } else {
                         q.setParameter("p" + n, c.value[i]);
                     }

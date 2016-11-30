@@ -17,14 +17,14 @@ import org.gagauz.hibernate.utils.EntityFilter;
 import org.gagauz.hibernate.utils.HqlEntityFilter;
 import org.gagauz.hibernate.utils.QueryParameter;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.TransientObjectException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractDao<Id extends Serializable, Entity> {
@@ -46,13 +46,14 @@ public class AbstractDao<Id extends Serializable, Entity> {
         });
     }
     @SuppressWarnings("rawtypes")
-    protected static final Map<Class, AbstractDao> instanceMap = new HashMap<Class, AbstractDao>();
+    protected static final Map<Class, AbstractDao> instanceMap = new HashMap<>();
 
     @Autowired
     protected SessionFactory sessionFactory;
 
     protected final Class<Id> idClass;
     protected final Class<Entity> entityClass;
+
     private final Function<String, Id> idDeserialiser;
 
     @SuppressWarnings("unchecked")
@@ -64,6 +65,9 @@ public class AbstractDao<Id extends Serializable, Entity> {
         idDeserialiser = getIdDeserializer();
     }
 
+    public Class<Entity> getEntityClass() {
+        return entityClass;
+    }
 
     @SuppressWarnings("unchecked")
     protected Function<String, Id> getIdDeserializer() {
@@ -126,8 +130,8 @@ public class AbstractDao<Id extends Serializable, Entity> {
         return getSession().createQuery(queryString);
     }
 
-    public SQLQuery createSQLQuery(String queryString) {
-        return getSession().createSQLQuery(queryString);
+    public NativeQuery createSQLQuery(String queryString) {
+        return getSession().createNativeQuery(queryString);
     }
 
     @SuppressWarnings("unchecked")
@@ -160,6 +164,10 @@ public class AbstractDao<Id extends Serializable, Entity> {
 
     public Criteria createCriteria() {
         return getSession().createCriteria(entityClass);
+    }
+
+    public CriteriaBuilder createCriteriaBuilder() {
+        return getSession().getCriteriaBuilder();
     }
 
     @SuppressWarnings("rawtypes")

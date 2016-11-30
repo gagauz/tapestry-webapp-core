@@ -9,52 +9,55 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.gagauz.utils.multimap.ListMultimap;
+import org.gagauz.utils.multimap.Multimaps;
+
 public class C {
     public static <K, V> HashMap<K, V> newHashMap() {
-        return new HashMap<K, V>();
+        return new HashMap<>();
     }
 
     public static <K, V> HashMap<K, V> newHashMap(Map<K, V> source) {
-        return new HashMap<K, V>(source);
+        return new HashMap<>(source);
     }
 
     public static <E> HashSet<E> newHashSet() {
-        return new HashSet<E>();
+        return new HashSet<>();
     }
 
     public static <E> HashSet<E> newHashSet(Collection<E> source) {
-        return new HashSet<E>(source);
+        return new HashSet<>(source);
     }
 
     public static <E> HashSet<E> newHashSet(E e, @SuppressWarnings("unchecked") E... source) {
-        HashSet<E> set = new HashSet<E>();
+        HashSet<E> set = new HashSet<>();
         set.add(e);
         set.addAll(Arrays.asList(source));
         return set;
     }
 
-    public static <E> ArrayList<E> newArrayList() {
-        return new ArrayList<E>();
+    public static <E> ArrayList<E> arrayList() {
+        return new ArrayList<>();
     }
 
     public static <E> ArrayList<E> newArrayList(int capacity) {
-        return new ArrayList<E>(capacity);
+        return new ArrayList<>(capacity);
     }
 
     public static <E> ArrayList<E> newArrayList(Collection<E> source) {
-        return new ArrayList<E>(source);
+        return new ArrayList<>(source);
     }
 
     public static <E> LinkedList<E> newLinkedList() {
-        return new LinkedList<E>();
+        return new LinkedList<>();
     }
 
     public static <E> LinkedList<E> newLinkedList(Collection<E> source) {
-        return new LinkedList<E>(source);
+        return new LinkedList<>(source);
     }
 
     public static <P, V> Collection<V> transform(Collection<P> iterable, Function<P, V> adapter) {
-        Collection<V> result = new ArrayList<V>(iterable.size());
+        Collection<V> result = new ArrayList<>(iterable.size());
         for (P p : iterable) {
             result.add(adapter.call(p));
         }
@@ -62,7 +65,7 @@ public class C {
     }
 
     public static <P, V> Collection<V> transform(P[] iterable, Function<P, V> adapter) {
-        ArrayList<V> result = new ArrayList<V>(iterable.length);
+        ArrayList<V> result = new ArrayList<>(iterable.length);
         for (P p : iterable) {
             result.add(adapter.call(p));
         }
@@ -116,10 +119,51 @@ public class C {
         return false;
     }
 
-    public static Map<Object, Object> newHashMap(Object... keyAndValues) {
-        Map<Object, Object> map = newHashMap();
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> hashMap(Object... keyAndValues) {
+        Map<K, V> map = newHashMap();
         for (int i = 0; i + 1 < keyAndValues.length; i = i + 2)
-            map.put(keyAndValues[i], keyAndValues[i + 1]);
+            map.put((K) keyAndValues[i], (V) keyAndValues[i + 1]);
         return map;
+    }
+
+    public static <K, V> Map<K, V> hashMap(Collection<V> values, Function<V, K> keyFunc) {
+        Map<K, V> result = newHashMap();
+        for (V v : values) {
+            result.put(keyFunc.call(v), v);
+        }
+        return result;
+    }
+
+    public static <K, V, Z> Map<K, Z> hashMap(Collection<V> values, Function<V, K> keyFunc, Function<V, Z> valueFunc) {
+        Map<K, Z> result = newHashMap();
+        for (V v : values) {
+            result.put(keyFunc.call(v), valueFunc.call(v));
+        }
+        return result;
+    }
+
+    public static <K, V> ListMultimap<K, V> listMultiMap(Collection<V> values, Function<V, K> keyFunc) {
+        ListMultimap<K, V> result = Multimaps.newArrayListMultimap();
+        for (V v : values) {
+            result.put(keyFunc.call(v), v);
+        }
+        return result;
+    }
+
+    public static <K, V, Z> ListMultimap<K, Z> listMultiMap(Collection<V> values, Function<V, K> keyFunc, Function<V, Z> valueFunc) {
+        ListMultimap<K, Z> result = Multimaps.newArrayListMultimap();
+        for (V v : values) {
+            result.put(keyFunc.call(v), valueFunc.call(v));
+        }
+        return result;
+    }
+
+    public static <K, V, Z> ListMultimap<K, Z> listSortedMultiMap(Collection<V> values, Function<V, K> keyFunc, Function<V, Z> valueFunc) {
+        ListMultimap<K, Z> result = Multimaps.newArrayListSortedMultimap();
+        for (V v : values) {
+            result.put(keyFunc.call(v), valueFunc.call(v));
+        }
+        return result;
     }
 }

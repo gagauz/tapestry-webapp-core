@@ -10,9 +10,12 @@ import org.gagauz.utils.C;
 import org.gagauz.utils.Function;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
+
 
 public class EntityFilter {
     public static enum OrderMode {
@@ -32,8 +35,8 @@ public class EntityFilter {
 
     protected int indexFrom = -1;
     protected int indexTo = -1;
-    private Map<String, OrderMode> orderBy = new LinkedHashMap<String, OrderMode>();
-    private List<Alias> aliases = C.newArrayList();
+    private Map<String, OrderMode> orderBy = new LinkedHashMap<>();
+    private List<Alias> aliases = C.arrayList();
     private Criterion criteria = null;
 
     private final Function<Criterion, EntityFilter> OR = new Function<Criterion, EntityFilter>() {
@@ -86,6 +89,12 @@ public class EntityFilter {
         return mode.call(Restrictions.in(name, value));
     }
 
+    public EntityFilter in(String name, Object value, Class<?> clazz) {
+        DetachedCriteria dc = DetachedCriteria.forClass(clazz);
+        dc.add(Restrictions.eq(name, value));
+        return mode.call(Subqueries.exists(dc));
+    }
+
     public EntityFilter eq(String name, Object value) {
         return mode.call(Restrictions.eq(name, value));
     }
@@ -131,28 +140,28 @@ public class EntityFilter {
     }
 
     public EntityFilter limit(int limit) {
-        this.indexTo = limit;
+        indexTo = limit;
         return this;
     }
 
     public EntityFilter limit(int from, int limit) {
-        this.indexFrom = from;
-        this.indexTo = from + limit;
+        indexFrom = from;
+        indexTo = from + limit;
         return this;
     }
 
     public EntityFilter addAlias(String path, String alias) {
-        this.aliases.add(new Alias(path, alias));
+        aliases.add(new Alias(path, alias));
         return this;
     }
 
     public EntityFilter orderAsc(String column) {
-        this.orderBy.put(column, OrderMode.ASC);
+        orderBy.put(column, OrderMode.ASC);
         return this;
     }
 
     public EntityFilter orderDecs(String column) {
-        this.orderBy.put(column, OrderMode.DESC);
+        orderBy.put(column, OrderMode.DESC);
         return this;
     }
 
@@ -161,7 +170,9 @@ public class EntityFilter {
             source.createAlias(a.path, a.alias);
         }
 
-        source.add(criteria);
+        if (null != criteria) {
+            source.add(criteria);
+        }
 
         if (indexTo > 0 && indexFrom >= 0) {
             source.setFirstResult(indexFrom);

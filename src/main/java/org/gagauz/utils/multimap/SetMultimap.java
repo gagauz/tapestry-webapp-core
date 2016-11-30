@@ -69,7 +69,7 @@ public interface SetMultimap<K, V> extends Multimap<K, V> {
      * Though the method signature doesn't say so explicitly, the returned map has {@link List} values.
      */
     @Override
-    Map<K, ? extends Set<V>> asMap();
+    Map<K, Set<V>> asMap();
 
     /**
      * Compares the specified object to this multimap for equality.

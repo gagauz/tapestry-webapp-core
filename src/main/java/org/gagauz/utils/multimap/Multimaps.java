@@ -1,6 +1,14 @@
 package org.gagauz.utils.multimap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public final class Multimaps {
 
@@ -8,11 +16,11 @@ public final class Multimaps {
     }
 
     public static <K, V> SetMultimap<K, V> newHashMultimap() {
-        return new HashMultimap<K, V>(new HashMap<K, Set<V>>());
+        return new HashMultimap<>(new HashMap<K, Set<V>>());
     }
 
     public static <K, V> SetMultimap<K, V> newHashMultimap(Map<K, Set<V>> map) {
-        return new HashMultimap<K, V>(new HashMap<K, Set<V>>(map));
+        return new HashMultimap<>(new HashMap<>(map));
     }
 
     public static <K, V> SetMultimap<K, V> newLinkedHashMultimap() {
@@ -20,23 +28,27 @@ public final class Multimaps {
     }
 
     public static <K, V> SetMultimap<K, V> newLinkedHashMultimap(Map<K, Set<V>> map) {
-        return new LinkedHashMultimap<K, V>(map);
+        return new LinkedHashMultimap<>(map);
     }
 
     public static <K, V> ListMultimap<K, V> newArrayListMultimap() {
         return newArrayListMultimap(new HashMap<K, List<V>>());
     }
 
+    public static <K, V> ListMultimap<K, V> newArrayListSortedMultimap() {
+        return newArrayListMultimap(new TreeMap<K, List<V>>());
+    }
+
     public static <K, V> ListMultimap<K, V> newArrayListMultimap(Map<K, List<V>> map) {
-        return new ArrayListMultimap<K, V>(map);
+        return new ArrayListMultimap<>(map);
     }
 
     public static <K, V> ListMultimap<K, V> newLinkedListMultimap() {
-        return new LinkedListMultimap<K, V>(new HashMap<K, List<V>>());
+        return new LinkedListMultimap<>(new HashMap<K, List<V>>());
     }
 
     public static <K, V> ListMultimap<K, V> newLinkedListMultimap(Map<K, List<V>> map) {
-        return new LinkedListMultimap<K, V>(new HashMap<K, List<V>>(map));
+        return new LinkedListMultimap<>(new HashMap<>(map));
     }
 
     private static final class ArrayListMultimap<K, V> extends
@@ -49,7 +61,7 @@ public final class Multimaps {
 
         @Override
         List<V> createCollection() {
-            return new ArrayList<V>();
+            return new ArrayList<>();
         }
     }
 
@@ -63,7 +75,7 @@ public final class Multimaps {
 
         @Override
         List<V> createCollection() {
-            return new LinkedList<V>();
+            return new LinkedList<>();
         }
     }
 
@@ -77,7 +89,7 @@ public final class Multimaps {
 
         @Override
         Set<V> createCollection() {
-            return new HashSet<V>();
+            return new HashSet<>();
         }
 
         @Override
@@ -96,7 +108,7 @@ public final class Multimaps {
 
         @Override
         Set<V> createCollection() {
-            return new LinkedHashSet<V>();
+            return new LinkedHashSet<>();
         }
 
         @Override
@@ -105,7 +117,8 @@ public final class Multimaps {
         }
     }
 
-    private abstract static class AbstractListMultimap<K, V, C extends List<V>> extends AbstractMultimap<K, V, C> implements ListMultimap<K, V> {
+    private abstract static class AbstractListMultimap<K, V, C extends List<V>> extends AbstractMultimap<K, V, C>
+            implements ListMultimap<K, V> {
         private static final long serialVersionUID = -8521842722983271296L;
 
         protected AbstractListMultimap(Map<K, C> map) {
@@ -113,8 +126,8 @@ public final class Multimaps {
         }
 
         @Override
-        public Map<K, ? extends List<V>> asMap() {
-            return createMap();
+        public Map<K, List<V>> asMap() {
+            return (Map<K, List<V>>) createMap();
         }
     }
 }

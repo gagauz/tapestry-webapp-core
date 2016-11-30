@@ -24,7 +24,8 @@ import java.util.Map;
  * the insertion ordering of values for a given key.
  * <p/>
  * <p/>
- * The {@link #get}, {@link #removeAll}, and {@link #replaceValues} methods each return a {@link List} of values. Though the method signature doesn't say so
+ * The {@link #get}, {@link #removeAll}, and {@link #replaceValues} methods each
+ * return a {@link List} of values. Though the method signature doesn't say so
  * explicitly, the map returned by {@link #asMap} has {@code List} values.
  *
  * @author Jared Levy
@@ -35,7 +36,8 @@ public interface ListMultimap<K, V> extends Multimap<K, V> {
      * {@inheritDoc}
      * <p/>
      * <p/>
-     * Because the values for a given key may have duplicates and follow the insertion ordering, this method returns a {@link List}, instead of the
+     * Because the values for a given key may have duplicates and follow the
+     * insertion ordering, this method returns a {@link List}, instead of the
      * {@link java.util.Collection} specified in the {@link Multimap} interface.
      */
     @Override
@@ -45,7 +47,8 @@ public interface ListMultimap<K, V> extends Multimap<K, V> {
      * {@inheritDoc}
      * <p/>
      * <p/>
-     * Because the values for a given key may have duplicates and follow the insertion ordering, this method returns a {@link List}, instead of the
+     * Because the values for a given key may have duplicates and follow the
+     * insertion ordering, this method returns a {@link List}, instead of the
      * {@link java.util.Collection} specified in the {@link Multimap} interface.
      */
     @Override
@@ -55,7 +58,8 @@ public interface ListMultimap<K, V> extends Multimap<K, V> {
      * {@inheritDoc}
      * <p/>
      * <p/>
-     * Because the values for a given key may have duplicates and follow the insertion ordering, this method returns a {@link List}, instead of the
+     * Because the values for a given key may have duplicates and follow the
+     * insertion ordering, this method returns a {@link List}, instead of the
      * {@link java.util.Collection} specified in the {@link Multimap} interface.
      */
     @Override
@@ -65,17 +69,19 @@ public interface ListMultimap<K, V> extends Multimap<K, V> {
      * {@inheritDoc}
      * <p/>
      * <p/>
-     * Though the method signature doesn't say so explicitly, the returned map has {@link List} values.
+     * Though the method signature doesn't say so explicitly, the returned map
+     * has {@link List} values.
      */
     @Override
-    Map<K, ? extends List<V>> asMap();
+    Map<K, List<V>> asMap();
 
     /**
      * Compares the specified object to this multimap for equality.
      * <p/>
      * <p/>
-     * Two {@code ListMultimap} instances are equal if, for each key, they contain the same values in the same order. If the value orderings disagree, the
-     * multimaps will not be considered equal.
+     * Two {@code ListMultimap} instances are equal if, for each key, they
+     * contain the same values in the same order. If the value orderings
+     * disagree, the multimaps will not be considered equal.
      */
     @Override
     boolean equals(Object obj);

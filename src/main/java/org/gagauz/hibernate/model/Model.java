@@ -1,11 +1,11 @@
 package org.gagauz.hibernate.model;
 
+import java.io.Serializable;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
@@ -32,6 +32,6 @@ public abstract class Model implements Serializable {
         if (obj == null) {
             return false;
         }
-        return this == obj || obj.hashCode() == hashCode();
+        return this == obj || (hashCode() > 0 && obj.hashCode() == hashCode());
     }
 }
