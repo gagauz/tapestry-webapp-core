@@ -101,7 +101,7 @@ public class C {
         return null;
     }
 
-    public static <E> E find(Collection<E> iterable, Filter<E> filter) {
+    public static <E> E find(E[] iterable, Filter<E> filter) {
         for (E element : iterable) {
             if (filter.apply(element)) {
                 return element;
@@ -109,6 +109,15 @@ public class C {
         }
         return null;
     }
+
+    // public static <E> E find(Collection<E> iterable, Filter<E> filter) {
+    // for (E element : iterable) {
+    // if (filter.apply(element)) {
+    // return element;
+    // }
+    // }
+    // return null;
+    // }
 
     public static <E> boolean has(Collection<E> iterable, Filter<E> filter) {
         for (E element : iterable) {

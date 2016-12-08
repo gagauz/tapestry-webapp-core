@@ -47,10 +47,9 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
         servletContext.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
         servletContext.addListener(new ContextLoaderListener(rootContext));
 
-        addFilter(StaticInterceptorFilter.class, getStaticResourcePathPrefix());
-		addFilter(LogFilter.class, getServletMapping());
-        addFilter(RequestInterceptorFilter.class, getServletMapping());
         addFilter(LogFilter.class, getServletMapping());
+        addFilter(StaticInterceptorFilter.class, getStaticResourcePathPrefix());
+        addFilter(RequestInterceptorFilter.class, getServletMapping());
         addFilter(UploadFilter.class, getServletMapping());
 
         FilterRegistration.Dynamic appFilter = addFilter(ContextRegistryTapestryFilter.class, getServletMapping());
@@ -73,7 +72,14 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
     protected abstract boolean getUseExternalSpringContext();
 
     protected final FilterRegistration.Dynamic addFilter(Class<? extends Filter> filterClass, String... urlMappings) {
-        FilterRegistration.Dynamic filter = Global.servletContext.addFilter(filterClass.getSimpleName(), filterClass);
+        final String filterName = filterClass.getSimpleName();
+        final FilterRegistration.Dynamic filter = Global.servletContext.addFilter(filterName, filterClass);
+        if (null == filter) {
+            final FilterRegistration filterRegistration = Global.servletContext.getFilterRegistration(filterName);
+
+            throw new IllegalStateException("Servlet context aready contains filter [" + filterName + "] of type "
+                    + filterRegistration.getClassName() + ", mapped to " + filterRegistration.getUrlPatternMappings());
+        }
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, urlMappings);
         return filter;
     }
