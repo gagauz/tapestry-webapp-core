@@ -47,9 +47,9 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
         servletContext.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
         servletContext.addListener(new ContextLoaderListener(rootContext));
 
-        addFilter(LogFilter.class, getServletMapping());
         addFilter(StaticInterceptorFilter.class, getStaticResourcePathPrefix());
         addFilter(RequestInterceptorFilter.class, getServletMapping());
+        addFilter(LogFilter.class, getServletMapping());
         addFilter(UploadFilter.class, getServletMapping());
 
         FilterRegistration.Dynamic appFilter = addFilter(ContextRegistryTapestryFilter.class, getServletMapping());

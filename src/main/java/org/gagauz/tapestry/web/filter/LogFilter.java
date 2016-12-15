@@ -2,8 +2,6 @@ package org.gagauz.tapestry.web.filter;
 
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Optional;
-import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,11 +9,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.gagauz.utils.C;
+import org.gagauz.tapestry.web.config.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -24,11 +21,6 @@ public class LogFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogFilter.class);
     private static final String SEPARATOR = "\n---------------------------------------\n";
-
-    private static final String MDC_COOKIE_NAME = "uuid";
-    private static final org.gagauz.utils.Filter<Cookie> COOKIE = c -> {
-        return c.getName().equals(MDC_COOKIE_NAME);
-    };
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -39,15 +31,7 @@ public class LogFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest request0 = (HttpServletRequest) request;
         final HttpServletResponse response0 = (HttpServletResponse) response;
-        Cookie cookie = C.find(Optional.ofNullable(request0.getCookies()).orElse(new Cookie[0]), COOKIE);
-        String uid = null;
-        if (null == cookie) {
-            uid = UUID.randomUUID().toString();
-            response0.addCookie(new Cookie(MDC_COOKIE_NAME, uid));
-        } else {
-            uid = cookie.getValue();
-        }
-        MDC.put(MDC_COOKIE_NAME, uid);
+        MDC.put(Global.UUID_COOKIE_NAME, Global.getUuid());
         try {
             chain.doFilter(request, response);
         } catch (Exception e) {
@@ -75,7 +59,7 @@ public class LogFilter implements Filter {
             LOG.error(sb.toString(), e);
             throw e;
         } finally {
-            MDC.remove(MDC_COOKIE_NAME);
+            MDC.remove(Global.UUID_COOKIE_NAME);
         }
     }
 

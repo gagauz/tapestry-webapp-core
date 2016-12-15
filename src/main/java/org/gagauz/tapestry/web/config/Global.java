@@ -4,61 +4,93 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.gagauz.utils.C;
+
 public class Global {
-	protected static Locale DEFAULT_LOCALE = Locale.ENGLISH;
-	protected static ServletContext servletContext;
-	private static final ThreadLocal<HttpServletRequest> requestHolder = new ThreadLocal<>();
-	private static final ThreadLocal<HttpServletResponse> responseHolder = new ThreadLocal<>();
-	private static final ThreadLocal<Map<Class<?>, Object>> requestDataHolder = new ThreadLocal<>();
 
-	public static ServletContext getServletContex() {
-		return servletContext;
-	}
+    public static final String UUID_COOKIE_NAME = "uuid";
 
-	public static HttpServletRequest getRequest() {
-		return requestHolder.get();
-	}
+    private static final String EMPTY_UUID = "-1".intern();
 
-	public static HttpServletResponse getResponse() {
-		return responseHolder.get();
-	}
+    private static class RequestThreadData {
+        final HttpServletRequest request;
+        final HttpServletResponse response;
+        String uuid = EMPTY_UUID;
+        Map<Class<?>, Object> map = Collections.EMPTY_MAP;
 
-	public static Locale getLocale() {
-		HttpServletRequest request = requestHolder.get();
-		return null == request || null == request.getLocale() ? DEFAULT_LOCALE : request.getLocale();
-	}
+        RequestThreadData(HttpServletRequest request, HttpServletResponse response) {
+            this.request = request;
+            this.response = response;
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public static void init(HttpServletRequest request, HttpServletResponse response) {
-		requestHolder.set(request);
-		responseHolder.set(response);
-		requestDataHolder.set(Collections.EMPTY_MAP);
-	}
+    private static final org.gagauz.utils.Filter<Cookie> UUID_COOKIE = c -> {
+        return c.getName().equals(UUID_COOKIE_NAME);
+    };
 
-	@SuppressWarnings("unchecked")
-	public static <T> T peek(Class<T> class1) {
-		return (T) requestDataHolder.get().get(class1);
-	}
+    protected static Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    protected static ServletContext servletContext;
+    private static final ThreadLocal<RequestThreadData> requestDataHolder = new ThreadLocal<>();
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> void put(Class<T> class1, T value) {
-		Map map = requestDataHolder.get();
-		if (Collections.EMPTY_MAP == map) {
-			map = new HashMap<>();
-			requestDataHolder.set(map);
-		}
-		map.put(class1, value);
-	}
+    public static ServletContext getServletContex() {
+        return servletContext;
+    }
 
-	public static void clear() {
-		requestDataHolder.remove();
-		responseHolder.remove();
-		requestHolder.remove();
-	}
+    public static HttpServletRequest getRequest() {
+        return requestDataHolder.get().request;
+    }
 
+    public static HttpServletResponse getResponse() {
+        return requestDataHolder.get().response;
+    }
+
+    public static Locale getLocale() {
+        HttpServletRequest request = getRequest();
+        return null == request || null == request.getLocale() ? DEFAULT_LOCALE : request.getLocale();
+    }
+
+    public static void init(HttpServletRequest request, HttpServletResponse response) {
+        requestDataHolder.set(new RequestThreadData(request, response));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T peek(Class<T> class1) {
+        return (T) requestDataHolder.get().map.get(class1);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> void put(Class<T> class1, T value) {
+        Map map = requestDataHolder.get().map;
+        if (Collections.EMPTY_MAP == map) {
+            map = new HashMap<>();
+            requestDataHolder.get().map = map;
+        }
+        map.put(class1, value);
+    }
+
+    public static void clear() {
+        requestDataHolder.remove();
+    }
+
+    public static String getUuid() {
+        final RequestThreadData requestThreadData = requestDataHolder.get();
+        if (EMPTY_UUID.equals(requestThreadData.uuid)) {
+            final Cookie cookie = C.find(getRequest().getCookies(), UUID_COOKIE);
+            if (null != cookie) {
+                requestThreadData.uuid = cookie.getValue();
+            } else {
+                requestThreadData.uuid = UUID.randomUUID().toString();
+                Cookie uuidCookie = new Cookie(UUID_COOKIE_NAME, requestThreadData.uuid);
+                getResponse().addCookie(cookie);
+            }
+        }
+        return requestThreadData.uuid;
+    }
 }

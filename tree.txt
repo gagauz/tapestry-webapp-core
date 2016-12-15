@@ -1,7 +1,8 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.gagauz:tapestry-webapp-core:jar:1.0
-[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-jar-plugin is missing. @ line 186, column 12
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework:spring-beans:jar -> duplicate declaration of version ${spring-release.version} @ line 136, column 15
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-jar-plugin is missing. @ line 188, column 12
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -13,43 +14,47 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ tapestry-webapp-core ---
-Downloading: https://repo.maven.apache.org/maven2/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6.jar
-3/42 KB   5/42 KB   8/42 KB   11/42 KB   13/42 KB   16/42 KB   19/42 KB   21/42 KB   24/42 KB   27/42 KB   29/42 KB   32/42 KB   36/42 KB   40/42 KB   42/42 KB              Downloaded: https://repo.maven.apache.org/maven2/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6.jar (42 KB at 47.2 KB/sec)
 [INFO] org.gagauz:tapestry-webapp-core:jar:1.0
-[INFO] +- org.apache.tapestry:tapestry-core:jar:5.4.0:compile
-[INFO] |  +- org.apache.tapestry:beanmodel:jar:5.4.0:compile
-[INFO] |  |  +- org.antlr:antlr-runtime:jar:3.5.2:compile
-[INFO] |  |  \- org.apache.tapestry:commons:jar:5.4.0:compile
-[INFO] |  +- org.apache.tapestry:tapestry-json:jar:5.4.0:compile
-[INFO] |  \- commons-codec:commons-codec:jar:1.10:compile
-[INFO] +- org.apache.tapestry:tapestry-ioc:jar:5.4.0:compile
-[INFO] |  +- javax.inject:javax.inject:jar:1:compile
-[INFO] |  +- org.apache.tapestry:tapestry5-annotations:jar:5.4.0:compile
-[INFO] |  +- org.apache.tapestry:plastic:jar:5.4.0:compile
-[INFO] |  \- org.apache.tapestry:tapestry-func:jar:5.4.0:compile
-[INFO] +- org.apache.tapestry:tapestry-upload:jar:5.4.0:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] +- org.apache.tomcat.embed:tomcat-embed-core:jar:8.5.5:compile
+[INFO] +- org.apache.tapestry:tapestry-core:jar:5.4.1:compile
+[INFO] |  +- org.apache.tapestry:beanmodel:jar:5.4.1:compile
+[INFO] |  |  +- org.apache.tapestry:commons:jar:5.4.1:compile
+[INFO] |  |  \- org.antlr:antlr-runtime:jar:3.5.2:compile
+[INFO] |  +- commons-codec:commons-codec:jar:1.10:compile
+[INFO] |  \- org.apache.tapestry:tapestry-json:jar:5.4.1:compile
+[INFO] +- org.apache.tapestry:tapestry-ioc:jar:5.4.1:compile
+[INFO] |  +- org.apache.tapestry:tapestry-func:jar:5.4.1:compile
+[INFO] |  +- org.apache.tapestry:tapestry5-annotations:jar:5.4.1:compile
+[INFO] |  +- org.apache.tapestry:plastic:jar:5.4.1:compile
+[INFO] |  \- javax.inject:javax.inject:jar:1:compile
+[INFO] +- org.apache.tapestry:tapestry-upload:jar:5.4.1:compile
 [INFO] |  +- commons-io:commons-io:jar:2.4:compile
 [INFO] |  \- commons-fileupload:commons-fileupload:jar:1.3.1:compile
 [INFO] +- org.apache.commons:commons-lang3:jar:3.4:compile
-[INFO] +- org.apache.tapestry:tapestry-spring:jar:5.4.0:compile
-[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
-[INFO] +- org.hibernate:hibernate-core:jar:4.2.19.Final:compile
+[INFO] +- org.apache.tapestry:tapestry-spring:jar:5.4.1:compile
+[INFO] +- org.hibernate:hibernate-core:jar:5.2.2.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar:1.0.0.Final:compile
 [INFO] |  +- antlr:antlr:jar:2.7.7:compile
-[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.1.0.GA:compile
+[INFO] |  +- org.apache.geronimo.specs:geronimo-jta_1.1_spec:jar:1.1.1:compile
+[INFO] |  +- org.jboss:jandex:jar:2.0.0.Final:compile
+[INFO] |  +- com.fasterxml:classmate:jar:1.3.0:compile
 [INFO] |  +- dom4j:dom4j:jar:1.6.1:compile
-[INFO] |  +- org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:jar:1.0.1.Final:compile
-[INFO] |  +- org.hibernate.javax.persistence:hibernate-jpa-2.0-api:jar:1.0.1.Final:compile
-[INFO] |  \- org.hibernate.common:hibernate-commons-annotations:jar:4.0.2.Final:compile
-[INFO] +- org.springframework:spring-core:jar:4.0.2.RELEASE:compile
-[INFO] +- org.springframework:spring-context:jar:4.0.2.RELEASE:compile
-[INFO] |  +- org.springframework:spring-aop:jar:4.0.2.RELEASE:compile
-[INFO] |  |  \- aopalliance:aopalliance:jar:1.0:compile
-[INFO] |  \- org.springframework:spring-expression:jar:4.0.2.RELEASE:compile
-[INFO] +- org.springframework:spring-beans:jar:4.0.2.RELEASE:compile
-[INFO] +- org.springframework:spring-orm:jar:4.0.2.RELEASE:compile
-[INFO] |  +- org.springframework:spring-jdbc:jar:4.0.2.RELEASE:compile
-[INFO] |  \- org.springframework:spring-tx:jar:4.0.2.RELEASE:compile
-[INFO] +- org.springframework:spring-web:jar:4.0.2.RELEASE:compile
+[INFO] |  +- org.hibernate.common:hibernate-commons-annotations:jar:5.0.1.Final:compile
+[INFO] |  \- javax.enterprise:cdi-api:jar:1.1:compile
+[INFO] |     +- javax.el:el-api:jar:2.2:compile
+[INFO] |     +- org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:jar:1.0.0.Beta1:compile
+[INFO] |     \- javax.annotation:jsr250-api:jar:1.0:compile
+[INFO] +- org.springframework:spring-core:jar:4.3.3.RELEASE:compile
+[INFO] +- org.springframework:spring-context:jar:4.3.3.RELEASE:compile
+[INFO] |  +- org.springframework:spring-aop:jar:4.3.3.RELEASE:compile
+[INFO] |  \- org.springframework:spring-expression:jar:4.3.3.RELEASE:compile
+[INFO] +- org.springframework:spring-beans:jar:4.3.3.RELEASE:compile
+[INFO] +- org.springframework:spring-orm:jar:4.3.3.RELEASE:compile
+[INFO] |  +- org.springframework:spring-jdbc:jar:4.3.3.RELEASE:compile
+[INFO] |  \- org.springframework:spring-tx:jar:4.3.3.RELEASE:compile
+[INFO] +- org.springframework:spring-web:jar:4.3.3.RELEASE:compile
 [INFO] +- mysql:mysql-connector-java:jar:5.1.24:compile
 [INFO] +- com.zaxxer:HikariCP-java6:jar:2.3.8:compile
 [INFO] +- org.codehaus.jackson:jackson-mapper-asl:jar:1.8.5:compile
@@ -59,13 +64,11 @@ Downloading: https://repo.maven.apache.org/maven2/org/apache/maven/wagon/wagon-p
 [INFO] |  +- org.slf4j:slf4j-api:jar:1.7.12:compile
 [INFO] |  \- log4j:log4j:jar:1.2.17:compile
 [INFO] +- org.slf4j:jul-to-slf4j:jar:1.7.12:compile
-[INFO] +- org.slf4j:jcl-over-slf4j:jar:1.7.12:compile
-[INFO] +- org.apache.tomcat.embed:tomcat-embed-core:jar:7.0.55:compile
-[INFO] \- org.apache.tomcat.embed:tomcat-embed-logging-log4j:jar:7.0.55:compile
+[INFO] \- org.slf4j:jcl-over-slf4j:jar:1.7.12:compile
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 2.910 s
-[INFO] Finished at: 2016-09-01T09:55:37+03:00
-[INFO] Final Memory: 18M/299M
+[INFO] Total time: 1.383 s
+[INFO] Finished at: 2016-12-08T12:16:48+03:00
+[INFO] Final Memory: 12M/245M
 [INFO] ------------------------------------------------------------------------
