@@ -30,7 +30,7 @@ import org.gagauz.tapestry.security.SecuritySymbols;
 import org.gagauz.tapestry.security.SecurityTransformer;
 import org.gagauz.tapestry.security.api.AccessDeniedHandler;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
-import org.gagauz.tapestry.security.api.IUser;
+import org.gagauz.tapestry.security.api.Principal;
 import org.gagauz.tapestry.utils.AbstractCommonHandlerWrapper;
 import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
 
@@ -89,7 +89,7 @@ public class SecurityModule {
 
             @Override
             public void handleLogin(LoginResult loginResult) {
-                IUser user = loginResult.getUser();
+                Principal user = loginResult.getUser();
                 if (null != user) {
                     String redirect = cookies.readCookieValue(REDIRECT_PAGE);
                     cookies.removeCookieValue(REDIRECT_PAGE);
@@ -104,7 +104,7 @@ public class SecurityModule {
             }
 
             @Override
-            public void handleLogout(IUser user) {
+            public void handleLogout(Principal user) {
             }
         }, "after:*");
     }

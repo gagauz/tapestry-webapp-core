@@ -4,7 +4,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Cookies;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
-import org.gagauz.tapestry.security.api.IUser;
+import org.gagauz.tapestry.security.api.Principal;
 import org.gagauz.tapestry.security.api.UserProvider;
 import org.gagauz.tapestry.security.impl.CookieCredentials;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class RememberMeHandler implements AuthenticationHandler {
     private UserProvider userProvider;
 
     @Override
-    public void handleLogout(IUser user) {
+    public void handleLogout(Principal user) {
         cookies.removeCookieValue(cookieName);
     }
 

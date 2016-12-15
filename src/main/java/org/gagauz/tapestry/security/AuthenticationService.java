@@ -7,8 +7,8 @@ import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
-import org.gagauz.tapestry.security.api.Credentials;
-import org.gagauz.tapestry.security.api.IUser;
+import org.gagauz.tapestry.security.api.Credential;
+import org.gagauz.tapestry.security.api.Principal;
 import org.gagauz.tapestry.security.api.UserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,24 +29,24 @@ public class AuthenticationService {
     @Inject
     private Request request;
 
-    public <USER extends IUser, CREDENTIALS extends Credentials> USER login(CREDENTIALS credentials) {
+    public <P extends Principal, C extends Credential> P login(C credential) {
         LoginResult result = null;
-        USER newUser = userProvider.findByCredentials(credentials);
+        P newUser = userProvider.findByCredential(credential);
         if (null != newUser) {
-            UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
+            PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
             if (null == userSet) {
-                userSet = new UserSet();
+                userSet = new PrincipalStorage();
             } else {
                 userSet.remove(newUser);
             }
             userSet.add(newUser);
-            applicationStateManager.set(UserSet.class, userSet);
+            applicationStateManager.set(PrincipalStorage.class, userSet);
             @SuppressWarnings("unchecked")
-            Class<USER> userClass = (Class<USER>) newUser.getClass();
+            Class<P> userClass = (Class<P>) newUser.getClass();
             applicationStateManager.set(userClass, newUser);
-            result = new LoginResult(newUser, credentials);
+            result = new LoginResult(newUser, credential);
         } else {
-            result = new LoginResult(credentials);
+            result = new LoginResult(credential);
         }
         for (AuthenticationHandler handler : handlers) {
             handler.handleLogin(result);
@@ -57,16 +57,16 @@ public class AuthenticationService {
 
     public void logout() {
 
-        UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
+        PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
 
         for (AuthenticationHandler handler : handlers) {
-            for (IUser user : userSet) {
+            for (Principal user : userSet) {
                 handler.handleLogout(user);
                 applicationStateManager.set(user.getClass(), null);
             }
         }
 
-        applicationStateManager.set(UserSet.class, null);
+        applicationStateManager.set(PrincipalStorage.class, null);
 
         Session session = request.getSession(false);
 

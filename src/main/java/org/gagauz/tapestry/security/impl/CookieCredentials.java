@@ -1,8 +1,8 @@
 package org.gagauz.tapestry.security.impl;
 
-import org.gagauz.tapestry.security.api.Credentials;
+import org.gagauz.tapestry.security.api.Credential;
 
-public class CookieCredentials implements Credentials {
+public class CookieCredentials implements Credential {
     private final String value;
 
     public CookieCredentials(String value) {

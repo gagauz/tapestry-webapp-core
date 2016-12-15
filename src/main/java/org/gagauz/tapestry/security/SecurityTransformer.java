@@ -34,7 +34,7 @@ public class SecurityTransformer implements ComponentClassTransformWorker2 {
     private ApplicationStateManager applicationStateManager;
 
     private void checkAccess(AccessAttribute attribute) throws AccessDeniedException {
-        UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
+        PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
         if (null != userSet) {
             if (accessAttributeExtractorChecker.check(userSet, attribute)) {
                 return;

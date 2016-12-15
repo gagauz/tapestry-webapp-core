@@ -1,5 +1,4 @@
 package org.gagauz.tapestry.security.api;
 
-public interface Credentials {
-
+public interface Principal {
 }

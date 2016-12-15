@@ -5,7 +5,7 @@ import org.apache.tapestry5.corelib.base.AbstractConditional;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.gagauz.tapestry.security.AccessDeniedException;
-import org.gagauz.tapestry.security.UserSet;
+import org.gagauz.tapestry.security.PrincipalStorage;
 import org.gagauz.tapestry.security.api.AccessAttribute;
 import org.gagauz.tapestry.security.api.AccessAttributeExtractorChecker;
 
@@ -24,7 +24,7 @@ public class IfAuthorized extends AbstractConditional {
     @Override
     protected boolean test() {
         try {
-            UserSet userSet = applicationStateManager.getIfExists(UserSet.class);
+            PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
             accessAttributeChecker.check(userSet, attribute);
         } catch (AccessDeniedException e) {
             return false;

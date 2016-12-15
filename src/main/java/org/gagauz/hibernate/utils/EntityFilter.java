@@ -16,7 +16,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.DistinctRootEntityResultTransformer;
 
-
 public class EntityFilter {
     public static enum OrderMode {
         ASC,

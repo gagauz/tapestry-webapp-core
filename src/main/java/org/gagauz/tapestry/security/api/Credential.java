@@ -1,4 +1,4 @@
 package org.gagauz.tapestry.security.api;
 
-public interface IUser {
+public interface Credential {
 }
