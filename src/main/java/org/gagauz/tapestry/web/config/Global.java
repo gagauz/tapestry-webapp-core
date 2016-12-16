@@ -88,7 +88,7 @@ public class Global {
             } else {
                 requestThreadData.uuid = UUID.randomUUID().toString();
                 Cookie uuidCookie = new Cookie(UUID_COOKIE_NAME, requestThreadData.uuid);
-                getResponse().addCookie(cookie);
+                getResponse().addCookie(uuidCookie);
             }
         }
         return requestThreadData.uuid;
