@@ -9,22 +9,23 @@ import javax.persistence.MappedSuperclass;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
-public abstract class Model implements Serializable {
-    protected int id;
+public abstract class Model implements Serializable, IModel<Integer> {
+    protected Integer id;
 
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return null == id ? 0 : id;
     }
 
     @Override

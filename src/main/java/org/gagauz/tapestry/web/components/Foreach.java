@@ -19,116 +19,118 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 @SupportsInformalParameters
 public class Foreach<T> {
 
-	private static Iterator emptyIterator = new Iterator() {
+    private static Iterator emptyIterator = new Iterator() {
 
-		@Override
-		public boolean hasNext() {
-			return false;
-		}
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
 
-		@Override
-		public Object next() {
-			throw new NoSuchElementException();
-		}
-	};
+        @Override
+        public Object next() {
+            throw new NoSuchElementException();
+        }
+    };
 
-	@Parameter
-	private Iterable<T> source;
+    @Parameter
+    private Iterable<T> source;
 
-	@Parameter(required = true, principal = true)
-	private T value;
+    @Parameter(required = true, principal = true)
+    private T value;
 
-	@Parameter(defaultPrefix = BindingConstants.LITERAL)
-	private String element;
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String element;
 
-	@Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
-	private Integer limit;
+    @Parameter(required = false, defaultPrefix = BindingConstants.LITERAL)
+    private Integer limit;
 
-	@Parameter(required = false, value = "0", defaultPrefix = BindingConstants.LITERAL)
-	private int offset;
+    @Parameter(required = false, value = "0", defaultPrefix = BindingConstants.LITERAL)
+    private int offset;
 
-	@Parameter(defaultPrefix = BindingConstants.LITERAL)
-	private String separator;
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String separator;
 
-	@Parameter(defaultPrefix = BindingConstants.LITERAL)
-	private Block empty;
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private Block empty;
 
-	@Parameter(defaultPrefix = BindingConstants.LITERAL)
-	private Block ellipsis;
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private Block ellipsis;
 
-	@Parameter
-	private int index;
+    @Parameter
+    private int index;
 
-	private Iterator<T> iterator;
+    @Parameter(value = "0")
+    private int indexStart;
 
-	@Inject
-	private ComponentResources resources;
+    private Iterator<T> iterator;
 
-	private Block cleanupBlock;
+    @Inject
+    private ComponentResources resources;
 
-	private Iterator<T> getIterator() {
-		if (null == this.iterator) {
-			this.iterator = (null == this.source) ? emptyIterator : this.source.iterator();
-		}
-		return this.iterator;
-	}
+    private Block cleanupBlock;
 
-	private boolean canAdvance() {
-		return (null == this.limit || this.index < this.limit) && getIterator().hasNext();
-	}
+    private Iterator<T> getIterator() {
+        if (null == this.iterator) {
+            this.iterator = (null == this.source) ? emptyIterator : this.source.iterator();
+        }
+        return this.iterator;
+    }
 
-	@SetupRender
-	boolean start() {
-		this.iterator = null;
-		this.index = 0;
-		if (!this.resources.isBound("source")) {
-			Class<T> valueType = this.resources.getBoundType("value");
+    private boolean canAdvance() {
+        return (null == this.limit || this.index < this.limit) && getIterator().hasNext();
+    }
 
-			if (valueType != null && valueType.isEnum()) {
-				this.source = Arrays.asList(valueType.getEnumConstants());
-			}
-		}
+    @SetupRender
+    boolean start() {
+        this.iterator = null;
+        this.index = indexStart;
+        if (!this.resources.isBound("source")) {
+            Class<T> valueType = this.resources.getBoundType("value");
 
-		if (getIterator().hasNext()) {
-			for (int i = 0; i < this.offset && getIterator().hasNext(); i++) {
-				getIterator().next();
-			}
-			this.index = this.offset;
-			return true;
-		}
-		this.cleanupBlock = this.empty;
-		return false;
-	}
+            if (valueType != null && valueType.isEnum()) {
+                this.source = Arrays.asList(valueType.getEnumConstants());
+            }
+        }
 
-	@BeginRender
-	void bodyStart(MarkupWriter writer) {
-		this.value = getIterator().next(); // get next value
+        if (getIterator().hasNext()) {
+            for (int i = 0; i < this.offset && getIterator().hasNext(); i++) {
+                getIterator().next();
+            }
+            return true;
+        }
+        this.cleanupBlock = this.empty;
+        return false;
+    }
 
-		if (this.element != null) {
-			writer.element(this.element);
-			this.resources.renderInformalParameters(writer);
-		}
-	}
+    @BeginRender
+    void bodyStart(MarkupWriter writer) {
+        this.value = getIterator().next(); // get next value
 
-	@AfterRender
-	boolean bodyEnd(MarkupWriter writer) {
-		if (this.element != null) {
-			writer.end();
-		}
-		this.index++;
-		if (canAdvance()) {
-			if (null != this.separator) {
-				writer.writeRaw(this.separator);
-			}
-			return false;
-		} else if (getIterator().hasNext()) {
-			this.cleanupBlock = this.ellipsis;
-		}
-		return true;
-	}
+        if (this.element != null) {
+            writer.element(this.element);
+            this.resources.renderInformalParameters(writer);
+        }
+    }
 
-	@CleanupRender
-	Block cleanupRender() {
-		return this.cleanupBlock;
-	}
+    @AfterRender
+    boolean bodyEnd(MarkupWriter writer) {
+        if (this.element != null) {
+            writer.end();
+        }
+        this.index++;
+        if (canAdvance()) {
+            if (null != this.separator) {
+                writer.writeRaw(this.separator);
+            }
+            return false;
+        } else if (getIterator().hasNext()) {
+            this.cleanupBlock = this.ellipsis;
+        }
+        return true;
+    }
+
+    @CleanupRender
+    Block cleanupRender() {
+        return this.cleanupBlock;
+    }
 }

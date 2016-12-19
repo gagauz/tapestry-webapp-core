@@ -14,80 +14,80 @@ import com.mysql.jdbc.Statement;
 
 public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StatementInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatementInterceptor.class);
 
-	private Properties properties;
+    private Properties properties;
 
-	private String connId;
+    private String connId;
 
-	private boolean initialized = false;
+    private boolean initialized = false;
 
-	@Override
-	public void init(Connection connection, Properties properties) throws SQLException {
-		this.properties = properties;
-		long connectionId = ((JDBC4Connection) connection).getId();
+    @Override
+    public void init(Connection connection, Properties properties) throws SQLException {
+        this.properties = properties;
+        long connectionId = ((JDBC4Connection) connection).getId();
 
-		if (connectionId != 0) {
-			this.initialized = true;
-			this.connId = "Connection [" + connectionId + "] ";
-		}
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(this.connId + "created");
-		}
-	}
+        if (connectionId != 0) {
+            initialized = true;
+            connId = "Connection [" + connectionId + "] ";
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(connId + "created");
+        }
+    }
 
-	@Override
-	public ResultSetInternalMethods preProcess(String s, Statement statement, Connection connection)
-			throws SQLException {
-		if (!this.initialized) {
-			init(connection, this.properties);
-		}
-		if (LOGGER.isDebugEnabled()) {
-			if (s != null) {
-				LOGGER.debug(this.connId + s);
-			} else {
-				String content = statement.toString();
-				LOGGER.debug(this.connId + content.substring(content.indexOf(':')));
-				if (LOGGER.isTraceEnabled()) {
-					Thread.dumpStack();
-				}
-			}
-		}
+    @Override
+    public ResultSetInternalMethods preProcess(String s, Statement statement, Connection connection)
+            throws SQLException {
+        if (!initialized) {
+            init(connection, properties);
+        }
+        if (LOGGER.isDebugEnabled()) {
+            if (s != null) {
+                LOGGER.debug(connId + s);
+            } else {
+                String content = statement.toString();
+                LOGGER.debug(connId + content.substring(content.indexOf(':')));
+                if (LOGGER.isTraceEnabled()) {
+                    Thread.dumpStack();
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public ResultSetInternalMethods postProcess(String s, Statement statement, ResultSetInternalMethods resultSetInternalMethods,
-			Connection connection)
-			throws SQLException {
-		SQLWarning warning;
-		if (resultSetInternalMethods != null
-				&& (warning = resultSetInternalMethods.getWarnings()) != null) {
-			log(warning);
-		} else if ((warning = connection.getWarnings()) != null) {
-			log(warning);
-		}
-		return resultSetInternalMethods;
-	}
+    @Override
+    public ResultSetInternalMethods postProcess(String s, Statement statement, ResultSetInternalMethods resultSetInternalMethods,
+            Connection connection)
+            throws SQLException {
+        SQLWarning warning;
+        if (resultSetInternalMethods != null
+                && (warning = resultSetInternalMethods.getWarnings()) != null) {
+            log(warning);
+        } else if ((warning = connection.getWarnings()) != null) {
+            log(warning);
+        }
+        return resultSetInternalMethods;
+    }
 
-	@Override
-	public boolean executeTopLevelOnly() {
-		return false;
-	}
+    @Override
+    public boolean executeTopLevelOnly() {
+        return false;
+    }
 
-	@Override
-	public void destroy() {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(this.connId + "destroyed");
-		}
-	}
+    @Override
+    public void destroy() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(connId + "destroyed");
+        }
+    }
 
-	private void log(SQLWarning warning) {
-		LOGGER.warn("ATTENSION!!!");
-		while (warning != null) {
-			LOGGER.warn(warning.getMessage());
-			warning = warning.getNextWarning();
-		}
-	}
+    private void log(SQLWarning warning) {
+        LOGGER.warn("ATTENSION!!!");
+        while (warning != null) {
+            LOGGER.warn(warning.getMessage());
+            warning = warning.getNextWarning();
+        }
+    }
 }

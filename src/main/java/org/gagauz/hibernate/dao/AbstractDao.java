@@ -13,13 +13,13 @@ import java.util.function.Function;
 
 import javax.persistence.criteria.CriteriaBuilder;
 
+import org.gagauz.hibernate.model.IModel;
 import org.gagauz.hibernate.utils.EntityFilter;
 import org.gagauz.hibernate.utils.HqlEntityFilter;
 import org.gagauz.hibernate.utils.QueryParameter;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.TransientObjectException;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -27,7 +27,7 @@ import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AbstractDao<Id extends Serializable, Entity> {
+public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
 
     private static final Map<Class<?>, Function<String, ?>> idResolverMap = new HashMap<>();
 
@@ -95,17 +95,21 @@ public class AbstractDao<Id extends Serializable, Entity> {
     public void setSession(Session session) {
     }
 
-    protected CriteriaBuilder getCriteriaBuilder() {
+    public CriteriaBuilder getCriteriaBuilder() {
         return getSession().getCriteriaBuilder();
     }
 
     @SuppressWarnings("unchecked")
     public Id getIdentifier(Entity entity) {
-        try {
-            return (Id) getSession().getIdentifier(entity);
-        } catch (TransientObjectException e) {
-            return null;
+        // try {
+        // return (Id) getSession().getIdentifier(entity);
+        // } catch (TransientObjectException e) {
+        // return null;
+        // }
+        if (null != entity) {
+            return entity.getId();
         }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -126,11 +130,11 @@ public class AbstractDao<Id extends Serializable, Entity> {
         return getSession().createCriteria(entityClass).add(Restrictions.in("id", ids)).list();
     }
 
-    public Query createQuery(String queryString) {
+    public Query<Entity> createQuery(String queryString) {
         return getSession().createQuery(queryString);
     }
 
-    public NativeQuery createSQLQuery(String queryString) {
+    public NativeQuery<Entity> createSQLQuery(String queryString) {
         return getSession().createNativeQuery(queryString);
     }
 
@@ -141,16 +145,17 @@ public class AbstractDao<Id extends Serializable, Entity> {
 
     @SuppressWarnings("unchecked")
     public List<Entity> findByFilter(final EntityFilter filter) {
-        return filter.setCriteria(getSession().createCriteria(entityClass)).list();
+        return filter.setCriteria(createCriteria(), entityClass).list();
     }
 
     @SuppressWarnings("unchecked")
     public Entity findOneByFilter(final EntityFilter filter) {
-        return (Entity) filter.setCriteria(getSession().createCriteria(entityClass)).uniqueResult();
+        return (Entity) filter.setCriteria(createCriteria(), entityClass).uniqueResult();
     }
 
     public long countByFilter(final EntityFilter filter) {
-        return (Long) filter.setCriteria(getSession().createCriteria(entityClass).setProjection(Projections.rowCount())).uniqueResult();
+        return (Long) filter.setCriteria(getSession().createCriteria(entityClass).setProjection(Projections.rowCount()), entityClass)
+                .uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -179,8 +184,8 @@ public class AbstractDao<Id extends Serializable, Entity> {
         return query.list();
     }
 
-    public void merge(Entity entity) {
-        getSession().merge(entity);
+    public Entity merge(Entity entity) {
+        return (Entity) getSession().merge(entity);
     }
 
     public void saveNoCommit(Entity entity) {
@@ -218,7 +223,7 @@ public class AbstractDao<Id extends Serializable, Entity> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <I extends Serializable, E, D extends AbstractDao<I, E>> D getDao(Class<E> entityClass) {
+    public static <I extends Serializable, E extends IModel<I>, D extends AbstractDao<I, E>> D getDao(Class<E> entityClass) {
         return (D) instanceMap.get(entityClass);
     }
 

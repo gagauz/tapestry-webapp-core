@@ -12,9 +12,12 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.hibernate.transform.DistinctRootEntityResultTransformer;
+import org.hibernate.transform.Transformers;
 
 public class EntityFilter {
     public static enum OrderMode {
@@ -36,6 +39,7 @@ public class EntityFilter {
     protected int indexTo = -1;
     private Map<String, OrderMode> orderBy = new LinkedHashMap<>();
     private List<Alias> aliases = C.arrayList();
+    private List<Projection> projections = C.arrayList();
     private Criterion criteria = null;
 
     private final Function<Criterion, EntityFilter> OR = new Function<Criterion, EntityFilter>() {
@@ -154,6 +158,16 @@ public class EntityFilter {
         return this;
     }
 
+    public EntityFilter projection(Projection projection) {
+        projections.add(projection);
+        return this;
+    }
+
+    public EntityFilter groupBy(String string) {
+        projections.add(Projections.groupProperty(string));
+        return this;
+    }
+
     public EntityFilter orderAsc(String column) {
         orderBy.put(column, OrderMode.ASC);
         return this;
@@ -164,9 +178,17 @@ public class EntityFilter {
         return this;
     }
 
-    public Criteria setCriteria(Criteria source) {
+    public Criteria setCriteria(Criteria source, Class<?> bean) {
         for (Alias a : aliases) {
             source.createAlias(a.path, a.alias);
+        }
+        if (!projections.isEmpty()) {
+            ProjectionList plist = Projections.projectionList();
+            for (Projection p : projections) {
+                plist.add(p);
+            }
+            source.setProjection(plist);
+            source.setResultTransformer(Transformers.aliasToBean(bean));
         }
 
         if (null != criteria) {
@@ -184,7 +206,7 @@ public class EntityFilter {
             source.addOrder(p.getValue() == OrderMode.ASC ? Order.asc(p.getKey()) : Order.desc(p.getKey()));
         }
 
-        return source.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
+        return source;// .setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE);
     }
 
     public void clearIndex() {
