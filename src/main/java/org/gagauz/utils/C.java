@@ -160,6 +160,11 @@ public class C {
         return result;
     }
 
+    public static <K, V> ListMultimap<K, V> listMultiMap() {
+        ListMultimap<K, V> result = Multimaps.newArrayListMultimap();
+        return result;
+    }
+
     public static <K, V, Z> ListMultimap<K, Z> listMultiMap(Collection<V> values, Function<V, K> keyFunc, Function<V, Z> valueFunc) {
         ListMultimap<K, Z> result = Multimaps.newArrayListMultimap();
         for (V v : values) {
