@@ -34,7 +34,6 @@ public class TypeCoercerModule {
             }
         }));
 
-
         AbstractDao.getRegisteredEntities().forEach(cls -> {
             configuration.add(CoercionTuple.create(String.class, cls, new CommonEntityValueEncoderFactory(cls)));
         });

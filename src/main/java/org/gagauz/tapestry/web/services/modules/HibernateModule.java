@@ -39,13 +39,15 @@ public class HibernateModule {
     }
 
     @Contribute(ComponentRequestHandler.class)
-    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration, HibernateCommonRequestFilter hibernateFilter) {
+    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration,
+            HibernateCommonRequestFilter hibernateFilter) {
         configuration.add("HibernateFilter", hibernateFilter, "before:*");
     }
 
     @Match("FieldValidatorDefaultSource")
     @org.apache.tapestry5.ioc.annotations.Order("after:*")
-    public static FieldValidatorDefaultSource decorate(final FieldValidatorSource validationSource, final FieldValidatorDefaultSource defaultSource, final Environment environment) {
+    public static FieldValidatorDefaultSource decorate(final FieldValidatorSource validationSource,
+            final FieldValidatorDefaultSource defaultSource, final Environment environment) {
 
         return new FieldValidatorDefaultSource() {
 
@@ -61,7 +63,8 @@ public class HibernateModule {
 
             @SuppressWarnings("rawtypes")
             @Override
-            public FieldValidator createDefaultValidator(Field field, String overrideId, Messages overrideMessages, Locale locale, Class propertyType, AnnotationProvider propertyAnnotations) {
+            public FieldValidator createDefaultValidator(Field field, String overrideId, Messages overrideMessages, Locale locale,
+                    Class propertyType, AnnotationProvider propertyAnnotations) {
 
                 FieldValidator defaultValidator = defaultSource.createDefaultValidator(field, overrideId, overrideMessages, locale,
                         propertyType, propertyAnnotations);
@@ -75,7 +78,7 @@ public class HibernateModule {
                         return validator;
                     }
 
-                    List<FieldValidator> validators = new LinkedList<FieldValidator>();
+                    List<FieldValidator> validators = new LinkedList<>();
                     if (isHibernateEntity(beanClass)) {
 
                         System.out.println("---------------------------------------------------------------------------");

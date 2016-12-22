@@ -129,8 +129,8 @@ public class C {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Map<K, V> hashMap(Object... keyAndValues) {
-        Map<K, V> map = newHashMap();
+    public static <K, V> HashMap<K, V> hashMap(Object... keyAndValues) {
+        HashMap<K, V> map = newHashMap();
         for (int i = 0; i + 1 < keyAndValues.length; i = i + 2)
             map.put((K) keyAndValues[i], (V) keyAndValues[i + 1]);
         return map;
@@ -179,5 +179,12 @@ public class C {
             result.put(keyFunc.call(v), valueFunc.call(v));
         }
         return result;
+    }
+
+    public static <T extends Comparable<T>> int compare(T a, T b) {
+        if (null != a && null != b) {
+            return a.compareTo(b);
+        }
+        return 0;
     }
 }

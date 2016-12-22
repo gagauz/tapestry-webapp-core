@@ -31,6 +31,9 @@ public class TreeIterator<T extends Parent<T>> {
     @Parameter(cache = false)
     private int hierarchy = 0;
 
+    @Parameter(cache = false, defaultPrefix = BindingConstants.LITERAL)
+    private String childClass;
+
     private Deque<Iterator<T>> lastIterator;
     private Iterator<T> iterator;
 
@@ -65,7 +68,7 @@ public class TreeIterator<T extends Parent<T>> {
             lastIterator.add(iterator);
             iterator = value.getChildren().iterator();
             hierarchy++;
-            writer.element(element);
+            writer.element(element, "class", childClass);
             return true;
         }
         return false;
