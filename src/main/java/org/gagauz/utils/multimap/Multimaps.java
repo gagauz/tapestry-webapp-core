@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public final class Multimaps {
 
@@ -29,6 +30,10 @@ public final class Multimaps {
 
     public static <K, V> SetMultimap<K, V> newLinkedHashMultimap(Map<K, Set<V>> map) {
         return new LinkedHashMultimap<>(map);
+    }
+
+    public static <K, V> SetMultimap<K, V> newTreeSetMultimap() {
+        return new TreeSetMultimap<>(new HashMap<>());
     }
 
     public static <K, V> ListMultimap<K, V> newArrayListMultimap() {
@@ -109,6 +114,25 @@ public final class Multimaps {
         @Override
         Set<V> createCollection() {
             return new LinkedHashSet<>();
+        }
+
+        @Override
+        public Map<K, Set<V>> asMap() {
+            return createMap();
+        }
+    }
+
+    private static final class TreeSetMultimap<K, V> extends
+            AbstractMultimap<K, V, Set<V>> implements SetMultimap<K, V> {
+        private static final long serialVersionUID = 8947127701020167995L;
+
+        private TreeSetMultimap(Map<K, Set<V>> map) {
+            super(map);
+        }
+
+        @Override
+        Set<V> createCollection() {
+            return new TreeSet<>();
         }
 
         @Override

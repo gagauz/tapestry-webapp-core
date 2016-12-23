@@ -25,7 +25,7 @@ public abstract class Model implements Serializable, IModel<Integer> {
 
     @Override
     public int hashCode() {
-        return null == id ? 0 : id;
+        return null == id ? super.hashCode() : id;
     }
 
     @Override

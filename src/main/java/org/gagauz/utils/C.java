@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.gagauz.utils.multimap.ListMultimap;
 import org.gagauz.utils.multimap.Multimaps;
+import org.gagauz.utils.multimap.SetMultimap;
 
 public class C {
     public static <K, V> HashMap<K, V> newHashMap() {
@@ -162,6 +163,11 @@ public class C {
 
     public static <K, V> ListMultimap<K, V> listMultiMap() {
         ListMultimap<K, V> result = Multimaps.newArrayListMultimap();
+        return result;
+    }
+
+    public static <K, V> SetMultimap<K, V> setMultiMap() {
+        SetMultimap<K, V> result = Multimaps.newHashMultimap();
         return result;
     }
 
