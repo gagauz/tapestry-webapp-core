@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.gagauz.utils.C;
-import org.gagauz.utils.Function;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
@@ -23,6 +25,12 @@ public class EntityFilter {
     public static enum OrderMode {
         ASC,
         DESC
+    }
+
+    public static class Or extends Disjunction {
+        Or() {
+            super();
+        }
     }
 
     static class Alias {
@@ -40,106 +48,91 @@ public class EntityFilter {
     private Map<String, OrderMode> orderBy = new LinkedHashMap<>();
     private List<Alias> aliases = C.arrayList();
     private List<Projection> projections = C.arrayList();
-    private Criterion criteria = null;
+    private List<Criterion> criterias = C.arrayList();
 
-    private final Function<Criterion, EntityFilter> OR = new Function<Criterion, EntityFilter>() {
-
-        @Override
-        public EntityFilter call(Criterion criterion) {
-            or(criterion);
-            return EntityFilter.this;
-        }
-    };
-
-    private final Function<Criterion, EntityFilter> AND = new Function<Criterion, EntityFilter>() {
-
-        @Override
-        public EntityFilter call(Criterion criterion) {
-            and(criterion);
-            return EntityFilter.this;
-        }
-    };
-
-    private Function<Criterion, EntityFilter> mode = AND;
+    private Junction mode = new Conjunction();
 
     public EntityFilter or() {
-        mode = OR;
+        if (mode.conditions().iterator().hasNext()) {
+            criterias.add(mode);
+        }
+        mode = new Or();
         return this;
     }
 
     public EntityFilter and() {
-        mode = AND;
+        if (mode.conditions().iterator().hasNext()) {
+            criterias.add(mode);
+        }
+        mode = new Conjunction();
         return this;
     }
 
-    private void and(Criterion criterion) {
-        if (null == criteria) {
-            criteria = criterion;
-        } else {
-            criteria = Restrictions.and(criteria, criterion);
-        }
-    }
-
-    private void or(Criterion criterion) {
-        if (null == criteria) {
-            criteria = criterion;
-        } else {
-            criteria = Restrictions.or(criteria, criterion);
-        }
-    }
-
     public EntityFilter in(String name, Collection<?> value) {
-        return mode.call(Restrictions.in(name, value));
+        mode.add(Restrictions.in(name, value));
+        return this;
     }
 
     public EntityFilter in(String name, Object value, Class<?> clazz) {
         DetachedCriteria dc = DetachedCriteria.forClass(clazz);
         dc.add(Restrictions.eq(name, value));
-        return mode.call(Subqueries.exists(dc));
+        mode.add(Subqueries.exists(dc));
+        return this;
     }
 
     public EntityFilter eq(String name, Object value) {
-        return mode.call(Restrictions.eq(name, value));
+        mode.add(Restrictions.eq(name, value));
+        return this;
     }
 
     public EntityFilter ne(String name, Object value) {
-        return mode.call(Restrictions.ne(name, value));
+        mode.add(Restrictions.ne(name, value));
+        return this;
     }
 
     public EntityFilter like(String name, Object value) {
-        return mode.call(Restrictions.like(name, value));
+        mode.add(Restrictions.like(name, value));
+        return this;
     }
 
     public EntityFilter ge(String name, Object value) {
-        return mode.call(Restrictions.ge(name, value));
+        mode.add(Restrictions.ge(name, value));
+        return this;
     }
 
     public EntityFilter le(String name, Object value) {
-        return mode.call(Restrictions.le(name, value));
+        mode.add(Restrictions.le(name, value));
+        return this;
     }
 
     public EntityFilter gt(String name, Object value) {
-        return mode.call(Restrictions.gt(name, value));
+        mode.add(Restrictions.gt(name, value));
+        return this;
     }
 
     public EntityFilter lt(String name, Object value) {
-        return mode.call(Restrictions.lt(name, value));
+        mode.add(Restrictions.lt(name, value));
+        return this;
     }
 
     public EntityFilter between(String name, Object value1, Object value2) {
-        return mode.call(Restrictions.between(name, value1, value2));
+        mode.add(Restrictions.between(name, value1, value2));
+        return this;
     }
 
     public EntityFilter isNull(String name) {
-        return mode.call(Restrictions.isNull(name));
+        mode.add(Restrictions.isNull(name));
+        return this;
     }
 
     public EntityFilter isNotNull(String name) {
-        return mode.call(Restrictions.isNotNull(name));
+        mode.add(Restrictions.isNotNull(name));
+        return this;
     }
 
     public EntityFilter sql(String sql) {
-        return mode.call(Restrictions.sqlRestriction(sql));
+        mode.add(Restrictions.sqlRestriction(sql));
+        return this;
     }
 
     public EntityFilter limit(int limit) {
@@ -191,9 +184,8 @@ public class EntityFilter {
             source.setResultTransformer(Transformers.aliasToBean(bean));
         }
 
-        if (null != criteria) {
-            source.add(criteria);
-        }
+        and(); // Finish sequence
+        criterias.forEach(c -> source.add(c));
 
         if (indexTo > 0 && indexFrom >= 0) {
             source.setFirstResult(indexFrom);

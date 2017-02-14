@@ -193,4 +193,13 @@ public class C {
         }
         return 0;
     }
+
+    public static <T> T first(Iterable<T> iterable) {
+        if (null != iterable) {
+            for (T element : iterable) {
+                return element;
+            }
+        }
+        return null;
+    }
 }

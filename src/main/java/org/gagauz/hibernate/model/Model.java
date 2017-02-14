@@ -33,6 +33,6 @@ public abstract class Model implements Serializable, IModel<Integer> {
         if (obj == null) {
             return false;
         }
-        return this == obj || (hashCode() > 0 && obj.hashCode() == hashCode());
+        return null == id ? super.equals(obj) : id.equals(((Model) obj).getId());
     }
 }

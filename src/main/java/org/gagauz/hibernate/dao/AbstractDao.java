@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 
@@ -188,6 +189,10 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
         return (Entity) getSession().merge(entity);
     }
 
+    public void update(Entity entity) {
+        getSession().update(entity);
+    }
+
     public void saveNoCommit(Entity entity) {
         getSession().saveOrUpdate(entity);
     }
@@ -208,6 +213,10 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
         getSession().delete(entity);
     }
 
+    public void persist(Entity entity) {
+        getSession().persist(entity);
+    }
+
     public void evict(Entity entity) {
         getSession().evict(entity);
     }
@@ -220,6 +229,10 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     public Entity unproxy(Entity proxied) {
         Session session = getSession();
         return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(proxied);
+    }
+
+    public Collection<Entity> unproxy(Collection<Entity> proxied) {
+        return proxied.stream().map(p -> unproxy(p)).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")

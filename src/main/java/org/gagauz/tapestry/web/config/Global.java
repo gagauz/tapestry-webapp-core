@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
@@ -82,7 +83,7 @@ public class Global {
     public static String getUuid() {
         final RequestThreadData requestThreadData = requestDataHolder.get();
         if (EMPTY_UUID.equals(requestThreadData.uuid)) {
-            final Cookie cookie = C.find(getRequest().getCookies(), UUID_COOKIE);
+            final Cookie cookie = C.find(Optional.ofNullable(getRequest().getCookies()).orElse(new Cookie[0]), UUID_COOKIE);
             if (null != cookie) {
                 requestThreadData.uuid = cookie.getValue();
             } else {

@@ -1,5 +1,7 @@
 package org.gagauz.hibernate.utils;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Properties;
@@ -36,6 +38,38 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
         }
     }
 
+    private static String formatSQL(String sql) {
+        return sql.replaceAll("select ", "\nselect\n\t")
+                .replaceAll("delete ", "\ndelete\n\t")
+                .replaceAll("update ", "\nupdate\n\t")
+                .replaceAll(" from ", "\nfrom ")
+                .replaceAll(" left ", "\nleft ")
+                .replaceAll(" right ", "\nright ")
+                .replaceAll(" where ", "\nwhere ").replaceAll(", ", ",\n\t");
+    }
+
+    static PrintWriter PW = new PrintWriter(System.out) {
+        @Override
+        public void print(Object obj) {
+            System.out.println(1);
+        };
+
+        @Override
+        public void println(Object x) {
+            System.out.println(1);
+        };
+
+        @Override
+        public void println(String x) {
+            System.out.println(1);
+        };
+
+        @Override
+        public String toString() {
+            return "MyPrintWriter";
+        }
+    };
+
     @Override
     public ResultSetInternalMethods preProcess(String s, Statement statement, Connection connection)
             throws SQLException {
@@ -44,12 +78,20 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
         }
         if (LOGGER.isDebugEnabled()) {
             if (s != null) {
-                LOGGER.debug(connId + s);
+                LOGGER.debug(connId + formatSQL(s));
             } else {
                 String content = statement.toString();
-                LOGGER.debug(connId + content.substring(content.indexOf(':')));
+                LOGGER.debug(connId + formatSQL(content.substring(content.indexOf(':'))));
                 if (LOGGER.isTraceEnabled()) {
-                    Thread.dumpStack();
+                    new Exception().printStackTrace(new PrintStream(System.out, true) {
+                        @Override
+                        public void println(Object x) {
+                            String s = String.valueOf(x);
+                            if (s.startsWith("\tat org.gagauz")) {
+                                super.println(s);
+                            }
+                        }
+                    });
                 }
             }
         }

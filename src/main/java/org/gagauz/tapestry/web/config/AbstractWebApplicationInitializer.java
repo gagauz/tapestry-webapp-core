@@ -19,6 +19,7 @@ import org.gagauz.tapestry.web.filter.UploadFilter;
 import org.gagauz.tapestry.web.services.ContextRegistryTapestryFilter;
 import org.gagauz.utils.RequestInterceptorFilter;
 import org.gagauz.utils.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -55,6 +56,7 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
         FilterRegistration.Dynamic appFilter = addFilter(ContextRegistryTapestryFilter.class, getServletMapping());
         appFilter.setInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, tapestryAppPackage);
         appFilter.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, String.valueOf(getUseExternalSpringContext()));
+        MDC.put(Global.UUID_COOKIE_NAME, "system");
     }
 
     private String getStaticResourcePathPrefix() {

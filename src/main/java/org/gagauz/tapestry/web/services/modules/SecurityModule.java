@@ -20,7 +20,6 @@ import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
-import org.gagauz.tapestry.security.AccessDeniedException;
 import org.gagauz.tapestry.security.AccessDeniedExceptionInterceptorFilter;
 import org.gagauz.tapestry.security.AuthenticationService;
 import org.gagauz.tapestry.security.LoginResult;
@@ -31,7 +30,7 @@ import org.gagauz.tapestry.security.SecurityTransformer;
 import org.gagauz.tapestry.security.api.AccessDeniedHandler;
 import org.gagauz.tapestry.security.api.AuthenticationHandler;
 import org.gagauz.tapestry.security.api.Principal;
-import org.gagauz.tapestry.utils.AbstractCommonHandlerWrapper;
+import org.gagauz.tapestry.security.impl.CookieCredentials;
 import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
 
 /**
@@ -39,7 +38,9 @@ import org.gagauz.tapestry.web.services.security.CookieEncryptorDecryptor;
  */
 public class SecurityModule {
 
-    private static final String REDIRECT_PAGE = "___rdpg__";
+    public static final String ACCESS_DENIED_REDIRECTOR = "AccessDeniedRedirector";
+
+    public static final String REDIRECT_PAGE_COOKIE_NAME = "___rdpg__";
 
     public static void bind(ServiceBinder binder) {
         binder.bind(AccessDeniedExceptionInterceptorFilter.class).withId("AccessDeniedExceptionInterceptorFilter");
@@ -60,21 +61,25 @@ public class SecurityModule {
         configuration.addInstance("SecurityTransformer", SecurityTransformer.class);
     }
 
-    public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration, @Local AccessDeniedExceptionInterceptorFilter filter) {
+    public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
+            @Local AccessDeniedExceptionInterceptorFilter filter) {
         configuration.add("AccessDeniedExceptionInterceptorFilterComponent", filter, "after:*");
     }
 
-    public void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration, @Local AccessDeniedExceptionInterceptorFilter filter) {
+    public void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration,
+            @Local AccessDeniedExceptionInterceptorFilter filter) {
         configuration.add("AccessDeniedExceptionInterceptorFilterPage", filter, "after:*");
     }
 
     @Contribute(ComponentEventRequestHandler.class)
-    public static void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration, RememberMeFilter handler) {
+    public static void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
+            RememberMeFilter handler) {
         configuration.add("ComponentEventRememberMeHandler", handler);
     }
 
     @Contribute(PageRenderRequestHandler.class)
-    public static void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration, RememberMeFilter handler) {
+    public static void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration,
+            RememberMeFilter handler) {
         configuration.add("PageRenderRememberMeHandler", handler);
     }
 
@@ -83,16 +88,17 @@ public class SecurityModule {
     }
 
     @Contribute(AuthenticationService.class)
-    public void contributeAuthenticationService(OrderedConfiguration<AuthenticationHandler> configuration, @Inject RememberMeHandler rememberMeHandler, @Inject final Response response, @Inject final Cookies cookies) {
+    public void contributeAuthenticationService(OrderedConfiguration<AuthenticationHandler> configuration,
+            @Inject RememberMeHandler rememberMeHandler, @Inject final Response response, @Inject final Cookies cookies) {
         configuration.add("RememberMeLoginHandler", rememberMeHandler, "before:*");
         configuration.add("RedirectHandler", new AuthenticationHandler() {
 
             @Override
             public void handleLogin(LoginResult loginResult) {
                 Principal user = loginResult.getUser();
-                if (null != user) {
-                    String redirect = cookies.readCookieValue(REDIRECT_PAGE);
-                    cookies.removeCookieValue(REDIRECT_PAGE);
+                if (null != user && !(loginResult.getCredentials() instanceof CookieCredentials)) {
+                    String redirect = cookies.readCookieValue(REDIRECT_PAGE_COOKIE_NAME);
+                    cookies.removeCookieValue(REDIRECT_PAGE_COOKIE_NAME);
                     if (null != redirect) {
                         try {
                             response.sendRedirect(redirect);
@@ -110,28 +116,26 @@ public class SecurityModule {
     }
 
     @Contribute(AccessDeniedExceptionInterceptorFilter.class)
-    public static void contributeSecurityExceptionInterceptorFilter(OrderedConfiguration<AccessDeniedHandler> configuration, @Inject final Request request, @Inject final Response response, @Inject final Cookies cookies) {
-        configuration.add("redirector", new AccessDeniedHandler() {
-            @Override
-            public void handleException(AbstractCommonHandlerWrapper handlerWrapper, AccessDeniedException cause) {
-                cause.printStackTrace();
-                String page = null;
-                if (handlerWrapper.getComponentEventRequestParameters() != null) {
-                    page = handlerWrapper.getComponentEventRequestParameters().getActivePageName();
+    public static void contributeSecurityExceptionInterceptorFilter(OrderedConfiguration<AccessDeniedHandler> configuration,
+            @Inject final Request request, @Inject final Response response, @Inject final Cookies cookies) {
+        configuration.add(ACCESS_DENIED_REDIRECTOR, (handlerWrapper, cause) -> {
+            cause.printStackTrace();
+            String page = null;
+            if (handlerWrapper.getComponentEventRequestParameters() != null) {
+                page = handlerWrapper.getComponentEventRequestParameters().getActivePageName();
+            }
+            if (handlerWrapper.getPageRenderRequestParameters() != null) {
+                page = handlerWrapper.getPageRenderRequestParameters().getLogicalPageName();
+            }
+            try {
+                cookies.getBuilder(REDIRECT_PAGE_COOKIE_NAME, request.getPath()).write();
+                if (page.toLowerCase().startsWith("admin")) {
+                    response.sendRedirect("/admin/login");
+                } else {
+                    response.sendRedirect("/login");
                 }
-                if (handlerWrapper.getPageRenderRequestParameters() != null) {
-                    page = handlerWrapper.getPageRenderRequestParameters().getLogicalPageName();
-                }
-                try {
-                    cookies.getBuilder(REDIRECT_PAGE, request.getPath()).write();
-                    if (page.toLowerCase().startsWith("admin")) {
-                        response.sendRedirect("/admin/login");
-                    } else {
-                        response.sendRedirect("/login");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }, "after:*");
     }

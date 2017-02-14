@@ -7,6 +7,14 @@ public class EntityFilterBuilder {
     private EntityFilterBuilder() {
     }
 
+    public static EntityFilter and() {
+        return new EntityFilter().and();
+    }
+
+    public static EntityFilter or() {
+        return new EntityFilter().or();
+    }
+
     public static EntityFilter in(String name, Collection<?> value) {
         return new EntityFilter().in(name, value);
     }
@@ -74,6 +82,5 @@ public class EntityFilterBuilder {
     public static EntityFilter orderDecs(String column) {
         return new EntityFilter().orderDecs(column);
     }
-
 
 }

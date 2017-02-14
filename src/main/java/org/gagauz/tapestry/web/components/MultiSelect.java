@@ -29,7 +29,6 @@ import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -107,8 +106,7 @@ public class MultiSelect extends AbstractField {
     private ValueEncoderSource valueEncoderSource;
 
     protected boolean isSelected(Object optionValue) {
-        return value != null && (
-                (Collection.class.isAssignableFrom(value.getClass()) && ((Collection) value).contains(optionValue)))
+        return value != null && ((Collection.class.isAssignableFrom(value.getClass()) && ((Collection) value).contains(optionValue)))
                 || Objects.equals(value, optionValue);
     }
 
@@ -152,9 +150,10 @@ public class MultiSelect extends AbstractField {
                 sizeA++;
             }
         }
-        Element element = writer.element("select", "name", getControlName(), "id", getClientId(), "size", sizeA, "class", cssClass);
+        Element element = writer.element("select", "name", getControlName(), "id", getClientId(), "class", cssClass);
         if (sizeA > 1) {
             element.forceAttributes("multiple", "true");
+            element.forceAttributes("size", String.valueOf(sizeA));
         }
 
         putPropertyNameIntoBeanValidationContext("value");
@@ -171,15 +170,11 @@ public class MultiSelect extends AbstractField {
     }
 
     protected Collection toValue(String[] values) {
-        return F.flow(values).map(new Mapper<String, Object>() {
-            @Override
-            public Object map(String element) {
-                if (StringUtils.isEmpty(element)) {
-                    element = nulls.replaceFromClient();
-                }
-                return getEncoder().toValue(element);
+        return F.flow(values).map(element -> {
+            if (StringUtils.isEmpty(element)) {
+                element = nulls.replaceFromClient();
             }
-
+            return getEncoder().toValue(element);
         }).toList();
     }
 
