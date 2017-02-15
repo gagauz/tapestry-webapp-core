@@ -1,5 +1,6 @@
 package org.gagauz.tapestry.binding;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -11,34 +12,44 @@ import org.apache.tapestry5.services.BindingSource;
 
 public class MsgBindingFactory implements BindingFactory {
 
-	private final BindingSource bindingSource;
-	private final TypeCoercer resolver;
-	private final Messages messages;
+    private final BindingSource bindingSource;
+    private final TypeCoercer resolver;
+    private final Messages messages;
 
-	public MsgBindingFactory(BindingSource bindingSource, TypeCoercer resolver, Messages messages) {
-		this.bindingSource = bindingSource;
-		this.resolver = resolver;
-		this.messages = messages;
-	}
+    public MsgBindingFactory(BindingSource bindingSource, TypeCoercer resolver, Messages messages) {
+        this.bindingSource = bindingSource;
+        this.resolver = resolver;
+        this.messages = messages;
+    }
 
-	@Override
-	public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component,
-			final String expression, final Location location) {
+    @Override
+    public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component,
+            final String expression, final Location location) {
 
-		return new AbstractContextBinding(this.bindingSource, this.resolver, description, container) {
-			@Override
-			public Object get() {
-				Object value = getValue(expression, BindingConstants.LITERAL, Object.class);
+        return new AbstractContextBinding(this.bindingSource, this.resolver, description, container) {
+            @Override
+            public Object get() {
 
-				if (null != value && value.getClass().isEnum()) {
-					value = value.getClass().getSimpleName() + "." + value;
-				}
-				String key = String.valueOf(value);
-				if (MsgBindingFactory.this.messages.contains(key)) {
-					return MsgBindingFactory.this.messages.get(key);
-				}
-				return key;
-			}
-		};
-	}
+                String[] expressions = StringUtils.split(expression, ',');
+                Object[] args = new Object[expressions.length - 1];
+
+                Object value = getValue(expressions[0], BindingConstants.LITERAL, Object.class);
+                for (int i = 1; i < expressions.length; i++) {
+                    args[i - 1] = getValue(expressions[i], BindingConstants.LITERAL, Object.class);
+                }
+
+                if (null != value && value.getClass().isEnum()) {
+                    value = value.getClass().getSimpleName() + "." + String.valueOf(value);
+                }
+                String key = String.valueOf(value);
+                // if (MsgBindingFactory.this.messages.contains(key)) {
+                if (args.length > 0) {
+                    return MsgBindingFactory.this.messages.format(key, args);
+                }
+                return MsgBindingFactory.this.messages.get(key);
+                // }
+                // return key;
+            }
+        };
+    }
 }
