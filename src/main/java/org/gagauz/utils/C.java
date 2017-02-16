@@ -41,7 +41,7 @@ public class C {
         return new ArrayList<>();
     }
 
-    public static <E> ArrayList<E> newArrayList(int capacity) {
+    public static <E> ArrayList<E> arrayList(int capacity) {
         return new ArrayList<>(capacity);
     }
 
@@ -74,7 +74,7 @@ public class C {
     }
 
     public static <E> List<E> filter(E[] iterable, Filter<E> filter) {
-        ArrayList<E> result = newArrayList(iterable.length);
+        ArrayList<E> result = arrayList(iterable.length);
         for (E element : iterable) {
             if (filter.apply(element)) {
                 result.add(element);
@@ -84,7 +84,7 @@ public class C {
     }
 
     public static <E> List<E> filter(Collection<E> iterable, Filter<E> filter) {
-        ArrayList<E> result = newArrayList(iterable.size());
+        ArrayList<E> result = arrayList(iterable.size());
         for (E element : iterable) {
             if (filter.apply(element)) {
                 result.add(element);

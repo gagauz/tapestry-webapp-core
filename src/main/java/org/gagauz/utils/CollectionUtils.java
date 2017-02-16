@@ -9,7 +9,7 @@ import java.util.List;
 public class CollectionUtils {
 
     public static <K extends Indexed> List<K> filterByMask(Collection<K> collection, Long mask) {
-        List<K> result = C.newArrayList(collection.size());
+        List<K> result = C.arrayList(collection.size());
 
         for (K element : collection) {
             if ((mask & (1L << element.getIdx())) != 0x00) {
@@ -34,7 +34,7 @@ public class CollectionUtils {
 
     public static <K extends Indexed> List<K> filterByMask(Collection<K> collection,
                                                            Long mask, Filter<K> filter) {
-        List<K> result = C.newArrayList(collection.size());
+        List<K> result = C.arrayList(collection.size());
 
         for (K element : collection) {
             if (filter.apply(element) && (mask & (1L << element.getIdx())) != 0x00) {
