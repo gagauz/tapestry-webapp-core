@@ -1,6 +1,5 @@
 package org.gagauz.tapestry.binding;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -23,11 +22,7 @@ public class CondBindingFactory implements BindingFactory {
     @Override
     public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component,
             String expression, final Location location) {
-        final String[] parts = StringUtils.split(expression, DELIMITER, 3);
-
-        if (parts.length < 3) {
-            return bindingSource.newBinding(description, container, component, "prop", expression, location);
-        }
+        final String[] parts = expression.split(DELIMITER, 3);
 
         return new AbstractContextBinding(bindingSource, resolver, description, container) {
             @Override
@@ -36,7 +31,9 @@ public class CondBindingFactory implements BindingFactory {
                 if (conditionValue != null && conditionValue) {
                     return getValue(parts[1], BindingConstants.LITERAL, String.class);
                 }
-                return getValue(parts[2], BindingConstants.LITERAL, String.class);
+                if (parts.length > 2)
+                    return getValue(parts[2], BindingConstants.LITERAL, String.class);
+                return "";
             }
 
         };

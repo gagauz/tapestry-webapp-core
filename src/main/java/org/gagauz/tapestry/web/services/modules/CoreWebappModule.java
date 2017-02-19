@@ -1,6 +1,5 @@
 package org.gagauz.tapestry.web.services.modules;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 
@@ -85,7 +84,8 @@ public class CoreWebappModule {
         configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.gagauz.tapestry.security"));
     }
 
-    public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource, TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {
+    public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource,
+            TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {
         configuration.add("cond", new CondBindingFactory(bindingSource, typeCoercer));
         configuration.add("date", new DateBindingFactory(bindingSource, typeCoercer));
         configuration.add("msg", new MsgBindingFactory(bindingSource, typeCoercer, messages));
@@ -95,7 +95,8 @@ public class CoreWebappModule {
                 toolsService));
     }
 
-    public static void contributeFieldValidatorSource(@SuppressWarnings("rawtypes") MappedConfiguration<String, Validator> configuration, Messages messages, JavaScriptSupport javaScriptSupport, Html5Support html5Support) {
+    public static void contributeFieldValidatorSource(@SuppressWarnings("rawtypes") MappedConfiguration<String, Validator> configuration,
+            Messages messages, JavaScriptSupport javaScriptSupport, Html5Support html5Support) {
         configuration.add("emailhost", new EmailRegexpAndHostValidator(javaScriptSupport, html5Support));
         configuration.add("latin", new NonLatinCharsValidator(javaScriptSupport));
         configuration.add("extension", new FileExtensionValidator(javaScriptSupport));
@@ -123,48 +124,45 @@ public class CoreWebappModule {
      */
     @Traditional
     @Contribute(ComponentEventResultProcessor.class)
-    public static void contributeHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class, ComponentEventResultProcessor> configuration, final Response response) {
-        configuration.add(CustomHttpResponse.class,
-                new ComponentEventResultProcessor<CustomHttpResponse>() {
-            @Override
-            public void processResultValue(CustomHttpResponse value) throws IOException {
-                String pageUrl = "";
-                if (null != value.getUrl()) {
-                    if (!value.getUrl().startsWith("/")) {
-                        pageUrl = "/";
-                    }
-                    pageUrl += value.getUrl();
-                    response.setHeader("Location", pageUrl);
+    public static void contributeHttpStatusCodeEventResultProcessor(
+            final MappedConfiguration<Class, ComponentEventResultProcessor> configuration, final Response response) {
+        ComponentEventResultProcessor<CustomHttpResponse> processor = value -> {
+            String pageUrl = "";
+            if (null != value.getUrl()) {
+                if (!value.getUrl().startsWith("/")) {
+                    pageUrl = "/";
                 }
-
-                response.sendError(value.getCode(), value.getMessage());
+                pageUrl += value.getUrl();
+                response.setHeader("Location", pageUrl);
             }
-        });
+
+            response.sendError(value.getCode(), value.getMessage());
+        };
+        configuration.add(CustomHttpResponse.class, processor);
     }
 
     @Ajax
     @Contribute(ComponentEventResultProcessor.class)
-    public static void contributeAjaxHttpStatusCodeEventResultProcessor(final MappedConfiguration<Class<CustomHttpResponse>, ComponentEventResultProcessor<CustomHttpResponse>> configuration, final Response response, @Symbol(SymbolConstants.CHARSET) final String outputEncoding) {
+    public static void contributeAjaxHttpStatusCodeEventResultProcessor(
+            final MappedConfiguration<Class<CustomHttpResponse>, ComponentEventResultProcessor<CustomHttpResponse>> configuration,
+            final Response response, @Symbol(SymbolConstants.CHARSET) final String outputEncoding) {
         configuration.add(CustomHttpResponse.class,
-                new ComponentEventResultProcessor<CustomHttpResponse>() {
-            @Override
-            public void processResultValue(CustomHttpResponse value) throws IOException {
-                String pageUrl = "";
-                if (null != value.getUrl()) {
-                    if (!value.getUrl().startsWith("/")) {
-                        pageUrl = "/";
+                value -> {
+                    String pageUrl = "";
+                    if (null != value.getUrl()) {
+                        if (!value.getUrl().startsWith("/")) {
+                            pageUrl = "/";
+                        }
+                        pageUrl += value.getUrl();
                     }
-                    pageUrl += value.getUrl();
-                }
-                ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
-                PrintWriter writer = response.getPrintWriter(contentType.toString());
-                JSONObject json = new JSONObject();
-                json.put("redirectURL", pageUrl);
-                json.print(writer);
-                writer.flush();
-                response.setStatus(value.getCode());
-            }
-        });
+                    ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
+                    PrintWriter writer = response.getPrintWriter(contentType.toString());
+                    JSONObject json = new JSONObject();
+                    json.put("redirectURL", pageUrl);
+                    json.print(writer);
+                    writer.flush();
+                    response.setStatus(value.getCode());
+                });
     }
 
     public static void contributeDefaultDataTypeAnalyzer(@SuppressWarnings("rawtypes") MappedConfiguration<Class, String> configuration) {
@@ -180,6 +178,7 @@ public class CoreWebappModule {
     @Contribute(BeanBlockOverrideSource.class)
     public static void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration) {
         configuration.add(new DisplayBlockContribution("date", "AppPropertyBlocks", "dateDisplay"));
+        configuration.add(new DisplayBlockContribution("boolean", "AppPropertyBlocks", "booleanDisplay"));
     }
 
     /**
@@ -194,30 +193,28 @@ public class CoreWebappModule {
         configuration.addInstance("LongCacheTransformer", LongCacheTransformer.class);
     }
 
-    public RequestExceptionHandler buildAppRequestExceptionHandler(final ResponseRenderer renderer, final ComponentSource componentSource, final HttpServletRequest request, final Response response) {
-        return new RequestExceptionHandler() {
-            @Override
-            public void handleRequestException(Throwable exception) throws IOException {
+    public RequestExceptionHandler buildAppRequestExceptionHandler(final ResponseRenderer renderer, final ComponentSource componentSource,
+            final HttpServletRequest request, final Response response) {
+        return exception -> {
 
-                String exceptionPage = "Error500";
+            String exceptionPage = "Error500";
 
-                LOG.error(
-                        "Unhandled exception! Method = " + request.getMethod() + ", Url = " + request.getServletPath() + " Referer = "
-                                + request.getHeader("Referer") + " User-Agent = "
-                                + request.getHeader("User-Agent") + ", RemoteAddr = " + request.getRemoteAddr(),
-                                exception);
+            LOG.error(
+                    "Unhandled exception! Method = " + request.getMethod() + ", Url = " + request.getServletPath() + " Referer = "
+                            + request.getHeader("Referer") + " User-Agent = "
+                            + request.getHeader("User-Agent") + ", RemoteAddr = " + request.getRemoteAddr(),
+                    exception);
 
-                response.setStatus(500);
-                try {
-                    ExceptionReporter index = (ExceptionReporter) componentSource.getPage(exceptionPage);
-                    LOG.info("reporting exception on " + index.getClass().getName());
-                    index.reportException(exception);
-                } catch (Throwable ex) {
-                    LOG.error("got error while reporting exception", ex);
-                }
-
-                renderer.renderPageMarkupResponse(exceptionPage);
+            response.setStatus(500);
+            try {
+                ExceptionReporter index = (ExceptionReporter) componentSource.getPage(exceptionPage);
+                LOG.info("reporting exception on " + index.getClass().getName());
+                index.reportException(exception);
+            } catch (Throwable ex) {
+                LOG.error("got error while reporting exception", ex);
             }
+
+            renderer.renderPageMarkupResponse(exceptionPage);
         };
     }
 

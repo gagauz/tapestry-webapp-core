@@ -13,7 +13,7 @@ public class RandomUtils {
         Random r = new Random();
         int inputSize = input.size();
         subsetSize = Math.min(inputSize, subsetSize);
-        List<T> source = C.newArrayList(input);
+        List<T> source = C.arrayList(input);
         for (int i = 0; i < subsetSize; i++) {
             int indexToSwap = i + r.nextInt(inputSize - i);
             T temp = source.get(i);

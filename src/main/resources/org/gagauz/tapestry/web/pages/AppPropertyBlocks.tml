@@ -31,13 +31,16 @@
 			<t:select class="form-control" t:id="commonEntity" />
 			<t:error for="commonEntity"/>
 		</div>
-	</t:block>
-	
+	</t:block>	
 	
 	<t:block id="dateDisplay">
 		<t:if test="outputContext.getPropertyValue()">
 		${date:outputContext.getPropertyValue(),dd.MM.yyyy HH:mm:ss}
 		</t:if>
+	</t:block>
+	
+	<t:block id="booleanDisplay">
+		<div class="label ${cond:outputContext.getPropertyValue(),label-success,label-danger}">${cond:outputContext.getPropertyValue(),msg:yes-label,msg:no-label}</div>
 	</t:block>
 
 </div>

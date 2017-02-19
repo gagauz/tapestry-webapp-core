@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.gagauz.utils.multimap.ListMultimap;
 import org.gagauz.utils.multimap.Multimaps;
@@ -37,6 +38,19 @@ public class C {
         return set;
     }
 
+    public static <E> HashSet<E> hashSet(E[] source) {
+        HashSet<E> set = new HashSet<>();
+        if (null != source) {
+            set.addAll(Arrays.asList(source));
+        }
+        return set;
+    }
+
+    public static <E> HashSet<E> hashSet() {
+        HashSet<E> set = new HashSet<>();
+        return set;
+    }
+
     public static <E> ArrayList<E> arrayList() {
         return new ArrayList<>();
     }
@@ -45,7 +59,7 @@ public class C {
         return new ArrayList<>(capacity);
     }
 
-    public static <E> ArrayList<E> newArrayList(Collection<E> source) {
+    public static <E> ArrayList<E> arrayList(Collection<E> source) {
         return new ArrayList<>(source);
     }
 
@@ -201,5 +215,18 @@ public class C {
             }
         }
         return null;
+    }
+
+    public static <T> void forEach(Iterable<T> iterable, Consumer<T> consumer) {
+        if (null != iterable) {
+            iterable.forEach(consumer);
+        }
+    }
+
+    public static <T> void forEach(T[] array, Consumer<T> consumer) {
+        if (null != array) {
+            for (int i = 0; i < array.length; i++)
+                consumer.accept(array[i]);
+        }
     }
 }

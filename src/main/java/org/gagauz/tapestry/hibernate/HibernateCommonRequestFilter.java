@@ -68,7 +68,7 @@ public class HibernateCommonRequestFilter implements ComponentRequestFilter {
             try {
                 transaction = session.getTransaction();
                 if (transaction.isActive()) {
-                    if (commit) {
+                    if (commit && !transaction.getRollbackOnly()) {
                         logger.debug("trying to commit transaction: {} in session: {}",
                                 transaction, session);
                         transaction.commit();
@@ -93,13 +93,15 @@ public class HibernateCommonRequestFilter implements ComponentRequestFilter {
         }
     }
 
-    public void handle(ComponentEventRequestParameters parameters1, PageRenderRequestParameters parameters2, ComponentRequestHandler handler)
+    public void handle(ComponentEventRequestParameters parameters1, PageRenderRequestParameters parameters2,
+            ComponentRequestHandler handler)
             throws IOException {
         boolean commit = true;
         boolean insideTransaction = openSession();
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         if (null != parameters1) {
-            System.out.println(parameters1.getContainingPageName() + "." + parameters1.getNestedComponentId() + ":" + parameters1.getEventType());
+            System.out.println(
+                    parameters1.getContainingPageName() + "." + parameters1.getNestedComponentId() + ":" + parameters1.getEventType());
         } else {
             System.out.println(parameters2.getLogicalPageName());
         }

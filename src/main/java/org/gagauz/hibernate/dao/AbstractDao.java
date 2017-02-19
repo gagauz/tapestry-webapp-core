@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.persistence.criteria.CriteriaBuilder;
 
 import org.gagauz.hibernate.model.IModel;
+import org.gagauz.hibernate.utils.CriteriaFilter;
 import org.gagauz.hibernate.utils.EntityFilter;
 import org.gagauz.hibernate.utils.HqlEntityFilter;
 import org.gagauz.hibernate.utils.QueryParameter;
@@ -147,6 +148,10 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     @SuppressWarnings("unchecked")
     public List<Entity> findByFilter(final EntityFilter filter) {
         return filter.setCriteria(createCriteria(), entityClass).list();
+    }
+
+    public CriteriaFilter<Entity> getCriteriaFilter() {
+        return new CriteriaFilter<>(createCriteria(), entityClass);
     }
 
     @SuppressWarnings("unchecked")

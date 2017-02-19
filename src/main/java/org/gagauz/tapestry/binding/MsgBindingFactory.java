@@ -38,17 +38,14 @@ public class MsgBindingFactory implements BindingFactory {
                     args[i - 1] = getValue(expressions[i], BindingConstants.LITERAL, Object.class);
                 }
 
-                if (null != value && value.getClass().isEnum()) {
-                    value = value.getClass().getSimpleName() + "." + String.valueOf(value);
-                }
                 String key = String.valueOf(value);
-                // if (MsgBindingFactory.this.messages.contains(key)) {
                 if (args.length > 0) {
                     return MsgBindingFactory.this.messages.format(key, args);
                 }
+                if (null != value && value.getClass().isEnum()) {
+                    value = value.getClass().getSimpleName() + "." + String.valueOf(value);
+                }
                 return MsgBindingFactory.this.messages.get(key);
-                // }
-                // return key;
             }
         };
     }
