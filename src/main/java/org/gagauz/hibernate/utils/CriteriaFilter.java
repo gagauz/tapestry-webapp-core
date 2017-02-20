@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Projections;
 
 public class CriteriaFilter<T> extends EntityFilter<T> {
     private final Criteria criteria;
@@ -26,4 +27,8 @@ public class CriteriaFilter<T> extends EntityFilter<T> {
         return (T) setCriteria(criteria, entityClass).uniqueResult();
     }
 
+    @Override
+    public Long count() throws HibernateException {
+        return (Long) setCriteria(criteria, entityClass).setProjection(Projections.rowCount()).uniqueResult();
+    }
 }

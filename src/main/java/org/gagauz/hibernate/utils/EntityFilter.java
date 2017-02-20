@@ -214,4 +214,8 @@ public class EntityFilter<T> {
     public T uniqueResult() throws HibernateException {
         throw new NoSuchMethodError();
     }
+
+    public Long count() throws HibernateException {
+        throw new NoSuchMethodError();
+    }
 }
