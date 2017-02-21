@@ -148,17 +148,18 @@ public class CoreWebappModule {
             final Response response, @Symbol(SymbolConstants.CHARSET) final String outputEncoding) {
         configuration.add(CustomHttpResponse.class,
                 value -> {
-                    String pageUrl = "";
+                    JSONObject json = new JSONObject();
                     if (null != value.getUrl()) {
+                        String pageUrl = "";
                         if (!value.getUrl().startsWith("/")) {
                             pageUrl = "/";
                         }
                         pageUrl += value.getUrl();
+                        json.put("redirectURL", pageUrl);
                     }
                     ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
                     PrintWriter writer = response.getPrintWriter(contentType.toString());
-                    JSONObject json = new JSONObject();
-                    json.put("redirectURL", pageUrl);
+
                     json.print(writer);
                     writer.flush();
                     response.setStatus(value.getCode());

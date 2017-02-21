@@ -11,18 +11,20 @@ import org.apache.tapestry5.StreamResponse;
 import org.apache.tapestry5.services.Response;
 import org.gagauz.tapestry.web.config.Global;
 import org.gagauz.tapestry.web.filter.UploadFilter;
+import org.gagauz.tapestry.web.services.CustomHttpResponse;
 
 public class UploadedFiles {
 
-
     Object onActivate(final EventContext ctx) {
-        return new StreamResponse() {
+        final File file = new File(UploadFilter.getRepository(Global.getRequest()), ctx.get(String.class, 0));
+        if (!file.exists()) {
+            return new CustomHttpResponse(404, null);
+        }
 
-            private File file;
+        return new StreamResponse() {
 
             @Override
             public void prepareResponse(Response response) {
-                file = new File(UploadFilter.getRepository(Global.getRequest()), ctx.get(String.class, 0));
             }
 
             @Override
