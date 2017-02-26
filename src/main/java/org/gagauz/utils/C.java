@@ -3,11 +3,13 @@ package org.gagauz.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.gagauz.utils.multimap.ListMultimap;
@@ -134,9 +136,27 @@ public class C {
     // return null;
     // }
 
-    public static <E> boolean has(Collection<E> iterable, Filter<E> filter) {
+    public static <E> boolean has(Iterable<E> iterable, Filter<E> filter) {
         for (E element : iterable) {
             if (filter.apply(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <E> boolean has(Iterable<E> iterable, E element) {
+        for (E e : iterable) {
+            if (Objects.equals(e, element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <E> boolean has(E[] iterable, E element) {
+        for (E e : iterable) {
+            if (Objects.equals(e, element)) {
                 return true;
             }
         }
@@ -228,5 +248,9 @@ public class C {
             for (int i = 0; i < array.length; i++)
                 consumer.accept(array[i]);
         }
+    }
+
+    public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
+        return null == iterable ? Collections.emptyList() : iterable;
     }
 }
