@@ -55,6 +55,27 @@ public class AuthenticationService {
         return newUser;
     }
 
+    public <P extends Principal> P login(P newUser) {
+        LoginResult result = null;
+        PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
+        if (null == userSet) {
+            userSet = new PrincipalStorage();
+        } else {
+            userSet.remove(newUser);
+        }
+        userSet.add(newUser);
+        applicationStateManager.set(PrincipalStorage.class, userSet);
+        @SuppressWarnings("unchecked")
+        Class<P> userClass = (Class<P>) newUser.getClass();
+        applicationStateManager.set(userClass, newUser);
+        result = new LoginResult(newUser, null);
+        for (AuthenticationHandler handler : handlers) {
+            handler.handleLogin(result);
+        }
+
+        return newUser;
+    }
+
     public void logout() {
 
         PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);

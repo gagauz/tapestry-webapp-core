@@ -30,6 +30,7 @@ import org.apache.tapestry5.services.ComponentRequestHandler;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FieldValidatorSource;
+import org.gagauz.hibernate.annotations.Email;
 import org.gagauz.tapestry.hibernate.HibernateCommonRequestFilter;
 
 public class HibernateModule {
@@ -84,10 +85,12 @@ public class HibernateModule {
                         System.out.println("---------------------------------------------------------------------------");
                         System.out.println("Create validators for entity " + beanClass.getSimpleName());
 
+                        Email email = null;
                         Column column = null;
                         JoinColumn joinColumn = null;
                         try {
                             java.lang.reflect.Field field0 = beanClass.getField(overrideId);
+                            email = getAnnotation(field0, Email.class);
                             column = getAnnotation(field0, Column.class);
                             joinColumn = getAnnotation(field0, JoinColumn.class);
                         } catch (Exception e) {
@@ -95,6 +98,7 @@ public class HibernateModule {
                         if (null == column && null == joinColumn) {
                             try {
                                 Method method = beanClass.getMethod("get" + StringUtils.capitalize(overrideId));
+                                email = getAnnotation(method, Email.class);
                                 column = getAnnotation(method, Column.class);
                                 joinColumn = getAnnotation(method, JoinColumn.class);
                             } catch (Exception e) {
@@ -115,6 +119,10 @@ public class HibernateModule {
                                 System.out.println("\t add required validator for " + field.getControlName());
                                 validators.add(validationSource.createValidator(field, "required", null));
                             }
+                        }
+                        if (null != email) {
+                            System.out.println("\t add email validator for " + field.getControlName());
+                            validators.add(validationSource.createValidator(field, "emailhost", null));
                         }
 
                         validator = !validators.isEmpty()

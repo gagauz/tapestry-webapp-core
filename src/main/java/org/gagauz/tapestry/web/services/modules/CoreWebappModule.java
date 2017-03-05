@@ -18,6 +18,7 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
@@ -47,6 +48,7 @@ import org.gagauz.tapestry.binding.CondBindingFactory;
 import org.gagauz.tapestry.binding.DateBindingFactory;
 import org.gagauz.tapestry.binding.DeclineBindingFactory;
 import org.gagauz.tapestry.binding.FormatBindingFactory;
+import org.gagauz.tapestry.binding.JsonBindingFactory;
 import org.gagauz.tapestry.binding.MsgBindingFactory;
 import org.gagauz.tapestry.binding.PageBindingFactory;
 import org.gagauz.tapestry.validate.FileExtensionValidator;
@@ -74,8 +76,13 @@ public class CoreWebappModule {
 
     @FactoryDefaults
     @Contribute(SymbolProvider.class)
-    public static void factoryDefaults(MappedConfiguration<String, Object> configuration) {
+    public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration) {
         configuration.override(SymbolConstants.APPLICATION_CATALOG, "context:/WEB-INF/app.properties");
+    }
+
+    @ApplicationDefaults
+    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration) {
+        configuration.add(SymbolConstants.OMIT_GENERATOR_META, true);
     }
 
     @Contribute(ComponentClassResolver.class)
@@ -86,6 +93,7 @@ public class CoreWebappModule {
 
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration, BindingSource bindingSource,
             TypeCoercer typeCoercer, Messages messages, ToolsService toolsService) {
+        configuration.add("json", new JsonBindingFactory(bindingSource, typeCoercer));
         configuration.add("cond", new CondBindingFactory(bindingSource, typeCoercer));
         configuration.add("date", new DateBindingFactory(bindingSource, typeCoercer));
         configuration.add("msg", new MsgBindingFactory(bindingSource, typeCoercer, messages));

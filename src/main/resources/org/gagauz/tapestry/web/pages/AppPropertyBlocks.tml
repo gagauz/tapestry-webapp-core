@@ -8,11 +8,20 @@
 				<t:error for="textarea"/>
 			</div>
 			<p:else>
-				<t:label class="col-xs-12 col-sm-3 control-label" for="textField" />
-				<div class="col-xs-12 col-sm-9">
-					<input class="form-control" t:id="textField" />
-					<t:error for="textField"/>
-				</div>
+				<t:if test="password">
+					<t:label class="col-xs-12 col-sm-3 control-label" for="passwordField" />
+					<div class="col-xs-12 col-sm-9">
+						<input class="form-control" t:id="passwordField" />
+						<t:error for="passwordField"/>
+					</div>
+					<p:else>
+						<t:label class="col-xs-12 col-sm-3 control-label" for="textField" />
+						<div class="col-xs-12 col-sm-9">
+							<input class="form-control" t:id="textField" />
+							<t:error for="textField"/>
+						</div>
+					</p:else>
+				</t:if>
 			</p:else>
 		</t:if>
 	</t:block>

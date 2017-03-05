@@ -63,4 +63,12 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return sb.toString();
     }
 
+    public static String join(String separator, Object first, Object... objects) {
+        StringBuilder result = new StringBuilder(first.toString());
+        for (int i = 0; i < objects.length; i++) {
+            result.append(separator);
+            result.append(objects[i]);
+        }
+        return result.toString();
+    }
 }

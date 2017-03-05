@@ -207,7 +207,7 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
         getSession().flush();
     }
 
-    public void save(Collection<Entity> entities) {
+    public void saveAll(Collection<Entity> entities) {
         for (Entity entity : entities) {
             getSession().saveOrUpdate(entity);
         }

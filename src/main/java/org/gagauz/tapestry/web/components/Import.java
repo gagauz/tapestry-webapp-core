@@ -7,6 +7,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.BeforeRenderBody;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.Initialization;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -26,10 +27,10 @@ public class Import {
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String stylesheet;
 
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "init")
     private String init;
 
-    @Parameter
+    @Parameter(defaultPrefix = "json")
     private Object[] parameters;
 
     @Inject
@@ -75,7 +76,15 @@ public class Import {
             if (null != init) {
                 initialization = initialization.invoke(init);
                 if (null != parameters) {
-                    initialization.with(parameters);
+                    Object[] params = new Object[parameters.length];
+                    for (int i = 0; i < parameters.length; i++) {
+                        if (null != parameters[i] && (parameters[i] instanceof String) && parameters[i].toString().startsWith("{")) {
+                            params[i] = new JSONObject(parameters[i].toString());
+                        } else {
+                            params[i] = parameters[i];
+                        }
+                    }
+                    initialization.with(params);
                 }
             }
         }
