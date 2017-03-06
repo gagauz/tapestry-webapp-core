@@ -4,20 +4,20 @@
 		<t:if test="long">
 			<t:label class="col-xs-12 col-sm-3 control-label" for="textarea" />
 			<div class="col-xs-12 col-sm-9">
-				<textarea class="form-control" t:id="textarea" rows="6" />
+				<t:textarea class="form-control" t:id="textarea" rows="6" disabled="disabled" t:mixins="formgroup" />
 				<t:error for="textarea"/>
 			</div>
 			<p:else>
 				<t:if test="password">
 					<t:label class="col-xs-12 col-sm-3 control-label" for="passwordField" />
 					<div class="col-xs-12 col-sm-9">
-						<input class="form-control" t:id="passwordField" />
+						<input class="form-control" t:id="passwordField" disabled="disabled" />
 						<t:error for="passwordField"/>
 					</div>
 					<p:else>
 						<t:label class="col-xs-12 col-sm-3 control-label" for="textField" />
 						<div class="col-xs-12 col-sm-9">
-							<input class="form-control" t:id="textField" />
+							<input class="form-control" t:id="textField" disabled="disabled" />
 							<t:error for="textField"/>
 						</div>
 					</p:else>
@@ -29,7 +29,7 @@
 	<t:block id="bigDecimal">
 		<t:label class="col-xs-12 col-sm-3 control-label" for="bigDecimalField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input class="form-control" t:id="bigDecimalField" />
+			<input class="form-control" t:id="bigDecimalField" disabled="disabled" />
 			<t:error for="bigDecimalField"/>
 		</div>
 	</t:block>
@@ -37,7 +37,7 @@
 	<t:block id="commonEntity">
 		<t:label class="col-xs-12 col-sm-3 control-label" for="commonEntity" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<t:select class="form-control" t:id="commonEntity" />
+			<t:select class="form-control" t:id="commonEntity" disabled="disabled" />
 			<t:error for="commonEntity"/>
 		</div>
 	</t:block>	
@@ -51,5 +51,22 @@
 	<t:block id="booleanDisplay">
 		<div class="label ${cond:outputContext.getPropertyValue(),label-success,label-danger}">${cond:outputContext.getPropertyValue(),msg:yes-label,msg:no-label}</div>
 	</t:block>
+
+    <t:block id="date">
+    	<t:label class="col-xs-12 col-sm-3 control-label" for="dateField" />
+		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+			<input t:id="dateField"  />
+			<t:error for="dateField" />
+		</div>
+    </t:block>
+
+    <t:block id="calendar">
+        <t:label class="col-xs-12 col-sm-3 control-label" for="calendarField" />
+		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
+			<input t:id="calendarField"  />
+			<t:error for="calendarField" />
+		</div>
+    </t:block>
+
 
 </div>

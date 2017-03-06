@@ -11,6 +11,7 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.corelib.components.DateField;
 import org.apache.tapestry5.corelib.components.PasswordField;
 import org.apache.tapestry5.corelib.components.Select;
 import org.apache.tapestry5.corelib.components.TextArea;
@@ -26,109 +27,128 @@ import org.gagauz.tapestry.web.components.BigDecimalField;
 
 public class AppPropertyBlocks {
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextField textField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+			"clientId=prop:context.propertyId", "annotationProvider=context" })
+	private TextField textField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private PasswordField passwordField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+			"clientId=prop:context.propertyId", "annotationProvider=context" })
+	private PasswordField passwordField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textAreaTranslator",
-            "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
-            "annotationProvider=context" })
-    private TextArea textArea;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:textAreaTranslator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
+			"annotationProvider=context" })
+	private TextArea textArea;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:bigDecimalTranslator", "validate=prop:bigDecimalValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private BigDecimalField bigDecimalField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:bigDecimalTranslator", "validate=prop:bigDecimalValidator",
+			"clientId=prop:context.propertyId", "annotationProvider=context" })
+	private BigDecimalField bigDecimalField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "model=prop:commonEntityModel", "validate=prop:commonEntityValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private Select commonEntity;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label", "model=prop:commonEntityModel",
+			"validate=prop:commonEntityValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+	private Select commonEntity;
 
-    @Inject
-    private TypeCoercer typeCoercer;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"clientId=prop:context.propertyid", "validate=prop:dateFieldValidator", "ensureClientIdUnique=true" })
+	private DateField dateField;
 
-    @Inject
-    private FieldValidatorSource fieldValidatorSource;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"clientId=prop:context.propertyid", "validate=prop:calendarFieldValidator", "ensureClientIdUnique=true" })
+	private DateField calendarField;
 
-    @Inject
-    private SelectModelFactory selectModelFactory;
+	@Inject
+	private TypeCoercer typeCoercer;
 
-    @Environmental
-    private PropertyEditContext context;
+	@Inject
+	private FieldValidatorSource fieldValidatorSource;
 
-    @Environmental
-    private PropertyOutputContext outputContext;
+	@Inject
+	private SelectModelFactory selectModelFactory;
 
-    public PropertyEditContext getContext() {
-        return context;
-    }
+	@Environmental
+	private PropertyEditContext context;
 
-    public PropertyOutputContext getOutputContext() {
-        return outputContext;
-    }
+	@Environmental
+	private PropertyOutputContext outputContext;
 
-    public FieldTranslator getTextFieldTranslator() {
-        return context.getTranslator(textField);
-    }
+	public PropertyEditContext getContext() {
+		return context;
+	}
 
-    public FieldValidator getTextFieldValidator() {
-        return context.getValidator(textField);
-    }
+	public PropertyOutputContext getOutputContext() {
+		return outputContext;
+	}
 
-    public FieldTranslator getBigDecimalTranslator() {
-        return context.getTranslator(bigDecimalField);
-    }
+	public FieldTranslator getTextFieldTranslator() {
+		return context.getTranslator(textField);
+	}
 
-    public FieldValidator getBigDecimalValidator() {
-        return context.getValidator(bigDecimalField);
-    }
+	public FieldValidator getTextFieldValidator() {
+		return context.getValidator(textField);
+	}
 
-    public FieldTranslator getTextAreaTranslator() {
-        return context.getTranslator(textArea);
-    }
+	public FieldTranslator getBigDecimalTranslator() {
+		return context.getTranslator(bigDecimalField);
+	}
 
-    public FieldValidator getTextAreaValidator() {
-        return context.getValidator(textArea);
-    }
+	public FieldValidator getBigDecimalValidator() {
+		return context.getValidator(bigDecimalField);
+	}
 
-    public FieldValidator getCommonEntityValidator() {
-        return context.getValidator(commonEntity);
-    }
+	public FieldTranslator getTextAreaTranslator() {
+		return context.getTranslator(textArea);
+	}
 
-    /**
-     * Provide a value encoder for an enum type.
-     */
-    @SuppressWarnings("unchecked")
-    public ValueEncoder getValueEncoderForProperty() {
-        return new EnumValueEncoder(typeCoercer, context.getPropertyType());
-    }
+	public FieldValidator getTextAreaValidator() {
+		return context.getValidator(textArea);
+	}
 
-    public SelectModel getCommonEntityModel() {
-        return selectModelFactory.create(Collections.emptyList());
-    }
+	public FieldValidator getCommonEntityValidator() {
+		return context.getValidator(commonEntity);
+	}
 
-    // public FieldValidator getNotNullValidator() {
-    //
-    // return fieldValidatorSource.createValidators(field, expression);
-    // }
+	public FieldValidator getDateFieldValidator() {
+		return context.getValidator(dateField);
+	}
 
-    public boolean isLong() {
-        Column column = getContext().getAnnotation(Column.class);
-        Lob lob = getContext().getAnnotation(Lob.class);
-        return (null != column && column.length() > 255) || null != lob;
-    }
+	public FieldValidator getCalendarFieldValidator() {
+		return context.getValidator(calendarField);
+	}
 
-    public boolean isPassword() {
-        final String fieldId = context.getPropertyId();
-        return fieldId.contains("password")
-                || context.getContainerMessages().get(fieldId + "-fieldType").equals("password");
-    }
+	/**
+	 * Provide a value encoder for an enum type.
+	 */
+	@SuppressWarnings("unchecked")
+	public ValueEncoder getValueEncoderForProperty() {
+		return new EnumValueEncoder(typeCoercer, context.getPropertyType());
+	}
+
+	public SelectModel getCommonEntityModel() {
+		return selectModelFactory.create(Collections.emptyList());
+	}
+
+	// public FieldValidator getNotNullValidator() {
+	//
+	// return fieldValidatorSource.createValidators(field, expression);
+	// }
+
+	public boolean isLong() {
+		Column column = getContext().getAnnotation(Column.class);
+		Lob lob = getContext().getAnnotation(Lob.class);
+		return (null != column && column.length() > 255) || null != lob;
+	}
+
+	public boolean isPassword() {
+		final String fieldId = context.getPropertyId();
+		return fieldId.toLowerCase().contains("password")
+				|| context.getContainerMessages().get(fieldId + "-fieldType").equalsIgnoreCase("password");
+	}
+
+	public boolean isDisabled() {
+		final String fieldId = context.getPropertyId();
+		return context.getContainerMessages().get(fieldId + "-disabled").equals("true");
+	}
 }
