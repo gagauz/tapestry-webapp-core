@@ -61,8 +61,19 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     @SuppressWarnings("unchecked")
     public AbstractDao() {
         Type[] parameters = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
-        idClass = (Class<Id>) parameters[0];
-        entityClass = (Class<Entity>) parameters[1];
+        if (parameters.length == 1) {
+            entityClass = (Class<Entity>) parameters[0];
+            try {
+                idClass = (Class<Id>) entityClass.getMethod("getId").getReturnType();
+            } catch (NoSuchMethodException | SecurityException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            idClass = (Class<Id>) parameters[0];
+            entityClass = (Class<Entity>) parameters[1];
+
+        }
+
         instanceMap.put(entityClass, this);
         idDeserialiser = getIdDeserializer();
     }
