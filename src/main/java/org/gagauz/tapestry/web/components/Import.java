@@ -27,7 +27,7 @@ public class Import {
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String stylesheet;
 
-    @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "init")
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String init;
 
     @Parameter(defaultPrefix = "json")
