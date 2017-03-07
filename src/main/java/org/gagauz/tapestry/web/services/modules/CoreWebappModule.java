@@ -54,6 +54,8 @@ import org.gagauz.tapestry.binding.MsgBindingFactory;
 import org.gagauz.tapestry.binding.PageBindingFactory;
 import org.gagauz.tapestry.validate.FileExtensionValidator;
 import org.gagauz.tapestry.validate.NonLatinCharsValidator;
+import org.gagauz.tapestry.web.services.AlertManagerExt;
+import org.gagauz.tapestry.web.services.AlertManagerExtImpl;
 import org.gagauz.tapestry.web.services.CookieService;
 import org.gagauz.tapestry.web.services.CustomHttpResponse;
 import org.gagauz.tapestry.web.services.EmailRegexpAndHostValidator;
@@ -73,6 +75,7 @@ public class CoreWebappModule {
 		binder.bind(ToolsService.class);
 		binder.bind(RequestMessagesPipeline.class);
 		binder.bind(CookieService.class);
+		binder.bind(AlertManagerExt.class, AlertManagerExtImpl.class);
 	}
 
 	@FactoryDefaults

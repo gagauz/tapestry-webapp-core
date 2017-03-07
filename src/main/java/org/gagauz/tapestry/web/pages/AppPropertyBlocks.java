@@ -2,6 +2,7 @@ package org.gagauz.tapestry.web.pages;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Lob;
@@ -22,6 +23,7 @@ import org.apache.tapestry5.internal.services.CompositeFieldValidator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.FieldValidatorSource;
+import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.services.PropertyOutputContext;
 import org.apache.tapestry5.services.SelectModelFactory;
@@ -30,138 +32,153 @@ import org.gagauz.tapestry.web.components.BigDecimalField;
 
 public class AppPropertyBlocks {
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextField textField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+			"clientId=prop:context.propertyId", "annotationProvider=context" })
+	private TextField textField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private PasswordField passwordField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:textFieldTranslator", "validate=prop:textFieldValidator",
+			"clientId=prop:context.propertyId", "annotationProvider=context" })
+	private PasswordField passwordField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:textAreaTranslator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
-            "annotationProvider=context" })
-    private TextArea textArea;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:textAreaTranslator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId",
+			"annotationProvider=context" })
+	private TextArea textArea;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:bigDecimalTranslator", "validate=prop:bigDecimalValidator",
-            "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private BigDecimalField bigDecimalField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"translate=prop:bigDecimalTranslator", "validate=prop:bigDecimalValidator",
+			"clientId=prop:context.propertyId", "annotationProvider=context" })
+	private BigDecimalField bigDecimalField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label", "model=prop:commonEntityModel",
-            "validate=prop:commonEntityValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private Select commonEntity;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label", "model=prop:commonEntityModel",
+			"validate=prop:commonEntityValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+	private Select commonEntity;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator", "ensureClientIdUnique=true" })
-    private DateField dateField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"clientId=prop:context.propertyid", "validate=prop:dateFieldValidator", "ensureClientIdUnique=true" })
+	private DateField dateField;
 
-    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
-            "clientId=prop:context.propertyid", "validate=prop:calendarFieldValidator", "ensureClientIdUnique=true" })
-    private DateField calendarField;
+	@Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+			"clientId=prop:context.propertyid", "validate=prop:calendarFieldValidator", "ensureClientIdUnique=true" })
+	private DateField calendarField;
 
-    @Inject
-    private TypeCoercer typeCoercer;
+	@Inject
+	private TypeCoercer typeCoercer;
 
-    @Inject
-    private FieldValidatorSource fieldValidatorSource;
+	@Inject
+	private FieldValidatorSource fieldValidatorSource;
 
-    @Inject
-    private SelectModelFactory selectModelFactory;
+	@Inject
+	private SelectModelFactory selectModelFactory;
 
-    @Environmental
-    private PropertyEditContext context;
+	@Environmental
+	private FormSupport formSupport;
 
-    @Environmental
-    private PropertyOutputContext outputContext;
+	@Environmental
+	private PropertyEditContext context;
 
-    public PropertyEditContext getContext() {
-        return context;
-    }
+	@Environmental
+	private PropertyOutputContext outputContext;
 
-    public PropertyOutputContext getOutputContext() {
-        return outputContext;
-    }
+	public PropertyEditContext getContext() {
+		return context;
+	}
 
-    public FieldTranslator getTextFieldTranslator() {
-        return context.getTranslator(textField);
-    }
+	public PropertyOutputContext getOutputContext() {
+		return outputContext;
+	}
 
-    public FieldValidator getTextFieldValidator() {
-        return createValidator(textField);
-    }
+	public FieldTranslator getTextFieldTranslator() {
+		return context.getTranslator(textField);
+	}
 
-    public FieldTranslator getBigDecimalTranslator() {
-        return context.getTranslator(bigDecimalField);
-    }
+	public FieldValidator getTextFieldValidator() {
+		return createValidator(textField);
+	}
 
-    public FieldValidator getBigDecimalValidator() {
-        return createValidator(bigDecimalField);
-    }
+	public FieldTranslator getBigDecimalTranslator() {
+		return context.getTranslator(bigDecimalField);
+	}
 
-    public FieldTranslator getTextAreaTranslator() {
-        return context.getTranslator(textArea);
-    }
+	public FieldValidator getBigDecimalValidator() {
+		return createValidator(bigDecimalField);
+	}
 
-    public FieldValidator getTextAreaValidator() {
-        return createValidator(textArea);
-    }
+	public FieldTranslator getTextAreaTranslator() {
+		return context.getTranslator(textArea);
+	}
 
-    public FieldValidator getCommonEntityValidator() {
-        return createValidator(commonEntity);
-    }
+	public FieldValidator getTextAreaValidator() {
+		return createValidator(textArea);
+	}
 
-    public FieldValidator getDateFieldValidator() {
-        return createValidator(dateField);
-    }
+	public FieldValidator getCommonEntityValidator() {
+		return createValidator(commonEntity);
+	}
 
-    public FieldValidator getCalendarFieldValidator() {
-        return createValidator(calendarField);
-    }
+	public FieldValidator getDateFieldValidator() {
+		return createValidator(dateField);
+	}
 
-    /**
-     * Provide a value encoder for an enum type.
-     */
-    @SuppressWarnings("unchecked")
-    public ValueEncoder getValueEncoderForProperty() {
-        return new EnumValueEncoder(typeCoercer, context.getPropertyType());
-    }
+	public FieldValidator getCalendarFieldValidator() {
+		return createValidator(calendarField);
+	}
 
-    public SelectModel getCommonEntityModel() {
-        return selectModelFactory.create(Collections.emptyList());
-    }
+	/**
+	 * Provide a value encoder for an enum type.
+	 */
+	@SuppressWarnings("unchecked")
+	public ValueEncoder getValueEncoderForProperty() {
+		return new EnumValueEncoder(typeCoercer, context.getPropertyType());
+	}
 
-    // public FieldValidator getNotNullValidator() {
-    //
-    // return fieldValidatorSource.createValidators(field, expression);
-    // }
+	public SelectModel getCommonEntityModel() {
+		return selectModelFactory.create(Collections.emptyList());
+	}
 
-    public boolean isLong() {
-        Column column = getContext().getAnnotation(Column.class);
-        Lob lob = getContext().getAnnotation(Lob.class);
-        return (null != column && column.length() > 255) || null != lob;
-    }
+	// public FieldValidator getNotNullValidator() {
+	//
+	// return fieldValidatorSource.createValidators(field, expression);
+	// }
 
-    public boolean isPassword() {
-        final String fieldId = context.getPropertyId();
-        return fieldId.toLowerCase().contains("password")
-                || context.getContainerMessages().get(fieldId + "-fieldType").equalsIgnoreCase("password");
-    }
+	public boolean isLong() {
+		Column column = getContext().getAnnotation(Column.class);
+		Lob lob = getContext().getAnnotation(Lob.class);
+		return (null != column && column.length() > 255) || null != lob;
+	}
 
-    public boolean isDisabled() {
-        final String fieldId = context.getPropertyId();
-        return context.getContainerMessages().get(fieldId + "-disabled").equals("true");
-    }
+	public boolean isPassword() {
+		final String fieldId = context.getPropertyId();
+		return fieldId.toLowerCase().contains("password")
+				|| context.getContainerMessages().get(fieldId + "-fieldType").equalsIgnoreCase("password");
+	}
 
-    public FieldValidator<?> createValidator(Field field) {
-        final String fieldId = context.getPropertyId();
-        if (context.getContainerMessages().contains(fieldId + "-validate")) {
-            String validate = context.getContainerMessages().get(fieldId + "-validate");
-            FieldValidator validator = fieldValidatorSource.createValidators(field, validate);
-            return new CompositeFieldValidator(Arrays.asList(validator, context.getValidator(field)));
-        }
-        return context.getValidator(field);
-    }
+	public boolean isDisabled() {
+		final String fieldId = context.getPropertyId();
+		return context.getContainerMessages().get(fieldId + "-disabled").equals("true");
+	}
+
+	public FieldValidator<?> createValidator(Field field) {
+		final String formId = formSupport.getFormValidationId();
+		final String fieldId = context.getPropertyId();
+		getValidators(formId + '-' + fieldId + "-validate").ifPresent(v -> {
+			FieldValidator validator = fieldValidatorSource.createValidators(field, validate);
+			return new CompositeFieldValidator(Arrays.asList(validator, context.getValidator(field)));
+		});
+		if (context.getContainerMessages().contains(fieldId + "-validate")) {
+			String validate = context.getContainerMessages().get(fieldId + "-validate");
+			FieldValidator validator = fieldValidatorSource.createValidators(field, validate);
+			return new CompositeFieldValidator(Arrays.asList(validator, context.getValidator(field)));
+		}
+		return context.getValidator(field);
+	}
+
+	protected Optional<String> getValidators(final String idForm) {
+		if (context.getContainerMessages().contains(idForm)) {
+			return Optional.of(context.getContainerMessages().get(idForm));
+		}
+		return Optional.ofNullable(null);
+	}
 }
