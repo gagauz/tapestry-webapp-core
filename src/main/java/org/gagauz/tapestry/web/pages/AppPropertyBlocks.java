@@ -10,9 +10,11 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.FieldValidator;
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.DateField;
 import org.apache.tapestry5.corelib.components.PasswordField;
 import org.apache.tapestry5.corelib.components.Select;
@@ -20,6 +22,7 @@ import org.apache.tapestry5.corelib.components.TextArea;
 import org.apache.tapestry5.corelib.components.TextField;
 import org.apache.tapestry5.internal.services.CompositeFieldValidator;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.FormSupport;
@@ -71,6 +74,16 @@ public class AppPropertyBlocks {
 
     @Inject
     private SelectModelFactory selectModelFactory;
+
+    @Inject
+    @Symbol(SymbolConstants.FORM_GROUP_LABEL_CSS_CLASS)
+    @Property(write = false)
+    private String labelClass;
+
+    @Inject
+    @Symbol(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS)
+    @Property(write = false)
+    private String inputWrapperClass;
 
     @Environmental
     private FormSupport formSupport;

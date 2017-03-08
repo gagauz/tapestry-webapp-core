@@ -2,21 +2,21 @@
 
 	<t:block id="string">
 		<t:if test="long">
-			<t:label class="col-xs-12 col-sm-3 control-label" for="textarea" />
-			<div class="col-xs-12 col-sm-9">
+			<t:label class="${labelClass}" for="textarea" />
+			<div class="${inputWrapperClass}">
 				<t:textarea class="form-control" t:id="textarea" rows="6" disabled="disabled" t:mixins="formgroup" />
 				<t:error for="textarea"/>
 			</div>
 			<p:else>
 				<t:if test="password">
-					<t:label class="col-xs-12 col-sm-3 control-label" for="passwordField" />
-					<div class="col-xs-12 col-sm-9">
+					<t:label class="${labelClass}" for="passwordField" />
+					<div class="${inputWrapperClass}">
 						<input class="form-control" t:id="passwordField" disabled="disabled" />
 						<t:error for="passwordField"/>
 					</div>
 					<p:else>
-						<t:label class="col-xs-12 col-sm-3 control-label" for="textField" />
-						<div class="col-xs-12 col-sm-9">
+						<t:label class="${labelClass}" for="textField" />
+						<div class="${inputWrapperClass}">
 							<input class="form-control" t:id="textField" disabled="disabled" />
 							<t:error for="textField"/>
 						</div>
@@ -27,7 +27,7 @@
 	</t:block>
 	
 	<t:block id="bigDecimal">
-		<t:label class="col-xs-12 col-sm-3 control-label" for="bigDecimalField" />
+		<t:label class="${labelClass}" for="bigDecimalField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
 			<input class="form-control" t:id="bigDecimalField" disabled="disabled" />
 			<t:error for="bigDecimalField"/>
@@ -35,7 +35,7 @@
 	</t:block>
 	
 	<t:block id="commonEntity">
-		<t:label class="col-xs-12 col-sm-3 control-label" for="commonEntity" />
+		<t:label class="${labelClass}" for="commonEntity" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
 			<t:select class="form-control" t:id="commonEntity" disabled="disabled" />
 			<t:error for="commonEntity"/>
@@ -53,7 +53,7 @@
 	</t:block>
 
     <t:block id="date">
-    	<t:label class="col-xs-12 col-sm-3 control-label" for="dateField" />
+    	<t:label class="${labelClass}" for="dateField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
 			<input t:id="dateField"  />
 			<t:error for="dateField" />
@@ -61,7 +61,7 @@
     </t:block>
 
     <t:block id="calendar">
-        <t:label class="col-xs-12 col-sm-3 control-label" for="calendarField" />
+        <t:label class="${labelClass}" for="calendarField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
 			<input t:id="calendarField"  />
 			<t:error for="calendarField" />
