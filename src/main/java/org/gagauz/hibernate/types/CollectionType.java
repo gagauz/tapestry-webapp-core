@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.gagauz.hibernate.model.base.Serializer;
-import org.gagauz.utils.StringUtils;
+import org.gagauz.util.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.ParameterizedType;

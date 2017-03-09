@@ -1,4 +1,4 @@
-package org.gagauz.utils;
+package org.gagauz.util;
 
 public abstract class ValuePredicate<V, E> {
 

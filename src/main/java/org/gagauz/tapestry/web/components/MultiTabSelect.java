@@ -33,7 +33,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.gagauz.tapestry.encoder.AbstractCollectionValueEncoder;
 import org.gagauz.tapestry.encoder.CollectionValueEncoder;
-import org.gagauz.utils.C;
+import org.gagauz.util.C;
 
 /**
  *

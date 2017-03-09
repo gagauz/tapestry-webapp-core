@@ -1,4 +1,4 @@
-package org.gagauz.utils;
+package org.gagauz.util;
 
 import java.util.HashMap;
 import java.util.Map;

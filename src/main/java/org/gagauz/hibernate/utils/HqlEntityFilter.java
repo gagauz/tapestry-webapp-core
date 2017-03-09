@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.gagauz.utils.C;
-import org.gagauz.utils.Function;
+import org.gagauz.util.C;
+import org.gagauz.util.Function;
 import org.hibernate.query.Query;
 import org.hibernate.type.StandardBasicTypes;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gagauz.utils.multimap;
+package org.gagauz.util.multimap;
 
 import java.io.Serializable;
 import java.util.*;

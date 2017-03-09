@@ -1,4 +1,4 @@
-package org.gagauz.utils;
+package org.gagauz.util;
 
 public class Test {
     public static void main(String[] args) {

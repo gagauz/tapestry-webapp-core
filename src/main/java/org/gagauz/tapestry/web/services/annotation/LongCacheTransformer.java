@@ -6,7 +6,7 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-import org.gagauz.utils.C;
+import org.gagauz.util.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

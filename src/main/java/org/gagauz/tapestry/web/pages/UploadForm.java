@@ -1,7 +1,5 @@
 package org.gagauz.tapestry.web.pages;
 
-import org.gagauz.utils.RequestSender;
-
 import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
@@ -10,6 +8,7 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.upload.services.UploadedFile;
+import org.gagauz.util.RequestSender;
 
 import java.io.File;
 

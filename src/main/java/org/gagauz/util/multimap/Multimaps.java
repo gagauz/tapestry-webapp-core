@@ -1,4 +1,4 @@
-package org.gagauz.utils.multimap;
+package org.gagauz.util.multimap;
 
 import java.util.ArrayList;
 import java.util.HashMap;

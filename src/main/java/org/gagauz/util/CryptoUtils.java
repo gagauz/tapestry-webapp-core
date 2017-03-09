@@ -1,4 +1,4 @@
-package org.gagauz.utils;
+package org.gagauz.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

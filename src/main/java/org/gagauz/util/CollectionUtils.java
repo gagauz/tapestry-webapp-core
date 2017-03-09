@@ -1,4 +1,4 @@
-package org.gagauz.utils;
+package org.gagauz.util;
 
 import org.gagauz.hibernate.model.base.Indexed;
 

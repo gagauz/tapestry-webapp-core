@@ -1,4 +1,4 @@
-package org.gagauz.utils;
+package org.gagauz.util;
 
 public interface FilterChain<E> extends Filter<E> {
     FilterChain<E> and(Filter<E> and);

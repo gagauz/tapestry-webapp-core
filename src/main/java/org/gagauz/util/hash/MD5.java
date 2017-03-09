@@ -1,4 +1,4 @@
-package org.gagauz.utils.hash;
+package org.gagauz.util.hash;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

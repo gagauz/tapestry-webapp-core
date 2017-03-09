@@ -12,7 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.gagauz.utils.C;
+import org.gagauz.util.C;
 
 public class Global {
 
@@ -32,7 +32,7 @@ public class Global {
         }
     }
 
-    private static final org.gagauz.utils.Filter<Cookie> UUID_COOKIE = c -> {
+    private static final org.gagauz.util.Filter<Cookie> UUID_COOKIE = c -> {
         return c.getName().equals(UUID_COOKIE_NAME);
     };
 

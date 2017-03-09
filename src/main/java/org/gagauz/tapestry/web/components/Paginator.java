@@ -1,7 +1,5 @@
 package org.gagauz.tapestry.web.components;
 
-import org.gagauz.utils.HttpUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +13,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Loop;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.gagauz.util.HttpUtils;
 
 /**
  * Paginator component

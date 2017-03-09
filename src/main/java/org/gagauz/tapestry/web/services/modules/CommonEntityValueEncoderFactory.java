@@ -7,7 +7,7 @@ import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.gagauz.hibernate.dao.AbstractDao;
 import org.gagauz.hibernate.model.IModel;
-import org.gagauz.utils.StringUtils;
+import org.gagauz.util.StringUtils;
 import org.hibernate.TransientObjectException;
 
 public class CommonEntityValueEncoderFactory<I extends Serializable, E extends IModel<I>, DAO extends AbstractDao<I, E>>
