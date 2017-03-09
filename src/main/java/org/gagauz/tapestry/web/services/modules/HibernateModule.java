@@ -1,150 +1,108 @@
 package org.gagauz.tapestry.web.services.modules;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.internal.BeanValidationContext;
-import org.apache.tapestry5.internal.services.CompositeFieldValidator;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.services.ComponentRequestFilter;
 import org.apache.tapestry5.services.ComponentRequestHandler;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FieldValidatorDefaultSource;
-import org.apache.tapestry5.services.FieldValidatorSource;
-import org.gagauz.hibernate.annotations.Email;
+import org.apache.tapestry5.services.ValidationConstraintGenerator;
 import org.gagauz.tapestry.hibernate.HibernateCommonRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateModule {
 
-    public static void bind(ServiceBinder binder) {
-        binder.bind(HibernateCommonRequestFilter.class);
-    }
+	private static final Logger LOG = LoggerFactory.getLogger(HibernateModule.class);
 
-    @Contribute(ComponentRequestHandler.class)
-    public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration,
-            HibernateCommonRequestFilter hibernateFilter) {
-        configuration.add("HibernateFilter", hibernateFilter, "before:*");
-    }
+	public static void bind(ServiceBinder binder) {
+		binder.bind(HibernateCommonRequestFilter.class);
+	}
 
-    @Match("FieldValidatorDefaultSource")
-    @org.apache.tapestry5.ioc.annotations.Order("after:*")
-    public static FieldValidatorDefaultSource decorate(final FieldValidatorSource validationSource,
-            final FieldValidatorDefaultSource defaultSource, final Environment environment) {
+	@Contribute(ComponentRequestHandler.class)
+	public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration,
+			HibernateCommonRequestFilter hibernateFilter) {
+		configuration.add("HibernateFilter", hibernateFilter, "before:*");
+	}
 
-        return new FieldValidatorDefaultSource() {
-
-            private final Map<String, FieldValidator<?>> validatorCache = new HashMap<>();
-
-            boolean isHibernateEntity(Class<?> clazz) {
-                return clazz.getAnnotation(Entity.class) != null;
-            }
-
-            <A extends Annotation> A getAnnotation(AccessibleObject clazz, Class<A> a) {
-                return clazz.getAnnotation(a);
-            }
-
-            @SuppressWarnings("rawtypes")
-            @Override
-            public FieldValidator createDefaultValidator(Field field, String overrideId, Messages overrideMessages, Locale locale,
-                    Class propertyType, AnnotationProvider propertyAnnotations) {
-
-                FieldValidator defaultValidator = defaultSource.createDefaultValidator(field, overrideId, overrideMessages, locale,
-                        propertyType, propertyAnnotations);
-                BeanValidationContext context = environment.peek(BeanValidationContext.class);
-                if (null != context) {
-                    Class<?> beanClass = context.getBeanType();
-                    final String lookUpKey = propertyType.getName() + ' ' + beanClass.getName() + '.' + overrideId;
-                    FieldValidator validator = validatorCache.get(lookUpKey);
-                    if (null != validator) {
-                        System.out.println("***** Found cached validator for " + lookUpKey);
-                        return validator;
-                    }
-
-                    List<FieldValidator> validators = new LinkedList<>();
-                    if (isHibernateEntity(beanClass)) {
-
-                        System.out.println("---------------------------------------------------------------------------");
-                        System.out.println("Create validators for entity " + beanClass.getSimpleName());
-
-                        Email email = null;
-                        Column column = null;
-                        JoinColumn joinColumn = null;
-                        try {
-                            java.lang.reflect.Field field0 = beanClass.getField(overrideId);
-                            email = getAnnotation(field0, Email.class);
-                            column = getAnnotation(field0, Column.class);
-                            joinColumn = getAnnotation(field0, JoinColumn.class);
-                        } catch (Exception e) {
-                        }
-                        if (null == column && null == joinColumn) {
-                            try {
-                                Method method = beanClass.getMethod("get" + StringUtils.capitalize(overrideId));
-                                email = getAnnotation(method, Email.class);
-                                column = getAnnotation(method, Column.class);
-                                joinColumn = getAnnotation(method, JoinColumn.class);
-                            } catch (Exception e) {
-                            }
-                        }
-                        if (null != column) {
-                            if (!column.nullable()) {
-                                System.out.println("\t add required validator for " + field.getControlName());
-                                validators.add(validationSource.createValidator(field, "required", null));
-                            }
-                            if (column.length() > 0) {
-                                System.out.println("\t add maxlength validator for " + field.getControlName());
-                                validators.add(validationSource.createValidator(field, "maxlength", String.valueOf(column.length())));
-                            }
-                        }
-                        if (null != joinColumn) {
-                            if (!joinColumn.nullable()) {
-                                System.out.println("\t add required validator for " + field.getControlName());
-                                validators.add(validationSource.createValidator(field, "required", null));
-                            }
-                        }
-                        if (null != email) {
-                            System.out.println("\t add email validator for " + field.getControlName());
-                            validators.add(validationSource.createValidator(field, "emailhost", null));
-                        }
-
-                        validator = !validators.isEmpty()
-                                ? new CompositeFieldValidator(validators)
-                                : defaultValidator;
-
-                        validatorCache.put(lookUpKey, validator);
-
-                        System.out.println("---------------------------------------------------------------------------");
-
-                        return validator;
-                    }
-                }
-
-                return defaultValidator;
-
-            }
-
-            @Override
-            public FieldValidator createDefaultValidator(ComponentResources resources, String parameterName) {
-                return defaultSource.createDefaultValidator(resources, parameterName);
-            }
-        };
-    }
+	@Contribute(ValidationConstraintGenerator.class)
+	public void contributeValidationConstraintGenerator(
+			OrderedConfiguration<ValidationConstraintGenerator> configuration) {
+		configuration.addInstance("HibernateColumnsValidators", HibernateColumnValidationConstraintGenerator.class);
+	}
+	/*
+	 * @Match("FieldValidatorDefaultSource")
+	 *
+	 * @org.apache.tapestry5.ioc.annotations.Order("after:*") public static
+	 * FieldValidatorDefaultSource decorate(final FieldValidatorSource
+	 * validationSource, final FieldValidatorDefaultSource defaultSource, final
+	 * Environment environment) {
+	 *
+	 * final ListMultimap<Class, ValidatorFactory> validatorMap =
+	 * Multimaps.newArrayListMultimap(); C.forEach(validators, v -> {
+	 * validatorMap.put(v.getAnnotationClass(), v); });
+	 *
+	 * return new FieldValidatorDefaultSource() {
+	 *
+	 * private final Map<String, FieldValidator<?>> validatorCache = new
+	 * HashMap<>();
+	 *
+	 * boolean isHibernateEntity(Class<?> clazz) { return
+	 * clazz.getAnnotation(Entity.class) != null ||
+	 * clazz.getAnnotation(Embeddable.class) != null; }
+	 *
+	 * @SuppressWarnings("rawtypes")
+	 *
+	 * @Override public FieldValidator createDefaultValidator(Field field,
+	 * String overrideId, Messages overrideMessages, Locale locale, Class
+	 * propertyType, AnnotationProvider propertyAnnotations) {
+	 *
+	 * FieldValidator defaultValidator =
+	 * defaultSource.createDefaultValidator(field, overrideId, overrideMessages,
+	 * locale, propertyType, propertyAnnotations); BeanValidationContext context
+	 * = environment.peek(BeanValidationContext.class); if (null != context) {
+	 * Class<?> beanClass = context.getBeanType(); final String lookUpKey =
+	 * propertyType.getName() + ' ' + beanClass.getName() + '.' + overrideId;
+	 * FieldValidator validator = validatorCache.get(lookUpKey); if (null !=
+	 * validator) { LOG.debug("Found cached validator for {}", lookUpKey);
+	 * return validator; } return createValidators(beanClass, overrideId, field,
+	 * defaultValidator, lookUpKey); }
+	 *
+	 * return defaultValidator;
+	 *
+	 * }
+	 *
+	 * private FieldValidator<?> createValidators(Class<?> beanClass, String
+	 * overrideId, Field field, FieldValidator<?> defaultValidator, final String
+	 * lookUpKey) { if (isHibernateEntity(beanClass)) { List<FieldValidator>
+	 * validators = new LinkedList<>();
+	 * LOG.debug("Create validators for entity {}", beanClass);
+	 *
+	 * lookupAnnotatedFieldOrMethod(beanClass, overrideId).forEach(annotation ->
+	 * { validatorMap.get(annotation.annotationType()).forEach(vf -> {
+	 * FieldValidator validator = vf.createValidator(beanClass, field,
+	 * annotation); if (null != validator) { validators.add(validator); } });
+	 * });
+	 *
+	 * FieldValidator<?> validator = !validators.isEmpty() ? new
+	 * CompositeFieldValidator(validators) : defaultValidator;
+	 *
+	 * validatorCache.put(lookUpKey, validator);
+	 *
+	 * return validator; } return defaultValidator; }
+	 *
+	 * private List<Annotation> lookupAnnotatedFieldOrMethod(Class<?> beanClass,
+	 * String fieldName) { Annotation[] annotations = null; try {
+	 * java.lang.reflect.Field field0 = beanClass.getField(fieldName);
+	 * annotations = field0.getAnnotations(); } catch (Exception e) { } if (0 ==
+	 * annotations.length) { try { Method method = beanClass.getMethod("get" +
+	 * StringUtils.capitalize(fieldName)); annotations =
+	 * method.getAnnotations(); } catch (Exception e) { } } return
+	 * Arrays.asList(annotations); }
+	 *
+	 * @Override public FieldValidator createDefaultValidator(ComponentResources
+	 * resources, String parameterName) { return
+	 * defaultSource.createDefaultValidator(resources, parameterName); }
+	 *
+	 * }; }
+	 */
 }
