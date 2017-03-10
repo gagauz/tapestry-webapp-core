@@ -1,4 +1,4 @@
-package org.gagauz.tapestry.utils;
+package org.gagauz.tapestry.util;
 
 import org.apache.tapestry5.services.*;
 

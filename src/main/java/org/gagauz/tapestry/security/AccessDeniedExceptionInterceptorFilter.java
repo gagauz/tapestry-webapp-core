@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.gagauz.tapestry.security.api.AccessDeniedHandler;
-import org.gagauz.tapestry.utils.AbstractCommonHandlerWrapper;
-import org.gagauz.tapestry.utils.AbstractCommonRequestFilter;
+import org.gagauz.tapestry.util.AbstractCommonHandlerWrapper;
+import org.gagauz.tapestry.util.AbstractCommonRequestFilter;
 
 public class AccessDeniedExceptionInterceptorFilter extends AbstractCommonRequestFilter {
 

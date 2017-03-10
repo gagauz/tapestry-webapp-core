@@ -4,7 +4,7 @@
 		<t:if test="long">
 			<t:label class="${labelClass}" for="textarea" />
 			<div class="${inputWrapperClass}">
-				<t:textarea class="form-control" t:id="textarea" rows="6" disabled="disabled" t:mixins="formgroup" />
+				<t:textarea class="form-control" t:id="textarea" rows="6" disabled="disabled" />
 				<t:error for="textarea"/>
 			</div>
 			<p:else>
