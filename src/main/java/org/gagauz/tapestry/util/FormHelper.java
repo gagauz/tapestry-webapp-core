@@ -6,51 +6,56 @@ import org.apache.tapestry5.ValidationTracker;
 
 public class FormHelper {
 
-    public static void recordErrorCodeForField(ValidationTracker tracker, ComponentResources resources, String fieldName,
-            String messageCode, Object... args) {
-        if (args.length > 0) {
-            tracker.recordError(getField(fieldName), resources.getMessages().format(messageCode, args));
-            return;
-        }
-        tracker.recordError(getField(fieldName), resources.getMessages().get(messageCode));
-    }
+	public static void recordErrorCodeForField(ValidationTracker tracker, ComponentResources resources,
+			String fieldName, String messageCode, Object... args) {
+		if (args.length > 0) {
+			tracker.recordError(getField(fieldName), resources.getMessages().format(messageCode, args));
+			return;
+		}
+		tracker.recordError(getField(fieldName), resources.getMessages().get(messageCode));
+	}
 
-    public static void recordErrorCode(ValidationTracker tracker, ComponentResources resources, String messageCode, Object... args) {
-        if (args.length > 0) {
-            tracker.recordError(resources.getMessages().format(messageCode, args));
-            return;
-        }
-        tracker.recordError(resources.getMessages().get(messageCode));
-    }
+	public static void recordErrorCode(ValidationTracker tracker, ComponentResources resources, String messageCode,
+			Object... args) {
+		if (args.length > 0) {
+			tracker.recordError(resources.getMessages().format(messageCode, args));
+			return;
+		}
+		tracker.recordError(resources.getMessages().get(messageCode));
+	}
 
-    private static Field getField(final String fieldName) {
-        return new Field() {
+	public static boolean isValid(ValidationTracker tracker, String fieldName) {
+		return tracker.inError(getField(fieldName));
+	}
 
-            @Override
-            public String getClientId() {
-                return fieldName;
-            }
+	private static Field getField(final String fieldName) {
+		return new Field() {
 
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
+			@Override
+			public String getClientId() {
+				return fieldName;
+			}
 
-            @Override
-            public boolean isDisabled() {
-                return false;
-            }
+			@Override
+			public boolean isRequired() {
+				return false;
+			}
 
-            @Override
-            public String getLabel() {
-                return null;
-            }
+			@Override
+			public boolean isDisabled() {
+				return false;
+			}
 
-            @Override
-            public String getControlName() {
-                return fieldName;
-            }
-        };
-    }
+			@Override
+			public String getLabel() {
+				return null;
+			}
+
+			@Override
+			public String getControlName() {
+				return fieldName;
+			}
+		};
+	}
 
 }
