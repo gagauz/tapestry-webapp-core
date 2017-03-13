@@ -16,6 +16,10 @@ public class BeanForm extends BeanEditForm {
     @Property(write = false)
     private boolean showErrors;
 
+    @Parameter(value = "literal:fa fa-floppy-o", defaultPrefix = BindingConstants.LITERAL)
+    @Property(write = false)
+    private String submitIcon;
+
     @Parameter(autoconnect = true, defaultPrefix = BindingConstants.BLOCK)
     @Property
     private Block buttons;

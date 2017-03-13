@@ -72,6 +72,7 @@ public class EntityFilter<T> {
     public EntityFilter<T> in(String name, Collection<?> value) {
         mode.add(Restrictions.in(name, value));
         return this;
+
     }
 
     public EntityFilter<T> in(String name, Object value, Class<?> clazz) {

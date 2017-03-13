@@ -1,16 +1,19 @@
-<form t:id="form" validate="object" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" class="${className}">
+<form t:id="form" t:validate="object" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" class="${className}">
 
 	<t:if test="showErrors">
 		<t:errors class="literal:alert alert-danger" role="literal:alert"/>
 	</t:if>
 	
-	<t:BeanEditor t:id="editor" object="object" model="model" overrides="this" />
+	<t:BeanEditorExt t:id="editor" object="object" model="model" overrides="this" />
 
 	<div class="form-group">
 		<div class="col-xs-12 col-sm-9 col-sm-offset-3">
 			<div class="btn-toolbar">
 				<t:button class="btn btn-success">
-					<i class="fa fa-floppy-o"></i> ${submitLabel}
+					<t:if test="submitIcon">
+						<i class="${submitIcon}"></i> 
+					</t:if>
+					${submitLabel}
 				</t:button>
 				<t:if test="cancel">
 					<t:CancelLink class="btn btn-danger" t:id="cancel" mode="cancel" object="object"><i class="fa fa-ban"></i> ${message:cancel-label}</t:CancelLink>

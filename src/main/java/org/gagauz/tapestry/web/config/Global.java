@@ -30,6 +30,14 @@ public class Global {
             this.request = request;
             this.response = response;
         }
+
+        public HttpServletRequest getRequest() {
+            return request;
+        }
+
+        public HttpServletResponse getResponse() {
+            return response;
+        }
     }
 
     private static final org.gagauz.util.Filter<Cookie> UUID_COOKIE = c -> {
@@ -46,6 +54,20 @@ public class Global {
 
     public static HttpServletRequest getRequest() {
         return requestDataHolder.get().request;
+    }
+
+    public static String getClientIp() {
+        final String[] result = new String[] { "0" };
+        Optional.ofNullable(requestDataHolder.get()).map(RequestThreadData::getRequest).ifPresent(r -> {
+            result[0] = r.getHeader("X-Forwarded-For2");
+            if (null == result[0]) {
+                result[0] = r.getHeader("X-Forwarded-For");
+                if (null == result[0]) {
+                    result[0] = r.getRemoteAddr();
+                }
+            }
+        });
+        return result[0];
     }
 
     public static HttpServletResponse getResponse() {

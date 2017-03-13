@@ -13,6 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 
 import org.gagauz.hibernate.model.IModel;
 import org.gagauz.hibernate.utils.CriteriaFilter;
@@ -145,6 +148,18 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
 
     public Query<Entity> createQuery(String queryString) {
         return getSession().createQuery(queryString);
+    }
+
+    public Query<Entity> createQuery(CriteriaDelete<Entity> criteria) {
+        return getSession().createQuery(criteria);
+    }
+
+    public Query<Entity> createQuery(CriteriaUpdate<Entity> criteria) {
+        return getSession().createQuery(criteria);
+    }
+
+    public Query<Entity> createQuery(CriteriaQuery<Entity> criteria) {
+        return getSession().createQuery(criteria);
     }
 
     public NativeQuery<Entity> createSQLQuery(String queryString) {

@@ -2,22 +2,20 @@
 
 	<t:block id="string">
 		<t:if test="long">
-			<t:label class="${labelClass}" for="textarea" />
-			<div class="${inputWrapperClass}">
-				<t:textarea class="form-control" t:id="textarea" rows="6" disabled="disabled" />
+			<t:textarea t:id="textarea" rows="6" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup">
 				<t:error for="textarea"/>
-			</div>
+			</t:textarea>
 			<p:else>
 				<t:if test="password">
 					<t:label class="${labelClass}" for="passwordField" />
 					<div class="${inputWrapperClass}">
-						<input class="form-control" t:id="passwordField" disabled="disabled" />
+						<input class="form-control" t:id="passwordField" disabled="disabled" placeholder="${placeholder}" />
 						<t:error for="passwordField"/>
 					</div>
 					<p:else>
 						<t:label class="${labelClass}" for="textField" />
 						<div class="${inputWrapperClass}">
-							<input class="form-control" t:id="textField" disabled="disabled" />
+							<input class="form-control" t:id="textField" disabled="disabled" placeholder="${placeholder}" />
 							<t:error for="textField"/>
 						</div>
 					</p:else>
@@ -29,7 +27,7 @@
 	<t:block id="bigDecimal">
 		<t:label class="${labelClass}" for="bigDecimalField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input class="form-control" t:id="bigDecimalField" disabled="disabled" />
+			<input class="form-control" t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" />
 			<t:error for="bigDecimalField"/>
 		</div>
 	</t:block>
@@ -55,7 +53,7 @@
     <t:block id="date">
     	<t:label class="${labelClass}" for="dateField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input t:id="dateField"  />
+			<input t:id="dateField" placeholder="${placeholder}" />
 			<t:error for="dateField" />
 		</div>
     </t:block>
@@ -63,10 +61,9 @@
     <t:block id="calendar">
         <t:label class="${labelClass}" for="calendarField" />
 		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input t:id="calendarField"  />
+			<input t:id="calendarField" placeholder="${placeholder}" />
 			<t:error for="calendarField" />
 		</div>
     </t:block>
-
 
 </div>
