@@ -3,13 +3,13 @@ package org.gagauz.tapestry.web.components;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.gagauz.tapestry.util.FormHelper;
 
 public class BeanForm extends BeanEditForm {
     @Parameter
@@ -31,52 +31,14 @@ public class BeanForm extends BeanEditForm {
     private ValidationTracker tracker;
 
     public boolean isValid(final String fieldName) {
-        return !tracker.inError(getField(fieldName));
-    }
-
-    private Field getField(String fieldName) {
-        return new Field() {
-
-            @Override
-            public String getClientId() {
-                return fieldName;
-            }
-
-            @Override
-            public boolean isRequired() {
-                return false;
-            }
-
-            @Override
-            public boolean isDisabled() {
-                return false;
-            }
-
-            @Override
-            public String getLabel() {
-                return null;
-            }
-
-            @Override
-            public String getControlName() {
-                return fieldName;
-            }
-        };
+		return FormHelper.isValid(tracker, fieldName);
     }
 
     public void recordErrorCode(final String code, Object... args) {
-        String message = args.length > 0
-                ? resources.getContainerMessages().format(code, args)
-                : resources.getContainerMessages().get(code);
+		FormHelper.recordErrorCode(tracker, resources, code, args);
     }
 
     public void recordErrorCode(final String fieldName, final String code, Object... args) {
-        String message = args.length > 0
-                ? resources.getContainerMessages().format(code, args)
-                : resources.getContainerMessages().get(code);
-        try {
-            recordError(getField(fieldName), message);
-        } catch (Exception e) {
+		FormHelper.recordErrorCodeForField(tracker, resources, fieldName, code, args);
         }
-    }
 }
