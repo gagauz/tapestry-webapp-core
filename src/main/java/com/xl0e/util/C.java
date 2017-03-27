@@ -260,9 +260,10 @@ public class C {
         return null == iterable ? Collections.emptyList() : iterable;
     }
 
-    public static <T> void unwrap(T wrapElement, Function<T, T> unwrapper) {
-        for (T t = wrapElement; t != null; t = unwrapper.call(wrapElement)) {
-
-        }
-    }
+	public static <T> void unwrap(T element, Function<T, T> unwrapper) {
+		T next = element;
+		while (null != next) {
+			next = unwrapper.call(next);
+		}
+	}
 }
