@@ -7,8 +7,7 @@ import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.BindingSource;
-
-import com.xl0e.tapestry.web.services.ToolsService;
+import org.apache.tapestry5.web.services.ToolsService;
 
 public class DeclineBindingFactory implements BindingFactory {
 

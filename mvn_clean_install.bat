@@ -1,3 +1,3 @@
 call ./setenv.bat
-call mvn -e clean source:jar install clean compile
+call mvn -e clean install source:jar install
 pause

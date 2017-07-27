@@ -279,4 +279,8 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     public static Set<Class> getRegisteredEntities() {
         return Collections.unmodifiableSet(instanceMap.keySet());
     }
+
+    public EntityFilter<Entity> filter() {
+        return new EntityFilter<>();
+    }
 }

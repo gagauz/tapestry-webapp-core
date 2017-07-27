@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.gagauz</groupId>
+	<groupId>com.xl0e</groupId>
 	<artifactId>tapestry-webapp-core</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
@@ -56,6 +56,37 @@
 					<groupId>javassist</groupId>
 					<artifactId>javassist</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tapestry</groupId>
+					<artifactId>plastic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tapestry</groupId>
+					<artifactId>beanmodel</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tapestry</groupId>
+					<artifactId>tapestry-func</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>beanmodel</artifactId>
+			<version>${tapestry-release.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.tapestry</groupId>
+					<artifactId>plastic</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tapestry</groupId>
+					<artifactId>tapestry5-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tapestry</groupId>
+					<artifactId>commons</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -77,6 +108,21 @@
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-upload</artifactId>
+			<version>${tapestry-release.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>tapestry5-annotations</artifactId>
+			<version>${tapestry-release.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>commons</artifactId>
+			<version>${tapestry-release.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>plastic</artifactId>
 			<version>${tapestry-release.version}</version>
 		</dependency>
 		<!--
