@@ -1,5 +1,6 @@
 package com.xl0e.util;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.xl0e.util.multimap.ListMultimap;
 import com.xl0e.util.multimap.Multimaps;
@@ -260,10 +262,40 @@ public class C {
         return null == iterable ? Collections.emptyList() : iterable;
     }
 
-	public static <T> void unwrap(T element, Function<T, T> unwrapper) {
-		T next = element;
-		while (null != next) {
-			next = unwrapper.call(next);
-		}
-	}
+    public static <T> void unwrap(T element, Function<T, T> unwrapper) {
+        T next = element;
+        while (null != next) {
+            next = unwrapper.call(next);
+        }
+    }
+
+    public static <T> T ifNull(final T value, final T elseValue) {
+        if (null == value) {
+            return elseValue;
+        }
+        return value;
+    }
+
+    public static <T> T ifNull(final T value, final Supplier<T> supplier) {
+        if (null == value) {
+            return supplier.get();
+        }
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] addToArray(final T[] array, final T value) {
+        if (null == array) {
+            if (null == value) {
+                return (T[]) new Object[] { value };
+            }
+            T[] arr = (T[]) Array.newInstance(value.getClass(), 1);
+            arr[0] = value;
+            return arr;
+        }
+        T[] copy = Arrays.copyOf(array, array.length + 1);
+        copy[array.length] = value;
+        return copy;
+    }
+
 }

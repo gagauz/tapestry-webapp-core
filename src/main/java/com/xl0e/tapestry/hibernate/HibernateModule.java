@@ -25,7 +25,7 @@ public class HibernateModule {
     @Contribute(ComponentRequestHandler.class)
     public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration,
             HibernateCommonRequestFilter hibernateFilter) {
-        configuration.add("HibernateFilter", hibernateFilter, "before:*");
+        configuration.add("HibernateFilter", hibernateFilter, "after:IgnoredPaths");
     }
 
     @Contribute(ValidationConstraintGenerator.class)

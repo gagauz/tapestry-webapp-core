@@ -69,9 +69,9 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
 
     protected void createDefaultFilters() {
         addFilter(StaticInterceptorFilter.class, getStaticResourcePathPrefix());
+        addFilter(UploadFilter.class, getServletMapping());
         addFilter(RequestInterceptorFilter.class, getServletMapping());
         addFilter(LogFilter.class, getServletMapping());
-        addFilter(UploadFilter.class, getServletMapping());
     }
 
     protected void createTapestryAppFilter() {
