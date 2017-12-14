@@ -13,6 +13,11 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import com.xl0e.tapestry.util.FormHelper;
 
 public class BeanForm extends BeanEditForm {
+
+    @Parameter(defaultPrefix = BindingConstants.BLOCK)
+    @Property
+    private Block title;
+
     @Parameter
     @Property(write = false)
     private boolean showErrors;
@@ -32,14 +37,14 @@ public class BeanForm extends BeanEditForm {
     private ValidationTracker tracker;
 
     public boolean isValid(final String fieldName) {
-		return FormHelper.isValid(tracker, fieldName);
+        return FormHelper.isValid(tracker, fieldName);
     }
 
     public void recordErrorCode(final String code, Object... args) {
-		FormHelper.recordErrorCode(tracker, resources, code, args);
+        FormHelper.recordErrorCode(tracker, resources, code, args);
     }
 
     public void recordErrorCode(final String fieldName, final String code, Object... args) {
-		FormHelper.recordErrorCodeForField(tracker, resources, fieldName, code, args);
-        }
+        FormHelper.recordErrorCodeForField(tracker, resources, fieldName, code, args);
+    }
 }
