@@ -7,17 +7,12 @@
 			</t:textarea>
 			<p:else>
 				<t:if test="password">
-					<t:label class="${labelClass}" for="passwordField" />
-					<div class="${inputWrapperClass}">
-						<input class="form-control" t:id="passwordField" disabled="disabled" placeholder="${placeholder}" />
-						<t:error for="passwordField"/>
-					</div>
+					
+					<input t:id="passwordField" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup" />
+					<t:error for="passwordField"/>
 					<p:else>
-						<t:label class="${labelClass}" for="textField" />
-						<div class="${inputWrapperClass}">
-							<input class="form-control" t:id="textField" disabled="disabled" placeholder="${placeholder}" />
-							<t:error for="textField"/>
-						</div>
+						<input t:id="textField" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup" />
+						<t:error for="textField"/>
 					</p:else>
 				</t:if>
 			</p:else>
@@ -25,17 +20,17 @@
 	</t:block>
 	
 	<t:block id="bigDecimal">
-		<t:label class="${labelClass}" for="bigDecimalField" />
-		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input class="form-control" t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" />
+		<t:label for="bigDecimalField" />
+		<div>
+			<input t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup" />
 			<t:error for="bigDecimalField"/>
 		</div>
 	</t:block>
 	
 	<t:block id="commonEntity">
-		<t:label class="${labelClass}" for="commonEntity" />
-		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<t:select class="form-control" t:id="commonEntity" disabled="disabled" />
+		<t:label for="commonEntity" />
+		<div>
+			<t:select t:id="commonEntity" disabled="disabled" t:mixins="formgroup" />
 			<t:error for="commonEntity"/>
 		</div>
 	</t:block>	
@@ -51,17 +46,17 @@
 	</t:block>
 
     <t:block id="date">
-    	<t:label class="${labelClass}" for="dateField" />
-		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input t:id="dateField" placeholder="${placeholder}" />
+    	<t:label for="dateField" />
+		<div>
+			<input t:id="dateField" placeholder="${placeholder}" t:mixins="formgroup" />
 			<t:error for="dateField" />
 		</div>
     </t:block>
 
     <t:block id="calendar">
-        <t:label class="${labelClass}" for="calendarField" />
-		<div class="col-lg-2 col-md-3 col-sm-6 col-xs-12">
-			<input t:id="calendarField" placeholder="${placeholder}" />
+        <t:label for="calendarField" />
+		<div>
+			<input t:id="calendarField" placeholder="${placeholder}" t:mixins="formgroup" />
 			<t:error for="calendarField" />
 		</div>
     </t:block>
