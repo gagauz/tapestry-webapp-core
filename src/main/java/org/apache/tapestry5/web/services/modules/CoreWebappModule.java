@@ -204,6 +204,7 @@ public class CoreWebappModule {
         configuration.add(new DisplayBlockContribution("boolean", "AppPropertyBlocks", "booleanDisplay"));
         configuration.add(new EditBlockContribution("date", "AppPropertyBlocks", "date"));
         configuration.add(new EditBlockContribution("calendar", "AppPropertyBlocks", "calendar"));
+        configuration.add(new EditBlockContribution("boolean", "AppPropertyBlocks", "boolean"));
     }
 
     /**

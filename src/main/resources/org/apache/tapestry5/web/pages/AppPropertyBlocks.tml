@@ -2,16 +2,16 @@
 
 	<t:block id="string">
 		<t:if test="long">
-			<t:textarea t:id="textarea" rows="6" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup">
+			<t:textarea t:id="textarea" rows="6" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup">
 				<t:error for="textarea"/>
 			</t:textarea>
 			<p:else>
 				<t:if test="password">
 					
-					<input t:id="passwordField" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup" />
+					<input t:id="passwordField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
 					<t:error for="passwordField"/>
 					<p:else>
-						<input t:id="textField" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup" />
+						<input t:id="textField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
 						<t:error for="textField"/>
 					</p:else>
 				</t:if>
@@ -22,7 +22,7 @@
 	<t:block id="bigDecimal">
 		<t:label for="bigDecimalField" />
 		<div>
-			<input t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" t:mixins="formgroup" />
+			<input t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
 			<t:error for="bigDecimalField"/>
 		</div>
 	</t:block>
@@ -30,7 +30,7 @@
 	<t:block id="commonEntity">
 		<t:label for="commonEntity" />
 		<div>
-			<t:select t:id="commonEntity" disabled="disabled" t:mixins="formgroup" />
+			<t:select t:id="commonEntity" disabled="disabled" t:mixins="MyFormGroup" />
 			<t:error for="commonEntity"/>
 		</div>
 	</t:block>	
@@ -46,19 +46,15 @@
 	</t:block>
 
     <t:block id="date">
-    	<t:label for="dateField" />
-		<div>
-			<input t:id="dateField" placeholder="${placeholder}" t:mixins="formgroup" />
-			<t:error for="dateField" />
-		</div>
+		<input t:id="dateField" placeholder="${placeholder}" t:mixins="MyFormGroup" />
     </t:block>
 
     <t:block id="calendar">
-        <t:label for="calendarField" />
-		<div>
-			<input t:id="calendarField" placeholder="${placeholder}" t:mixins="formgroup" />
-			<t:error for="calendarField" />
-		</div>
+		<input t:id="calendarField" placeholder="${placeholder}" t:mixins="MyFormGroup" />
     </t:block>
 
+	<t:block id="boolean">
+		<input t:id="checkboxField" t:mixins="MyFormGroup" />
+		<t:error for="checkboxField"/>
+	</t:block>
 </div>

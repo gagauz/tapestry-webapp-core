@@ -1,49 +1,47 @@
 <div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
 
 	<t:block id="text">
-		<input t:id="textField" t:mixins="formgroup"/>
+		<input t:id="textField" t:mixins="MyFormGroup"/>
 		<t:error for="textField"/>
 	</t:block>
 
 	<t:block id="number">
-		<input class="t-number" t:id="numberField" t:mixins="formgroup" />
+		<input class="t-number" t:id="numberField" t:mixins="MyFormGroup" />
 		<t:error for="numberField"/>
 	</t:block>
 
 
 	<t:block id="enum">
-		<input t:id="select" t:mixins="formgroup" />
+		<input t:id="select" t:mixins="MyFormGroup" />
 		<t:error for="select"/>
 	</t:block>
 
 	<t:block id="boolean">
-		<div>
-			<div class="checkbox">
-				<t:mylabel for="checkboxField">
-					<input t:id="checkboxField" />
-				</t:mylabel>
-				<t:error for="checkboxField"/>
-			</div>
+		<div class="checkbox1">
+			<t:mylabel for="checkboxField">
+				<input t:id="checkboxField" t:mixins="MyFormGroup" />
+			</t:mylabel>
+			<t:error for="checkboxField"/>
 		</div>
 	</t:block>
 
 	<t:block id="date">
-		<input t:id="dateField" data-provide="datepicker" t:mixins="formgroup" />
+		<input t:id="dateField" data-provide="datepicker" t:mixins="MyFormGroup" />
 		<t:error for="dateField"/>
 	</t:block>
 
 	<t:block id="calendar">
-		<input t:id="calendarField" t:mixins="formgroup" />
+		<input t:id="calendarField" t:mixins="MyFormGroup" />
 		<t:error for="calendarField"/>
 	</t:block>
 
 	<t:block id="password">
-		<input t:id="passwordField" t:mixins="formgroup" />
+		<input t:id="passwordField" t:mixins="MyFormGroup" />
 		<t:error for="passwordField"/>
 	</t:block>
 
 	<t:block id="longtext">
-		<textarea t:id="textarea" rows="6" t:mixins="formgroup" />
+		<textarea t:id="textarea" rows="6" t:mixins="MyFormGroup" />
 		<t:error for="textarea"/>
 	</t:block>
 

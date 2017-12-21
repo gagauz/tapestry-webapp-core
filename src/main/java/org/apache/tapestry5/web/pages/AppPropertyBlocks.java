@@ -15,6 +15,7 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.corelib.components.Checkbox;
 import org.apache.tapestry5.corelib.components.DateField;
 import org.apache.tapestry5.corelib.components.PasswordField;
 import org.apache.tapestry5.corelib.components.Select;
@@ -65,6 +66,10 @@ public class AppPropertyBlocks {
     @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
             "clientId=prop:context.propertyid", "validate=prop:calendarFieldValidator", "ensureClientIdUnique=true" })
     private DateField calendarField;
+
+    @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
+            "clientId=prop:context.propertyid", "validate=prop:checkboxFieldValidator", "ensureClientIdUnique=true" })
+    private Checkbox checkboxField;
 
     @Inject
     private TypeCoercer typeCoercer;
@@ -136,6 +141,10 @@ public class AppPropertyBlocks {
 
     public FieldValidator<?> getCalendarFieldValidator() {
         return createValidator(calendarField);
+    }
+
+    public FieldValidator<?> getCheckboxFieldValidator() {
+        return createValidator(checkboxField);
     }
 
     /**
