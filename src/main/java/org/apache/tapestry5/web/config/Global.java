@@ -1,9 +1,6 @@
 package org.apache.tapestry5.web.config;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,51 +11,34 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.xl0e.util.C;
 
+import org.apache.catalina.servlet4preview.http.HttpServletRequestWrapper;
+
 public class Global {
 
     public static final String UUID_COOKIE_NAME = "uuid";
+    public static final String UUID_ATTRIBUTE = "_uuid";
 
     private static final String EMPTY_UUID = "-1".intern();
-
-    private static class RequestThreadData {
-        final HttpServletRequest request;
-        final HttpServletResponse response;
-        String uuid = EMPTY_UUID;
-        Map<Class<?>, Object> map = Collections.EMPTY_MAP;
-
-        RequestThreadData(HttpServletRequest request, HttpServletResponse response) {
-            this.request = request;
-            this.response = response;
-        }
-
-        public HttpServletRequest getRequest() {
-            return request;
-        }
-
-        public HttpServletResponse getResponse() {
-            return response;
-        }
-    }
 
     private static final com.xl0e.util.Filter<Cookie> UUID_COOKIE = c -> {
         return c.getName().equals(UUID_COOKIE_NAME);
     };
 
-    protected static Locale DEFAULT_LOCALE = Locale.ENGLISH;
     protected static ServletContext servletContext;
-    private static final ThreadLocal<RequestThreadData> requestDataHolder = new ThreadLocal<>();
+    private static final ThreadLocal<HttpServletRequest> requestHolder = new ThreadLocal<>();
+    private static final ThreadLocal<HttpServletResponse> responseHolder = new ThreadLocal<>();
 
     public static ServletContext getServletContex() {
         return servletContext;
     }
 
     public static HttpServletRequest getRequest() {
-        return requestDataHolder.get().request;
+        return requestHolder.get();
     }
 
     public static String getClientIp() {
         final String[] result = new String[] { "0" };
-        Optional.ofNullable(requestDataHolder.get()).map(RequestThreadData::getRequest).ifPresent(r -> {
+        Optional.ofNullable(getRequest()).ifPresent(r -> {
             result[0] = r.getHeader("X-Forwarded-For2");
             if (null == result[0]) {
                 result[0] = r.getHeader("X-Forwarded-For");
@@ -71,49 +51,60 @@ public class Global {
     }
 
     public static HttpServletResponse getResponse() {
-        return requestDataHolder.get().response;
+        return responseHolder.get();
     }
 
     public static Locale getLocale() {
         HttpServletRequest request = getRequest();
-        return null == request || null == request.getLocale() ? DEFAULT_LOCALE : request.getLocale();
+        if (null == request.getLocale()) {
+            wrapRequest(new HttpServletRequestWrapper(request) {
+                @Override
+                public Locale getLocale() {
+                    return Locale.getDefault();
+                }
+            });
+        }
+        return request.getLocale();
+    }
+
+    private static void wrapRequest(HttpServletRequestWrapper httpServletRequestWrapper) {
+        requestHolder.set(httpServletRequestWrapper);
     }
 
     public static void init(HttpServletRequest request, HttpServletResponse response) {
-        requestDataHolder.set(new RequestThreadData(request, response));
+        requestHolder.set(request);
+        responseHolder.set(response);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T peek(Class<T> class1) {
-        return (T) requestDataHolder.get().map.get(class1);
+    public static <T> T peek(final Class<T> class1) {
+        return (T) getRequest().getAttribute(class1.getName());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static <T> void put(Class<T> class1, T value) {
-        Map map = requestDataHolder.get().map;
-        if (Collections.EMPTY_MAP == map) {
-            map = new HashMap<>();
-            requestDataHolder.get().map = map;
-        }
-        map.put(class1, value);
+    public static <T> void put(final Class<T> class1, final T value) {
+        getRequest().setAttribute(class1.getName(), value);
     }
 
     public static void clear() {
-        requestDataHolder.remove();
+        requestHolder.remove();
+        responseHolder.remove();
     }
 
     public static String getUuid() {
-        final RequestThreadData requestThreadData = requestDataHolder.get();
-        if (EMPTY_UUID.equals(requestThreadData.uuid)) {
+        final HttpServletRequest request = getRequest();
+        String uuid = (String) getRequest().getAttribute(UUID_ATTRIBUTE);
+        if (null == uuid) {
             final Cookie cookie = C.find(Optional.ofNullable(getRequest().getCookies()).orElse(new Cookie[0]), UUID_COOKIE);
             if (null != cookie) {
-                requestThreadData.uuid = cookie.getValue();
+                uuid = cookie.getValue();
+                request.setAttribute(UUID_ATTRIBUTE, uuid);
             } else {
-                requestThreadData.uuid = UUID.randomUUID().toString();
-                Cookie uuidCookie = new Cookie(UUID_COOKIE_NAME, requestThreadData.uuid);
+                uuid = UUID.randomUUID().toString();
+                Cookie uuidCookie = new Cookie(UUID_COOKIE_NAME, uuid);
+                request.setAttribute(UUID_ATTRIBUTE, uuid);
                 getResponse().addCookie(uuidCookie);
             }
         }
-        return requestThreadData.uuid;
+        return uuid;
     }
 }

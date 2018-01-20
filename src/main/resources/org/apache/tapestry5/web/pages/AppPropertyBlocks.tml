@@ -20,19 +20,13 @@
 	</t:block>
 	
 	<t:block id="bigDecimal">
-		<t:label for="bigDecimalField" />
-		<div>
-			<input t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
-			<t:error for="bigDecimalField"/>
-		</div>
+		<input t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
+		<t:error for="bigDecimalField"/>
 	</t:block>
 	
 	<t:block id="commonEntity">
-		<t:label for="commonEntity" />
-		<div>
-			<t:select t:id="commonEntity" disabled="disabled" t:mixins="MyFormGroup" />
-			<t:error for="commonEntity"/>
-		</div>
+		<t:select t:id="commonEntity" disabled="disabled" t:mixins="MyFormGroup" />
+		<t:error for="commonEntity"/>
 	</t:block>	
 	
 	<t:block id="dateDisplay">

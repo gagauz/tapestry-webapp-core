@@ -1,18 +1,5 @@
 package org.apache.tapestry5.web.mixins;
 
-//Licensed under the Apache License, Version 2.0 (the "License");
-
-//you may not use this file except in compliance with the License.
-//You may obtain a copy of the License at
-//
-//  http://www.apache.org/licenses/LICENSE-2.0
-//
-//Unless required by applicable law or agreed to in writing, software
-//distributed under the License is distributed on an "AS IS" BASIS,
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//See the License for the specific language governing permissions and
-//limitations under the License.
-
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
@@ -24,6 +11,8 @@ import org.apache.tapestry5.corelib.components.Checkbox;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
 
 /**
  * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer
@@ -67,6 +56,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
  */
 public class MyFormGroup {
     @InjectContainer
+    private Component container;
+
     private Field field;
 
     @Inject
@@ -85,6 +76,9 @@ public class MyFormGroup {
     @Symbol(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS)
     private String fieldWrapperElementCssClass;
 
+    @Inject
+    protected ComponentDefaultProvider defaultProvider;
+
     private Element label;
 
     private Element fieldWrapper;
@@ -97,33 +91,51 @@ public class MyFormGroup {
     void beginRender(MarkupWriter writer) {
         writer.element("div", "class", divCssClass);
 
-        decorator.beforeLabel(field);
+        if (container instanceof Field) {
+            field = (Field) container;
+            decorator.beforeLabel(field);
 
-        label = writer.element("label");
+            label = writer.element("label");
 
-        checkbox = field instanceof Checkbox;
-        if (!checkbox) {
+            checkbox = field instanceof Checkbox;
+            if (!checkbox) {
+                writer.end();
+            }
+
+            fillInLabelAttributes();
+
+            decorator.afterLabel(field);
+
+            if (!checkbox) {
+                wrapContainer(writer);
+            }
+        } else {
+            label = writer.element("label");
+            label.attribute("for", container.getComponentResources().getId());
+            label.attribute("class", labelCssClass);
+            label.text(defaultLabel());
             writer.end();
+
+            wrapContainer(writer);
         }
+    }
 
-        fillInLabelAttributes();
-
-        decorator.afterLabel(field);
-
-        if (!checkbox && fieldWrapperElementName.length() > 0) {
+    private void wrapContainer(MarkupWriter writer) {
+        if (fieldWrapperElementName.length() > 0) {
             fieldWrapper = writer.element(fieldWrapperElementName);
             if (fieldWrapperElementCssClass.length() > 0) {
                 fieldWrapper.attribute("class", fieldWrapperElementCssClass);
             }
         }
-
     }
 
     @HeartbeatDeferred
     void fillInLabelAttributes() {
-        label.attribute("for", field.getClientId());
-        label.attribute("class", labelCssClass);
-        label.text(field.getLabel());
+        if (null != field) {
+            label.attribute("for", field.getClientId());
+            label.attribute("class", labelCssClass);
+            label.text(field.getLabel());
+        }
     }
 
     void afterRender(MarkupWriter writer) {
@@ -134,5 +146,9 @@ public class MyFormGroup {
             writer.end(); // label end
         }
         writer.end(); // div.form-group
+    }
+
+    final String defaultLabel() {
+        return defaultProvider.defaultLabel(container.getComponentResources());
     }
 }
