@@ -5,13 +5,48 @@ import java.util.Map;
 
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static boolean equalsToString(Object o1, Object o2) {
-        return o1 == o2 || String.valueOf(o1).equals(String.valueOf(o2));
+        return o1 == o2
+                || String.valueOf(o1).equals(String.valueOf(o2));
     }
 
     private static final Map<Character, String> TRANSLITERATE;
 
     static {
         TRANSLITERATE = new HashMap<>();
+        TRANSLITERATE.put('Й', "J");
+        TRANSLITERATE.put('Ц', "Cz");
+        TRANSLITERATE.put('У', "U");
+        TRANSLITERATE.put('К', "K");
+        TRANSLITERATE.put('Е', "E");
+        TRANSLITERATE.put('Ё', "Yo");
+        TRANSLITERATE.put('Н', "N");
+        TRANSLITERATE.put('Г', "G");
+        TRANSLITERATE.put('Ш', "Sh");
+        TRANSLITERATE.put('Щ', "Shh");
+        TRANSLITERATE.put('З', "Z");
+        TRANSLITERATE.put('Х', "Kh");
+        TRANSLITERATE.put('Ъ', "");
+        TRANSLITERATE.put('Ф', "F");
+        TRANSLITERATE.put('Ы', "Y");
+        TRANSLITERATE.put('В', "V");
+        TRANSLITERATE.put('А', "A");
+        TRANSLITERATE.put('П', "P");
+        TRANSLITERATE.put('Р', "R");
+        TRANSLITERATE.put('О', "O");
+        TRANSLITERATE.put('Л', "L");
+        TRANSLITERATE.put('Д', "D");
+        TRANSLITERATE.put('Ж', "Zh");
+        TRANSLITERATE.put('Э', "Eh");
+        TRANSLITERATE.put('Я', "Ya");
+        TRANSLITERATE.put('Ч', "Ch");
+        TRANSLITERATE.put('С', "S");
+        TRANSLITERATE.put('М', "M");
+        TRANSLITERATE.put('И', "I");
+        TRANSLITERATE.put('Т', "T");
+        TRANSLITERATE.put('Ь', "'");
+        TRANSLITERATE.put('Б', "B");
+        TRANSLITERATE.put('Ю', "Yu");
+
         TRANSLITERATE.put('й', "j");
         TRANSLITERATE.put('ц', "cz");
         TRANSLITERATE.put('у', "u");
@@ -57,7 +92,9 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             if (null != bb) {
                 sb.append(bb);
             } else {
-                sb.append('[' + from.charAt(i) + ']');
+                sb.append('['
+                        + from.charAt(i)
+                        + ']');
             }
         }
         return sb.toString();
