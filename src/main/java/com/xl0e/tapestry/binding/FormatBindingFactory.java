@@ -19,17 +19,20 @@ public class FormatBindingFactory implements BindingFactory {
     }
 
     @Override
-    public Binding newBinding(final String description, final ComponentResources container, final ComponentResources component,
-                              final String expression, final Location location) {
+    public Binding newBinding(final String description,
+                              final ComponentResources container,
+                              final ComponentResources component,
+                              final String expression,
+                              final Location location) {
 
         final String[] parts = expression.split(",", 2);
 
         return new AbstractContextBinding(bindingSource, resolver, description, container) {
             @Override
             public Object get() {
-                if (parts[0].endsWith("f"))
+                if (parts[0].contains("f"))
                     return String.format(parts[0], getValue(parts[1], BindingConstants.PROP, Double.class));
-                if (parts[0].endsWith("d"))
+                if (parts[0].contains("d"))
                     return String.format(parts[0], getValue(parts[1], BindingConstants.PROP, Integer.class));
                 return String.format(parts[0], getValue(parts[1], BindingConstants.PROP, String.class));
             }

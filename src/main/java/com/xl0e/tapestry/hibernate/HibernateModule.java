@@ -4,6 +4,7 @@ import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.ImportModule;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentRequestFilter;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.xl0e.hibernate.dao.AbstractDao;
 
+@ImportModule({ HibernateValueEncoderModule.class })
 public class HibernateModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateModule.class);
@@ -24,13 +26,13 @@ public class HibernateModule {
 
     @Contribute(ComponentRequestHandler.class)
     public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration,
-            HibernateCommonRequestFilter hibernateFilter) {
+                                                  HibernateCommonRequestFilter hibernateFilter) {
         configuration.add("HibernateFilter", hibernateFilter, "after:IgnoredPaths");
     }
 
     @Contribute(ValidationConstraintGenerator.class)
     public void contributeValidationConstraintGenerator(
-            OrderedConfiguration<ValidationConstraintGenerator> configuration) {
+                                                        OrderedConfiguration<ValidationConstraintGenerator> configuration) {
         configuration.addInstance("HibernateColumnsValidators", HibernateColumnValidationConstraintGenerator.class);
     }
 

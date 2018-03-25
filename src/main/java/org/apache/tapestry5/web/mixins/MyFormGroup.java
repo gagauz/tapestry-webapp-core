@@ -24,6 +24,7 @@ import org.apache.tapestry5.corelib.components.Checkbox;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.web.MySymbolConstants;
 
 /**
  * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer
@@ -74,6 +75,10 @@ public class MyFormGroup {
     private String labelCssClass;
 
     @Inject
+    @Symbol(MySymbolConstants.FORM_CHECKBOX_LABEL_CSS_CLASS)
+    private String checkboxLabelCssClass;
+
+    @Inject
     @Symbol(SymbolConstants.FORM_GROUP_WRAPPER_CSS_CLASS)
     private String divCssClass;
 
@@ -102,6 +107,7 @@ public class MyFormGroup {
         label = writer.element("label");
 
         checkbox = field instanceof Checkbox;
+
         if (!checkbox) {
             writer.end();
         }
@@ -122,7 +128,9 @@ public class MyFormGroup {
     @HeartbeatDeferred
     void fillInLabelAttributes() {
         label.attribute("for", field.getClientId());
-        label.attribute("class", labelCssClass);
+        label.attribute("class", checkbox
+                ? checkboxLabelCssClass
+                : labelCssClass);
         label.text(field.getLabel());
     }
 
