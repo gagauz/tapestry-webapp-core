@@ -1,0 +1,22 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd" xmlns:p="tapestry:parameter">
+	<t:form t:id="uploadForm" class="form-horizontal">
+		<t:body />
+		<div class="form-group">
+			<t:label class="col-sm-4 input-label" for="file">
+				<t:Delegate to="label" />
+			</t:label>
+			<div class="col-sm-8">
+				<t:upload t:id="file" value="fileValue" class="form-control" />
+				<t:error for="file" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-8">
+				<t:linksubmit class="btn btn-success">
+					<i class="fa fa-download"></i> Загрузить
+				</t:linksubmit>
+			</div>
+		</div>
+		
+	</t:form>
+</t:container>

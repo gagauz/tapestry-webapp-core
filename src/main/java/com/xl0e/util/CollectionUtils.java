@@ -1,7 +1,10 @@
 package com.xl0e.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.xl0e.hibernate.model.base.Indexed;
 
@@ -32,7 +35,8 @@ public class CollectionUtils {
     }
 
     public static <K extends Indexed> List<K> filterByMask(Collection<K> collection,
-                                                           Long mask, Filter<K> filter) {
+                                                           Long mask,
+                                                           Filter<K> filter) {
         List<K> result = C.arrayList(collection.size());
 
         for (K element : collection) {
@@ -60,6 +64,17 @@ public class CollectionUtils {
         long l = 1L << 38;
         l = l | (1L << 28);
         System.out.println(l);
+    }
+
+    public static <T> Stream<T> stream(Collection<T> nullable) {
+        return Optional.ofNullable(nullable).map(Collection::stream).orElse(Collections.<T>emptyList().stream());
+    }
+
+    public static <T> Collection<T> emptyIfNull(Collection<T> nullable) {
+        if (null != nullable) {
+            return nullable;
+        }
+        return Collections.<T>emptyList();
     }
 
 }
