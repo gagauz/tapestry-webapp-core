@@ -12,9 +12,10 @@ import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.security.api.AccessAttributes;
 import org.apache.tapestry5.security.api.AccessDeniedHandler;
 import org.apache.tapestry5.security.api.AuthenticationHandler;
-import org.apache.tapestry5.security.api.Principal;
+import org.apache.tapestry5.security.api.User;
 import org.apache.tapestry5.security.impl.CookieCredentials;
 import org.apache.tapestry5.services.ComponentEventRequestFilter;
 import org.apache.tapestry5.services.ComponentEventRequestHandler;
@@ -77,7 +78,7 @@ public class SecurityModule {
     }
 
     public CookieEncryptorDecryptor buildSecurityEncryptor(@Inject @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase) {
-        return new CookieEncryptorDecryptor(passphrase, "salt");
+        return new CookieEncryptorDecryptor(passphrase, passphrase);
     }
 
     @Contribute(AuthenticationService.class)
@@ -90,7 +91,7 @@ public class SecurityModule {
 
             @Override
             public void handleLogin(LoginResult loginResult) {
-                Principal user = loginResult.getUser();
+                User user = loginResult.getUser();
                 if (null != user && !(loginResult.getCredentials() instanceof CookieCredentials)) {
                     String redirect = cookies.readCookieValue(REDIRECT_PAGE_COOKIE_NAME);
                     if (null != redirect) {
@@ -105,7 +106,7 @@ public class SecurityModule {
             }
 
             @Override
-            public void handleLogout(Principal user) {
+            public void handleLogout(AccessAttributes user) {
             }
         }, "after:*");
     }

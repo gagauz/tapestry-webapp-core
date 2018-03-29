@@ -1,8 +1,8 @@
 package org.apache.tapestry5.security.impl;
 
-import org.apache.tapestry5.security.api.Credential;
+import org.apache.tapestry5.security.api.Credentials;
 
-public class CookieCredentials implements Credential {
+public class CookieCredentials implements Credentials {
     private final String value;
 
     public CookieCredentials(String value) {

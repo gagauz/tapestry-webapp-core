@@ -4,28 +4,26 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractConditional;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.security.AccessDeniedException;
-import org.apache.tapestry5.security.PrincipalStorage;
-import org.apache.tapestry5.security.api.AccessAttribute;
-import org.apache.tapestry5.security.api.AccessAttributeExtractorChecker;
-import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.security.api.AccessAttributes;
+import org.apache.tapestry5.security.api.AccessAttributesChecker;
+import org.apache.tapestry5.security.api.SessionAccessAttributes;
 
 public class IfAuthorized extends AbstractConditional {
 
     /** The roles. */
     @Parameter
-    private AccessAttribute attribute;
+    private AccessAttributes attribute;
 
     @Inject
-    private ApplicationStateManager applicationStateManager;
+    private SessionAccessAttributes sessionAttributes;
 
     @Inject
-    private AccessAttributeExtractorChecker accessAttributeChecker;
+    private AccessAttributesChecker accessAttributeChecker;
 
     @Override
     protected boolean test() {
         try {
-            PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
-            accessAttributeChecker.check(userSet, attribute);
+            accessAttributeChecker.canAccess(sessionAttributes.getSessionAttributes(), attribute);
         } catch (AccessDeniedException e) {
             return false;
         }

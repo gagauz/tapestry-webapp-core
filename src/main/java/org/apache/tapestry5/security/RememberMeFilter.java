@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.security.api.Principal;
+import org.apache.tapestry5.security.api.User;
 import org.apache.tapestry5.security.impl.CookieCredentials;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Cookies;
@@ -43,7 +43,7 @@ public class RememberMeFilter extends AbstractCommonRequestFilter {
             if (null != cookieValue) {
                 log.info("Handle remember me cookie [{}]", cookieValue);
                 try {
-                    Principal user = authService.login(new CookieCredentials(cookieValue));
+                    User user = authService.login(new CookieCredentials(cookieValue));
                     if (null == user) {
                         throw new RuntimeException("remove cookie");
                     }

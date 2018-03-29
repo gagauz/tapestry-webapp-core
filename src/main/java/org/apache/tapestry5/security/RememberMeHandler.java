@@ -2,8 +2,9 @@ package org.apache.tapestry5.security;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.security.api.AccessAttributes;
 import org.apache.tapestry5.security.api.AuthenticationHandler;
-import org.apache.tapestry5.security.api.Principal;
+import org.apache.tapestry5.security.api.CookieCredentialEncoder;
 import org.apache.tapestry5.security.api.UserProvider;
 import org.apache.tapestry5.security.impl.CookieCredentials;
 import org.apache.tapestry5.services.Cookies;
@@ -28,8 +29,11 @@ public class RememberMeHandler implements AuthenticationHandler {
     @Inject
     private UserProvider userProvider;
 
+    @Inject
+    private CookieCredentialEncoder cookieCredentialEncoder;
+
     @Override
-    public void handleLogout(Principal user) {
+    public void handleLogout(AccessAttributes user) {
         cookies.removeCookieValue(cookieName);
     }
 
@@ -39,13 +43,13 @@ public class RememberMeHandler implements AuthenticationHandler {
 
         if (result.isSuccess()
                 && !(result.getCredentials() instanceof CookieCredentials)) {
-            String oldValue = cookies.readCookieValue(cookieName);
 
-            CookieCredentials cookie = userProvider.toCredentials(result.getUser(), CookieCredentials.class);
+            CookieCredentials cookie = cookieCredentialEncoder.encode(result.getUser());
 
-            if (null == oldValue || !oldValue.equals(cookie.getValue())) {
-                cookies.getBuilder(cookieName, cookie.getValue()).setPath("/").setMaxAge(cookieAge).write();
-            }
+            cookies.getBuilder(cookieName, cookie.getValue())
+                    .setPath("/")
+                    .setMaxAge(cookieAge)
+                    .write();
         }
     }
 

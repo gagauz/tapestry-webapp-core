@@ -1,19 +1,19 @@
 package org.apache.tapestry5.web.services.security;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
-import org.apache.tapestry5.security.api.AccessAttribute;
+import org.apache.tapestry5.security.api.AccessAttributes;
 
-public class SecuredAccessAttributes implements AccessAttribute {
+public class SecuredAccessAttributes implements AccessAttributes {
 
-    private final List<String> attributes;
+    private final Collection<String> attributes;
 
     public SecuredAccessAttributes(String[] value) {
         this.attributes = Arrays.asList(value);
     }
 
-    public List<String> getAttributes() {
+    public Collection<String> getAttributes() {
         return attributes;
     }
 

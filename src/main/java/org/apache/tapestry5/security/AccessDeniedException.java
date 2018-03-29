@@ -1,17 +1,17 @@
 package org.apache.tapestry5.security;
 
-import org.apache.tapestry5.security.api.AccessAttribute;
+import org.apache.tapestry5.security.api.AccessAttributes;
 
 public class AccessDeniedException extends RuntimeException {
 
-    private AccessAttribute accessAttribute;
+    private AccessAttributes accessAttribute;
 
-    public AccessDeniedException(AccessAttribute accessAttribute) {
+    public AccessDeniedException(AccessAttributes accessAttribute) {
         this.accessAttribute = accessAttribute;
 
     }
 
-    public AccessAttribute getNeedRoles() {
+    public AccessAttributes getNeedRoles() {
         return accessAttribute;
     }
 

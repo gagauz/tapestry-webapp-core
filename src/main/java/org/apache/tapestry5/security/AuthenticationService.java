@@ -1,17 +1,21 @@
 package org.apache.tapestry5.security;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.security.api.AccessAttributes;
 import org.apache.tapestry5.security.api.AuthenticationHandler;
-import org.apache.tapestry5.security.api.Credential;
-import org.apache.tapestry5.security.api.Principal;
+import org.apache.tapestry5.security.api.Credentials;
+import org.apache.tapestry5.security.api.SessionAccessAttributes;
+import org.apache.tapestry5.security.api.User;
 import org.apache.tapestry5.security.api.UserProvider;
-import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.xl0e.util.C;
 
 public class AuthenticationService {
 
@@ -21,7 +25,7 @@ public class AuthenticationService {
     private UserProvider userProvider;
 
     @Inject
-    private ApplicationStateManager applicationStateManager;
+    private SessionAccessAttributes sessionAccessAttributes;
 
     @Inject
     private List<AuthenticationHandler> handlers;
@@ -29,21 +33,12 @@ public class AuthenticationService {
     @Inject
     private Request request;
 
-    public <P extends Principal, C extends Credential> P login(C credential) {
+    public User login(Credentials credential) {
         LoginResult result = null;
-        P newUser = userProvider.findByCredential(credential);
+        User newUser = userProvider.findByCredential(credential);
         if (null != newUser) {
-            PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
-            if (null == userSet) {
-                userSet = new PrincipalStorage();
-            } else {
-                userSet.remove(newUser);
-            }
-            userSet.add(newUser);
-            applicationStateManager.set(PrincipalStorage.class, userSet);
-            @SuppressWarnings("unchecked")
-            Class<P> userClass = (Class<P>) newUser.getClass();
-            applicationStateManager.set(userClass, newUser);
+            copySession();
+            sessionAccessAttributes.setSessionAttributes(newUser.getAccessAttributes());
             result = new LoginResult(newUser, credential);
         } else {
             result = new LoginResult(credential);
@@ -55,39 +50,17 @@ public class AuthenticationService {
         return newUser;
     }
 
-    public <P extends Principal> P login(P newUser) {
-        LoginResult result = null;
-        PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
-        if (null == userSet) {
-            userSet = new PrincipalStorage();
-        } else {
-            userSet.remove(newUser);
-        }
-        userSet.add(newUser);
-        applicationStateManager.set(PrincipalStorage.class, userSet);
-        @SuppressWarnings("unchecked")
-        Class<P> userClass = (Class<P>) newUser.getClass();
-        applicationStateManager.set(userClass, newUser);
-        result = new LoginResult(newUser, null);
-        for (AuthenticationHandler handler : handlers) {
-            handler.handleLogin(result);
-        }
-
-        return newUser;
+    public <P extends User> P login(P newUser) {
+        return null;
     }
 
     public void logout() {
 
-        PrincipalStorage userSet = applicationStateManager.getIfExists(PrincipalStorage.class);
+        AccessAttributes user = sessionAccessAttributes.setSessionAttributes(null);
 
         for (AuthenticationHandler handler : handlers) {
-            for (Principal user : userSet) {
-                handler.handleLogout(user);
-                applicationStateManager.set(user.getClass(), null);
-            }
+            handler.handleLogout(user);
         }
-
-        applicationStateManager.set(PrincipalStorage.class, null);
 
         Session session = request.getSession(false);
 
@@ -98,6 +71,17 @@ public class AuthenticationService {
                 log.error("Session invalidate error", e);
             }
         }
+    }
+
+    private void copySession() {
+        Session old = request.getSession(false);
+        Map<String, Object> attr = C.newHashMap();
+        old.getAttributeNames().forEach(n -> {
+            attr.put(n, old.getAttribute(n));
+        });
+        Session newSession = request.getSession(true);
+        attr.forEach((k, v) -> newSession.setAttribute(k, v));
+
     }
 
 }

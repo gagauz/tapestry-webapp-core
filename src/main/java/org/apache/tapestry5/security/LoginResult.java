@@ -1,27 +1,27 @@
 package org.apache.tapestry5.security;
 
-import org.apache.tapestry5.security.api.Credential;
-import org.apache.tapestry5.security.api.Principal;
+import org.apache.tapestry5.security.api.Credentials;
+import org.apache.tapestry5.security.api.User;
 
 public class LoginResult {
-    private final Principal user;
+    private final User user;
     private final boolean success;
-    private final Credential credentials;
-    private Principal lastUser;
+    private final Credentials credentials;
+    private User lastUser;
 
-    public LoginResult(Principal user, Credential credentials) {
+    public LoginResult(User user, Credentials credentials) {
         this.user = user;
         this.credentials = credentials;
         this.success = true;
     }
 
-    public LoginResult(Credential credentials) {
+    public LoginResult(Credentials credentials) {
         this.user = null;
         this.credentials = credentials;
         this.success = false;
     }
 
-    public Principal getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -29,15 +29,15 @@ public class LoginResult {
         return success;
     }
 
-    public Credential getCredentials() {
+    public Credentials getCredentials() {
         return credentials;
     }
 
-    public Principal getLastUser() {
+    public User getLastUser() {
         return lastUser;
     }
 
-    public void setLastUser(Principal lastUser) {
+    public void setLastUser(User lastUser) {
         this.lastUser = lastUser;
     }
 
