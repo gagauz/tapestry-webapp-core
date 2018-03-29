@@ -11,8 +11,9 @@ import org.apache.tapestry5.corelib.components.Checkbox;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.web.MySymbolConstants;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.web.MySymbolConstants;
 
 /**
  * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer
@@ -97,19 +98,19 @@ public class MyFormGroup {
 
         if (container instanceof Field) {
             field = (Field) container;
-        decorator.beforeLabel(field);
+            decorator.beforeLabel(field);
 
-        label = writer.element("label");
+            label = writer.element("label");
 
-        checkbox = field instanceof Checkbox;
+            checkbox = field instanceof Checkbox;
 
-        if (!checkbox) {
-            writer.end();
-        }
+            if (!checkbox) {
+                writer.end();
+            }
 
-        fillInLabelAttributes();
+            fillInLabelAttributes();
 
-        decorator.afterLabel(field);
+            decorator.afterLabel(field);
 
             if (!checkbox) {
                 wrapContainer(writer);
@@ -137,12 +138,12 @@ public class MyFormGroup {
     @HeartbeatDeferred
     void fillInLabelAttributes() {
         if (null != field) {
-        label.attribute("for", field.getClientId());
-        label.attribute("class", checkbox
-                ? checkboxLabelCssClass
-                : labelCssClass);
-        label.text(field.getLabel());
-    }
+            label.attribute("for", field.getClientId());
+            label.attribute("class", checkbox
+                    ? checkboxLabelCssClass
+                    : labelCssClass);
+            label.text(field.getLabel());
+        }
     }
 
     void afterRender(MarkupWriter writer) {

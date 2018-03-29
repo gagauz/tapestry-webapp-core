@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -170,8 +172,11 @@ public class C {
     @SuppressWarnings("unchecked")
     public static <K, V> HashMap<K, V> hashMap(Object... keyAndValues) {
         HashMap<K, V> map = newHashMap();
-        for (int i = 0; i + 1 < keyAndValues.length; i = i + 2)
-            map.put((K) keyAndValues[i], (V) keyAndValues[i + 1]);
+        for (int i = 0; i
+                + 1 < keyAndValues.length; i = i
+                        + 2)
+            map.put((K) keyAndValues[i], (V) keyAndValues[i
+                    + 1]);
         return map;
     }
 
@@ -228,7 +233,8 @@ public class C {
     }
 
     public static <T extends Comparable<T>> int compare(T a, T b) {
-        if (null != a && null != b) {
+        if (null != a
+                && null != b) {
             return a.compareTo(b);
         }
         return 0;
@@ -259,7 +265,9 @@ public class C {
     }
 
     public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
-        return null == iterable ? Collections.emptyList() : iterable;
+        return null == iterable
+                ? Collections.emptyList()
+                : iterable;
     }
 
     public static <T> void unwrap(T element, Function<T, T> unwrapper) {
@@ -293,9 +301,28 @@ public class C {
             arr[0] = value;
             return arr;
         }
-        T[] copy = Arrays.copyOf(array, array.length + 1);
+        T[] copy = Arrays.copyOf(array, array.length
+                + 1);
         copy[array.length] = value;
         return copy;
+    }
+
+    public static <T> Set<T> copy(final Set<T> original) {
+        return Optional.ofNullable(original).map(HashSet::new).orElse(null);
+    }
+
+    public static <T, X extends Set<T>> X copy(final Set<T> original, Function<Set<T>, X> creator) {
+        return null == original
+                ? null
+                : creator.call(original);
+    }
+
+    public static <T> List<T> copy(final List<T> original) {
+        return Optional.ofNullable(original).map(ArrayList::new).orElse(null);
+    }
+
+    public static <K, V> Map<K, V> copy(final Map<K, V> original) {
+        return Optional.ofNullable(original).map(HashMap::new).orElse(null);
     }
 
 }
