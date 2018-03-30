@@ -15,12 +15,8 @@ public class SessionAccessAttributesImpl implements SessionAccessAttributes<Secu
     }
 
     @Override
-    public SecuredAccessAttributes setSessionAttributes(SecuredAccessAttributes newUser) {
-        try {
-            return getSessionAttributes();
-        } finally {
-            applicationStateManager.set(SecuredAccessAttributes.class, null);
-        }
+    public void setSessionAttributes(SecuredAccessAttributes attributes) {
+        applicationStateManager.set(SecuredAccessAttributes.class, attributes);
     }
 
 }

@@ -1,7 +1,11 @@
 package org.apache.tapestry5.security;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import com.xl0e.util.C;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.security.api.AccessAttributes;
@@ -14,8 +18,6 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.xl0e.util.C;
 
 public class AuthenticationService {
 
@@ -56,7 +58,8 @@ public class AuthenticationService {
 
     public void logout() {
 
-        AccessAttributes user = sessionAccessAttributes.setSessionAttributes(null);
+        AccessAttributes user = sessionAccessAttributes.getSessionAttributes();
+        sessionAccessAttributes.setSessionAttributes(null);
 
         for (AuthenticationHandler handler : handlers) {
             handler.handleLogout(user);
@@ -76,7 +79,7 @@ public class AuthenticationService {
     private void copySession() {
         Session old = request.getSession(false);
         Map<String, Object> attr = C.newHashMap();
-        old.getAttributeNames().forEach(n -> {
+        Optional.ofNullable(old).map(Session::getAttributeNames).orElse(Collections.emptyList()).forEach(n -> {
             attr.put(n, old.getAttribute(n));
         });
         Session newSession = request.getSession(true);

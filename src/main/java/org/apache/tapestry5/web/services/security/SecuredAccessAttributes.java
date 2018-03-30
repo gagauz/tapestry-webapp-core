@@ -9,8 +9,12 @@ public class SecuredAccessAttributes implements AccessAttributes {
 
     private final Collection<String> attributes;
 
-    public SecuredAccessAttributes(String[] value) {
+    public SecuredAccessAttributes(String... value) {
         this.attributes = Arrays.asList(value);
+    }
+
+    public SecuredAccessAttributes(Collection<String> value) {
+        this.attributes = value;
     }
 
     public Collection<String> getAttributes() {

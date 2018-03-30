@@ -11,8 +11,11 @@ import org.apache.tapestry5.security.api.SessionAccessAttributes;
 public class IfAuthorized extends AbstractConditional {
 
     /** The roles. */
-    @Parameter
-    private AccessAttributes attribute;
+    @Parameter(allowNull = false)
+    private AccessAttributes attributes;
+
+    @Parameter(value = "false")
+    private boolean negate;
 
     @Inject
     private SessionAccessAttributes sessionAttributes;
@@ -22,12 +25,15 @@ public class IfAuthorized extends AbstractConditional {
 
     @Override
     protected boolean test() {
+        return testInternal() != negate;
+    }
+
+    protected boolean testInternal() {
         try {
-            accessAttributeChecker.canAccess(sessionAttributes.getSessionAttributes(), attribute);
+            return accessAttributeChecker.canAccess(sessionAttributes.getSessionAttributes(), attributes);
         } catch (AccessDeniedException e) {
             return false;
         }
-        return true;
     }
 
 }
