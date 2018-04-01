@@ -1,5 +1,7 @@
 package com.xl0e.util;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
@@ -25,14 +27,14 @@ public class CryptoUtils {
 
     private static final Cipher decryptAES;
 
-    private static final String CH = "latin1";
+    private static final Charset LATIN = StandardCharsets.ISO_8859_1;
 
     private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     static {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            KeySpec spec = new PBEKeySpec(PASS.toCharArray(), SALT.getBytes(CH), 65536, 128);
+            KeySpec spec = new PBEKeySpec(PASS.toCharArray(), SALT.getBytes(LATIN), 65536, 128);
             SecretKey tmp = factory.generateSecret(spec);
             SecretKey key = new SecretKeySpec(tmp.getEncoded(), ALGORITHM);
             encryptAES = Cipher.getInstance(ALGORITHM);
@@ -74,8 +76,8 @@ public class CryptoUtils {
 
     public static String encryptAES(String valueToEnc) {
         try {
-            byte[] encValue = encryptAES.doFinal(valueToEnc.getBytes(CH));
-            return Base64.encodeBase64String(encValue);
+            byte[] encValue = encryptAES.doFinal(valueToEnc.getBytes(LATIN));
+            return new String(Base64.encodeBase64URLSafe(encValue), LATIN);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -83,7 +85,7 @@ public class CryptoUtils {
 
     public static String decryptAES(String encryptedValue) {
         try {
-            byte[] decordedValue = Base64.decodeBase64(encryptedValue.getBytes(CH));
+            byte[] decordedValue = Base64.decodeBase64(encryptedValue.getBytes(LATIN));
             byte[] decValue = decryptAES.doFinal(decordedValue);
             return new String(decValue);
         } catch (Exception e) {

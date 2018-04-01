@@ -23,6 +23,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.util.SerializationHelper;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +34,9 @@ import com.xl0e.hibernate.utils.EntityFilter;
 import com.xl0e.hibernate.utils.HqlEntityFilter;
 import com.xl0e.hibernate.utils.QueryParameter;
 
-public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
+public class AbstractHibernateDao<Id extends Serializable, Entity extends IModel<Id>> {
 
-    private static final Map<Class<?>, Function<String, ?>> idResolverMap = new HashMap<>();
+    protected static final Map<Class<?>, Function<String, ?>> idResolverMap = new HashMap<>();
 
     static {
         idResolverMap.put(Byte.class, t -> {
@@ -53,7 +54,7 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     }
 
     @SuppressWarnings("rawtypes")
-    protected static final Map<Class, AbstractDao> instanceMap = new HashMap<>();
+    protected static final Map<Class, AbstractHibernateDao> instanceMap = new HashMap<>();
 
     @Autowired
     protected SessionFactory sessionFactory;
@@ -65,7 +66,7 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     private final Function<String, Id> idDeserialiser;
 
     @SuppressWarnings("unchecked")
-    public AbstractDao() {
+    public AbstractHibernateDao() {
         Type[] parameters = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
         if (parameters.length == 1) {
             entityClass = (Class<Entity>) parameters[0];
@@ -263,15 +264,21 @@ public class AbstractDao<Id extends Serializable, Entity extends IModel<Id>> {
     @SuppressWarnings("unchecked")
     public Entity unproxy(Entity proxied) {
         Session session = getSession();
-        return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(proxied);
+        Entity clone = clone(proxied);
+        return (Entity) ((SessionImplementor) session).getPersistenceContext().unproxy(clone);
+    }
+
+    public Entity clone(Entity dtls) {
+        Entity clonedObject = (Entity) SerializationHelper.<Entity>clone((Serializable) dtls);
+        return clonedObject;
     }
 
     public Collection<Entity> unproxy(Collection<Entity> proxied) {
-        return proxied.stream().map(p -> unproxy(p)).collect(Collectors.toList());
+        return proxied.stream().map(this::unproxy).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
-    public static <I extends Serializable, E extends IModel<I>, D extends AbstractDao<I, E>> D getDao(Class<E> entityClass) {
+    public static <I extends Serializable, E extends IModel<I>, D extends AbstractHibernateDao<I, E>> D getDao(Class<E> entityClass) {
         return (D) instanceMap.get(entityClass);
     }
 

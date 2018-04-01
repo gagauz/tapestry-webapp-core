@@ -7,17 +7,17 @@ import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.hibernate.TransientObjectException;
 
-import com.xl0e.hibernate.dao.AbstractDao;
+import com.xl0e.hibernate.dao.AbstractHibernateDao;
 import com.xl0e.hibernate.model.IModel;
 import com.xl0e.util.StringUtils;
 
-public class HibernateEntityValueEncoderFactory<I extends Serializable, E extends IModel<I>, DAO extends AbstractDao<I, E>>
+public class HibernateEntityValueEncoderFactory<I extends Serializable, E extends IModel<I>, DAO extends AbstractHibernateDao<I, E>>
         implements ValueEncoderFactory<E>, Coercion<String, E> {
 
     private final DAO dao;
 
     public HibernateEntityValueEncoderFactory(Class<E> entityClass) {
-        this.dao = AbstractDao.getDao(entityClass);
+        this.dao = AbstractHibernateDao.getDao(entityClass);
         if (null == this.dao) {
             throw new IllegalStateException("No DAO was found for entity class " + entityClass);
         }

@@ -11,10 +11,15 @@ import java.util.Set;
 
 import org.apache.tapestry5.ComponentParameterConstants;
 import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.Field;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.Validator;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.translator.NumericTranslator;
+import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.Messages;
@@ -39,6 +44,7 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.DisplayBlockContribution;
 import org.apache.tapestry5.services.EditBlockContribution;
+import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Html5Support;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PageRenderLinkSource;
@@ -210,6 +216,7 @@ public class CoreWebappModule {
         configuration.override(Date.class, "date");
         configuration.add(BigDecimal.class, "bigDecimal");
         configuration.add(Float.class, "bigDecimal");
+        configuration.add(Double.class, "bigDecimal");
     }
 
     @Contribute(BeanBlockSource.class)
@@ -278,5 +285,27 @@ public class CoreWebappModule {
 
         configuration.add(CoercionTuple.create(Collection.class, EnumSet.class,
                 input -> null == input || input.isEmpty() ? null : EnumSet.copyOf(input)));
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static void contributeTranslatorSource(MappedConfiguration<Class<?>, Translator<?>> configuration,
+                                                  NumericTranslatorSupport support,
+                                                  Html5Support html5Support) {
+
+        Class<?>[] types = new Class[] { Float.class, Double.class, BigDecimal.class };
+
+        for (Class<?> type : types) {
+            String name = type.getSimpleName().toLowerCase();
+
+            configuration.override(type, new NumericTranslator(name, type, support, html5Support) {
+                @Override
+                public void render(Field field, String message, MarkupWriter writer, FormSupport formSupport) {
+                    if (formSupport.isClientValidationEnabled()) {
+                        support.setupTranslation(getType(), writer.getElement(), message);
+                    }
+                }
+
+            });
+        }
     }
 }

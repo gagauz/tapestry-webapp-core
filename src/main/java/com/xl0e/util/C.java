@@ -214,8 +214,9 @@ public class C {
         return result;
     }
 
-    public static <K, V, Z> ListMultimap<K, Z> listMultiMap(Collection<V> values, Function<V, K> keyFunc,
-            Function<V, Z> valueFunc) {
+    public static <K, V, Z> ListMultimap<K, Z> listMultiMap(Collection<V> values,
+                                                            Function<V, K> keyFunc,
+                                                            Function<V, Z> valueFunc) {
         ListMultimap<K, Z> result = Multimaps.newArrayListMultimap();
         for (V v : values) {
             result.put(keyFunc.call(v), valueFunc.call(v));
@@ -223,8 +224,9 @@ public class C {
         return result;
     }
 
-    public static <K, V, Z> ListMultimap<K, Z> listSortedMultiMap(Collection<V> values, Function<V, K> keyFunc,
-            Function<V, Z> valueFunc) {
+    public static <K, V, Z> ListMultimap<K, Z> listSortedMultiMap(Collection<V> values,
+                                                                  Function<V, K> keyFunc,
+                                                                  Function<V, Z> valueFunc) {
         ListMultimap<K, Z> result = Multimaps.newArrayListSortedMultimap();
         for (V v : values) {
             result.put(keyFunc.call(v), valueFunc.call(v));
@@ -264,7 +266,7 @@ public class C {
         }
     }
 
-    public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
+    public static <T> Collection<T> emptyIfNull(Collection<T> iterable) {
         return null == iterable
                 ? Collections.emptyList()
                 : iterable;

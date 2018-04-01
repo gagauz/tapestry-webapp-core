@@ -31,7 +31,6 @@ import org.apache.tapestry5.services.PropertyEditContext;
 import org.apache.tapestry5.services.PropertyOutputContext;
 import org.apache.tapestry5.services.SelectModelFactory;
 import org.apache.tapestry5.util.EnumValueEncoder;
-import org.apache.tapestry5.web.components.BigDecimalField;
 
 public class AppPropertyBlocks {
 
@@ -53,7 +52,7 @@ public class AppPropertyBlocks {
     @Component(parameters = { "value=context.propertyValue", "label=prop:context.label",
             "translate=prop:bigDecimalTranslator", "validate=prop:bigDecimalValidator",
             "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private BigDecimalField bigDecimalField;
+    private TextField bigDecimalField;
 
     @Component(parameters = { "value=context.propertyValue", "label=prop:context.label", "model=prop:commonEntityModel",
             "validate=prop:commonEntityValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })

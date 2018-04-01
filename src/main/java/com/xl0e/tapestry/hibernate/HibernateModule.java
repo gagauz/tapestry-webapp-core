@@ -13,7 +13,7 @@ import org.apache.tapestry5.services.ValidationConstraintGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.xl0e.hibernate.dao.AbstractDao;
+import com.xl0e.hibernate.dao.AbstractHibernateDao;
 
 @ImportModule({ HibernateValueEncoderModule.class })
 public class HibernateModule {
@@ -39,7 +39,7 @@ public class HibernateModule {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Contribute(TypeCoercer.class)
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration) {
-        AbstractDao.getRegisteredEntities().forEach(cls -> {
+        AbstractHibernateDao.getRegisteredEntities().forEach(cls -> {
             configuration.add(CoercionTuple.create(String.class, cls, new HibernateEntityValueEncoderFactory(cls)));
         });
     }
