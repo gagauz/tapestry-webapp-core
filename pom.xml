@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.xl0e</groupId>
-	<artifactId>tapestry-5.4-web-core</artifactId>
+	<artifactId>tapestry-54-web-core</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
 	<name>Tapestry 5.4 Web core</name>

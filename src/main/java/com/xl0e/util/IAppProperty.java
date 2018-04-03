@@ -6,12 +6,16 @@ public interface IAppProperty<E extends Enum<E>> {
 
     @SuppressWarnings("unchecked")
     default String getName() {
-        return ((E) this).name();
+        return getPrefix() + ((E) this).name();
     }
 
     default String getEnv() {
         String value = System.getenv(getName());
         return null == value ? getDefaultValue() : value;
+    }
+
+    default String getPrefix() {
+        return "";
     }
 
     default String getProperty() {
