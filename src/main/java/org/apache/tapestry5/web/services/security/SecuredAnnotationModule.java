@@ -28,6 +28,6 @@ public class SecuredAnnotationModule {
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration) {
         configuration.add(CoercionTuple.create(Collection.class, AccessAttributes.class, input -> new SecuredAccessAttributes(input)));
         configuration.add(CoercionTuple.create(String.class, AccessAttributes.class, input -> new SecuredAccessAttributes(input)));
-
     }
+
 }

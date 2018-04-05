@@ -233,13 +233,20 @@ public class AbstractHibernateDao<Id extends Serializable, Entity extends IModel
         getSession().saveOrUpdate(entity);
     }
 
-    public void save(Entity entity) {
+    public void save(Object entity) {
         getSession().saveOrUpdate(entity);
         getSession().flush();
     }
 
-    public void saveAll(Collection<Entity> entities) {
-        for (Entity entity : entities) {
+    public void saveAll(Collection entities) {
+        for (Object entity : entities) {
+            getSession().saveOrUpdate(entity);
+        }
+        getSession().flush();
+    }
+
+    public void saveAll(Object... entities) {
+        for (Object entity : entities) {
             getSession().saveOrUpdate(entity);
         }
         getSession().flush();

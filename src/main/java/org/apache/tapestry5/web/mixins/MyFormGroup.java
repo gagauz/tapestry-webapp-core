@@ -1,5 +1,7 @@
 package org.apache.tapestry5.web.mixins;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
@@ -7,13 +9,17 @@ import org.apache.tapestry5.ValidationDecorator;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.InjectContainer;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.components.Checkbox;
+import org.apache.tapestry5.corelib.components.LinkSubmit;
+import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.web.MySymbolConstants;
+import org.apache.tapestry5.web.components.Button;
 
 /**
  * Applied to a {@link org.apache.tapestry5.Field}, this provides the outer
@@ -81,6 +87,9 @@ public class MyFormGroup {
     @Symbol(SymbolConstants.FORM_GROUP_FORM_FIELD_WRAPPER_ELEMENT_CSS_CLASS)
     private String fieldWrapperElementCssClass;
 
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    private String wrapperCssClass;
+
     @Inject
     protected ComponentDefaultProvider defaultProvider;
 
@@ -116,11 +125,15 @@ public class MyFormGroup {
                 wrapContainer(writer);
             }
         } else {
-            label = writer.element("label");
-            label.attribute("for", container.getComponentResources().getId());
-            label.attribute("class", labelCssClass);
-            label.text(defaultLabel());
-            writer.end();
+            if (!isButton(container)) {
+                label = writer.element("label");
+                label.attribute("for", container.getComponentResources().getId());
+                label.attribute("class", labelCssClass);
+                label.text(defaultLabel());
+                writer.end();
+            } else {
+
+            }
 
             wrapContainer(writer);
         }
@@ -129,7 +142,9 @@ public class MyFormGroup {
     private void wrapContainer(MarkupWriter writer) {
         if (fieldWrapperElementName.length() > 0) {
             fieldWrapper = writer.element(fieldWrapperElementName);
-            if (fieldWrapperElementCssClass.length() > 0) {
+            if (!StringUtils.isEmpty(wrapperCssClass)) {
+                fieldWrapper.attribute("class", wrapperCssClass);
+            } else if (fieldWrapperElementCssClass.length() > 0) {
                 fieldWrapper.attribute("class", fieldWrapperElementCssClass);
             }
         }
@@ -158,5 +173,11 @@ public class MyFormGroup {
 
     final String defaultLabel() {
         return defaultProvider.defaultLabel(container.getComponentResources());
+    }
+
+    private static boolean isButton(Component field) {
+        return (field instanceof Submit)
+                || (field instanceof Button)
+                || (field instanceof LinkSubmit);
     }
 }
