@@ -2,10 +2,12 @@ package org.apache.tapestry5.web.mixins;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.InjectContainer;
@@ -93,11 +95,17 @@ public class MyFormGroup {
     @Inject
     protected ComponentDefaultProvider defaultProvider;
 
+    @Inject
+    protected ComponentResources resources;
+
     private Element label;
 
     private Element fieldWrapper;
 
     private boolean checkbox;
+
+    @Environmental
+    protected ValidationTracker validationTracker;
 
     @Environmental
     private ValidationDecorator decorator;
@@ -162,6 +170,12 @@ public class MyFormGroup {
     }
 
     void afterRender(MarkupWriter writer) {
+        // if (validationTracker.inError(field)) {
+        // Element element = writer.element("p", "class", "help-block invisible");
+        // resources.renderInformalParameters(writer);
+        // writer.write(validationTracker.getError(field));
+        // writer.end();
+        // }
         if (fieldWrapper != null) {
             writer.end(); // field wrapper
         }

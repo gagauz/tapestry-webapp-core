@@ -6,7 +6,6 @@ public class Cast {
 
     private static Cast EMPTY = new EmptyCast(null);
     protected final Object obj;
-    protected Object capture;
 
     Cast() {
         this.obj = null;
@@ -55,6 +54,7 @@ public class Cast {
     }
 
     static class EmptyCast extends Cast {
+        private Object capture;
 
         EmptyCast(Object capture) {
             this.capture = capture;

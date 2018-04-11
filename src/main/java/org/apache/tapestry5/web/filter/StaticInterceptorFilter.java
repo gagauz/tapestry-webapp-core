@@ -1,10 +1,15 @@
 package org.apache.tapestry5.web.filter;
 
-import javax.servlet.*;
-
 import java.io.IOException;
 
-public class StaticInterceptorFilter implements Filter {
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class StaticInterceptorFilter extends AbstractHttpFilter {
 
     private RequestDispatcher defaultRequestDispatcher;
 
@@ -13,7 +18,7 @@ public class StaticInterceptorFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void filter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         defaultRequestDispatcher.forward(request, response);
     }
 

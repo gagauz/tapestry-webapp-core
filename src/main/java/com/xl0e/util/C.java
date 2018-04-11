@@ -327,4 +327,12 @@ public class C {
         return Optional.ofNullable(original).map(HashMap::new).orElse(null);
     }
 
+    public static <X> boolean isNotEmpty(Collection<X> collection) {
+        return null != collection && !collection.isEmpty();
+    }
+
+    public static <X> boolean isNotEmpty(X[] array) {
+        return null != array && array.length > 0;
+    }
+
 }

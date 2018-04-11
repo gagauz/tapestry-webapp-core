@@ -2,17 +2,12 @@
 
 	<t:block id="string">
 		<t:if test="long">
-			<t:textarea t:id="textarea" rows="6" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup">
-				<t:error for="textarea"/>
-			</t:textarea>
+			<t:textarea t:id="textarea" rows="6" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
 			<p:else>
 				<t:if test="password">
-					
 					<input t:id="passwordField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
-					<t:error for="passwordField"/>
 					<p:else>
 						<input t:id="textField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
-						<t:error for="textField"/>
 					</p:else>
 				</t:if>
 			</p:else>
@@ -21,12 +16,10 @@
 	
 	<t:block id="bigDecimal">
 		<input t:id="bigDecimalField" disabled="disabled" placeholder="${placeholder}" t:mixins="MyFormGroup" />
-		<t:error for="bigDecimalField"/>
 	</t:block>
 	
 	<t:block id="commonEntity">
 		<t:select t:id="commonEntity" disabled="disabled" t:mixins="MyFormGroup" />
-		<t:error for="commonEntity"/>
 	</t:block>	
 	
 	<t:block id="dateDisplay">
@@ -49,6 +42,5 @@
 
 	<t:block id="boolean">
 		<input t:id="checkboxField" t:mixins="MyFormGroup" />
-		<t:error for="checkboxField"/>
 	</t:block>
 </div>

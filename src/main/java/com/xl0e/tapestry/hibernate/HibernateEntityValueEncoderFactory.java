@@ -25,8 +25,8 @@ public class HibernateEntityValueEncoderFactory<I extends Serializable, E extend
 
     private E stringToEntity(String string) {
         if (!StringUtils.isEmpty(string) && !"null".equalsIgnoreCase(string)) {
-            E e = HibernateEntityValueEncoderFactory.this.dao.findById(HibernateEntityValueEncoderFactory.this.dao.stringToId(string));
-            return e;
+            I id = dao.stringToId(string);
+            return HibernateEntityValueEncoderFactory.this.dao.findById(id);
         }
         return null;
     }

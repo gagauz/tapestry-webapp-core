@@ -295,6 +295,6 @@ public class AbstractHibernateDao<Id extends Serializable, Entity extends IModel
     }
 
     public EntityFilter<Entity> filter() {
-        return new EntityFilter<>();
+        return new CriteriaFilter<>(createCriteria(), getEntityClass());
     }
 }

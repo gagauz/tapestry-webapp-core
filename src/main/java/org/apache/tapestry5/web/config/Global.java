@@ -9,9 +9,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.xl0e.util.C;
-
 import org.apache.catalina.servlet4preview.http.HttpServletRequestWrapper;
+
+import com.xl0e.util.C;
 
 public class Global {
 
@@ -99,7 +99,7 @@ public class Global {
                 uuid = cookie.getValue();
                 request.setAttribute(UUID_ATTRIBUTE, uuid);
             } else {
-                uuid = UUID.randomUUID().toString();
+                uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
                 Cookie uuidCookie = new Cookie(UUID_COOKIE_NAME, uuid);
                 request.setAttribute(UUID_ATTRIBUTE, uuid);
                 getResponse().addCookie(uuidCookie);

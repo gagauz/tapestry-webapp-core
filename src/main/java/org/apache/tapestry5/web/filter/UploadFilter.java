@@ -16,14 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -34,7 +32,7 @@ import org.apache.tapestry5.web.config.Global;
 
 import com.xl0e.util.C;
 
-public class UploadFilter implements Filter {
+public class UploadFilter extends AbstractHttpFilter {
 
     private static final String MULTIPART_CONTENT_TYPE = "multipart/";
     private static final String UPLOADED_FILES_PATH_PARAM = "uploadedFilesPath";
@@ -50,7 +48,7 @@ public class UploadFilter implements Filter {
             return Arrays.asList(requestFiles.get().get(name));
         }
 
-        return Collections.<FileItem> emptyList();
+        return Collections.<FileItem>emptyList();
     }
 
     private static String uploadedFilesDir;
@@ -70,17 +68,15 @@ public class UploadFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void filter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        if (null != httpRequest.getContentType()
-                && httpRequest.getContentType().contains(MULTIPART_CONTENT_TYPE)) {
+        if (null != request.getContentType()
+                && request.getContentType().contains(MULTIPART_CONTENT_TYPE)) {
 
             try {
 
-                final List<FileItem> items = new ServletFileUpload(getFactory(httpRequest)).parseRequest(httpRequest);
+                final List<FileItem> items = new ServletFileUpload(getFactory(request)).parseRequest(request);
 
                 Map<String, String[]> parametersMap = Collections.emptyMap();
                 Map<String, FileItem[]> requestFileItems = Collections.emptyMap();
@@ -103,7 +99,7 @@ public class UploadFilter implements Filter {
 
                 final Map<String, String[]> finalParametersMap = parametersMap;
 
-                httpRequest = new HttpServletRequestWrapper(httpRequest) {
+                request = new HttpServletRequestWrapper(request) {
                     @Override
                     public Map<String, String[]> getParameterMap() {
                         return finalParametersMap;
@@ -144,7 +140,7 @@ public class UploadFilter implements Filter {
                 e.printStackTrace();
             }
         }
-        chain.doFilter(httpRequest, response);
+        chain.doFilter(request, response);
 
         requestFiles.remove(); // Reset
 
@@ -153,13 +149,10 @@ public class UploadFilter implements Filter {
     private FileItemFactory getFactory(final HttpServletRequest request) {
         FileItemFactory factory = factoryHolder.get();
         if (null == factory) {
-            factory = new FileItemFactory() {
-                @Override
-                public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
-                    DiskFileItem result = new DiskFileItem(fieldName, contentType,
-                            isFormField, fileName, 0, getRepository(request));
-                    return result;
-                }
+            factory = (fieldName, contentType, isFormField, fileName) -> {
+                DiskFileItem result = new DiskFileItem(fieldName, contentType,
+                        isFormField, fileName, 0, getRepository(request));
+                return result;
             };
         }
         return factory;
