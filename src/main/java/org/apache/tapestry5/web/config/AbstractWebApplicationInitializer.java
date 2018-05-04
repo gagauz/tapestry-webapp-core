@@ -44,9 +44,13 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
         Global.servletContext = servletContext;
 
         this.servletContext = servletContext;
-        this.rootContext = new AnnotationConfigWebApplicationContext();
 
-        rootContext.setConfigLocations(getSpringConfigLocations());
+        AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
+        this.rootContext = springContext;
+
+        springContext.setConfigLocations(getSpringConfigLocations());
+
+        Global.applicationContext = springContext;
 
         servletContext.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, String.valueOf(getUseExternalSpringContext()));
 

@@ -11,4 +11,8 @@ public class MySQL5InnoDBDialect2 extends MySQL5InnoDBDialect {
         registerFunction("bitwise_or", new SQLFunctionTemplate(IntegerType.INSTANCE, "(?1 | ?2)"));
     }
 
+    @Override
+    public String getTableTypeString() {
+        return super.getTableTypeString() + " DEFAULT CHARSET=utf8";
+    }
 }

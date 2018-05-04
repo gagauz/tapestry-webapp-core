@@ -64,6 +64,10 @@ import org.apache.tapestry5.web.services.RequestMessagesPipeline;
 import org.apache.tapestry5.web.services.ToolsService;
 import org.apache.tapestry5.web.services.annotation.GetParamTransformer;
 import org.apache.tapestry5.web.services.annotation.LongCacheTransformer;
+import org.apache.tapestry5.web.services.cache.CacheScopeProvider;
+import org.apache.tapestry5.web.services.cache.CacheScopeProviderImpl;
+import org.apache.tapestry5.web.services.cache.CacheService;
+import org.apache.tapestry5.web.services.cache.CacheServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +89,8 @@ public class CoreWebappModule {
         binder.bind(RequestMessagesPipeline.class);
         binder.bind(CookieService.class);
         binder.bind(AlertManagerExt.class, AlertManagerExtImpl.class);
+        binder.bind(CacheScopeProvider.class, CacheScopeProviderImpl.class);
+        binder.bind(CacheService.class, CacheServiceImpl.class);
     }
 
     @FactoryDefaults
@@ -308,4 +314,5 @@ public class CoreWebappModule {
             });
         }
     }
+
 }

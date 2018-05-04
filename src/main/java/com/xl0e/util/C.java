@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.xl0e.util.multimap.ListMultimap;
@@ -80,7 +82,7 @@ public class C {
     public static <P, V> Collection<V> transform(Collection<P> iterable, Function<P, V> adapter) {
         Collection<V> result = new ArrayList<>(iterable.size());
         for (P p : iterable) {
-            result.add(adapter.call(p));
+            result.add(adapter.apply(p));
         }
         return result;
     }
@@ -88,7 +90,7 @@ public class C {
     public static <P, V> Collection<V> transform(P[] iterable, Function<P, V> adapter) {
         ArrayList<V> result = new ArrayList<>(iterable.length);
         for (P p : iterable) {
-            result.add(adapter.call(p));
+            result.add(adapter.apply(p));
         }
         return result;
     }
@@ -183,7 +185,7 @@ public class C {
     public static <K, V> Map<K, V> hashMap(Collection<V> values, Function<V, K> keyFunc) {
         Map<K, V> result = newHashMap();
         for (V v : values) {
-            result.put(keyFunc.call(v), v);
+            result.put(keyFunc.apply(v), v);
         }
         return result;
     }
@@ -191,7 +193,7 @@ public class C {
     public static <K, V, Z> Map<K, Z> hashMap(Collection<V> values, Function<V, K> keyFunc, Function<V, Z> valueFunc) {
         Map<K, Z> result = newHashMap();
         for (V v : values) {
-            result.put(keyFunc.call(v), valueFunc.call(v));
+            result.put(keyFunc.apply(v), valueFunc.apply(v));
         }
         return result;
     }
@@ -199,7 +201,7 @@ public class C {
     public static <K, V> ListMultimap<K, V> listMultiMap(Collection<V> values, Function<V, K> keyFunc) {
         ListMultimap<K, V> result = Multimaps.newArrayListMultimap();
         for (V v : values) {
-            result.put(keyFunc.call(v), v);
+            result.put(keyFunc.apply(v), v);
         }
         return result;
     }
@@ -219,7 +221,7 @@ public class C {
                                                             Function<V, Z> valueFunc) {
         ListMultimap<K, Z> result = Multimaps.newArrayListMultimap();
         for (V v : values) {
-            result.put(keyFunc.call(v), valueFunc.call(v));
+            result.put(keyFunc.apply(v), valueFunc.apply(v));
         }
         return result;
     }
@@ -229,7 +231,7 @@ public class C {
                                                                   Function<V, Z> valueFunc) {
         ListMultimap<K, Z> result = Multimaps.newArrayListSortedMultimap();
         for (V v : values) {
-            result.put(keyFunc.call(v), valueFunc.call(v));
+            result.put(keyFunc.apply(v), valueFunc.apply(v));
         }
         return result;
     }
@@ -266,16 +268,28 @@ public class C {
         }
     }
 
-    public static <T> Collection<T> emptyIfNull(Collection<T> iterable) {
+    public static <T> List<T> emptyIfNull(List<T> iterable) {
         return null == iterable
                 ? Collections.emptyList()
                 : iterable;
     }
 
+    public static <T> Set<T> emptyIfNull(Set<T> iterable) {
+        return null == iterable
+                ? Collections.emptySet()
+                : iterable;
+    }
+
+    public static <K, V> Map<K, V> emptyIfNull(Map<K, V> map) {
+        return null == map
+                ? Collections.emptyMap()
+                : map;
+    }
+
     public static <T> void unwrap(T element, Function<T, T> unwrapper) {
         T next = element;
         while (null != next) {
-            next = unwrapper.call(next);
+            next = unwrapper.apply(next);
         }
     }
 
@@ -316,7 +330,7 @@ public class C {
     public static <T, X extends Set<T>> X copy(final Set<T> original, Function<Set<T>, X> creator) {
         return null == original
                 ? null
-                : creator.call(original);
+                : creator.apply(original);
     }
 
     public static <T> List<T> copy(final List<T> original) {
@@ -333,6 +347,17 @@ public class C {
 
     public static <X> boolean isNotEmpty(X[] array) {
         return null != array && array.length > 0;
+    }
+
+    public static <T, K> List<T> sortAgainst(final List<T> list,
+                                             final Function<T, K> getter,
+                                             final List<K> mirror) {
+        final LinkedHashMap<K, T> map = new LinkedHashMap<>(mirror.size());
+        mirror.forEach(k -> map.put(k, null));
+        list.forEach(t -> {
+            map.put(getter.apply(t), t);
+        });
+        return C.arrayList(map.values());
     }
 
 }

@@ -88,6 +88,16 @@ public class EntityFilter<T> {
         return this;
     }
 
+    public EntityFilter<T> isTrue(String name) {
+        mode.add(Restrictions.eq(name, true));
+        return this;
+    }
+
+    public EntityFilter<T> isFalse(String name) {
+        mode.add(Restrictions.eq(name, false));
+        return this;
+    }
+
     public EntityFilter<T> ne(String name, Object value) {
         mode.add(Restrictions.ne(name, value));
         return this;

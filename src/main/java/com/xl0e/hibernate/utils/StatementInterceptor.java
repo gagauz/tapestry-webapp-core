@@ -87,9 +87,7 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
                         @Override
                         public void println(Object x) {
                             String s = String.valueOf(x);
-                            if (s.startsWith("\tat org.gagauz")) {
-                                super.println(s);
-                            }
+                            super.println(s);
                         }
                     });
                 }
@@ -100,8 +98,10 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
     }
 
     @Override
-    public ResultSetInternalMethods postProcess(String s, Statement statement, ResultSetInternalMethods resultSetInternalMethods,
-            Connection connection)
+    public ResultSetInternalMethods postProcess(String s,
+                                                Statement statement,
+                                                ResultSetInternalMethods resultSetInternalMethods,
+                                                Connection connection)
             throws SQLException {
         SQLWarning warning;
         if (resultSetInternalMethods != null

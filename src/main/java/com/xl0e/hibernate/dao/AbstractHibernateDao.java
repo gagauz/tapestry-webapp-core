@@ -181,7 +181,7 @@ public class AbstractHibernateDao<Id extends Serializable, Entity extends IModel
         return filter.setCriteria(createCriteria(), entityClass).list();
     }
 
-    public CriteriaFilter<Entity> getCriteriaFilter() {
+    public EntityFilter<Entity> getCriteriaFilter() {
         return new CriteriaFilter<>(createCriteria(), entityClass);
     }
 

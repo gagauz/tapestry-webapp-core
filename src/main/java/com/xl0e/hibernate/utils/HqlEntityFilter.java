@@ -8,12 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import org.hibernate.query.Query;
 import org.hibernate.type.StandardBasicTypes;
 
 import com.xl0e.util.C;
-import com.xl0e.util.Function;
 
 public class HqlEntityFilter {
     public static enum OrderMode {
@@ -197,7 +197,7 @@ public class HqlEntityFilter {
             }
         }
         System.out.println(sql);
-        Query q = queryFunc.call(sql);
+        Query q = queryFunc.apply(sql);
         n = 0;
         for (Triple c : criterias) {
             if (c.func == SqlOp.IN) {

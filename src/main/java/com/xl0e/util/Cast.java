@@ -1,6 +1,7 @@
 package com.xl0e.util;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Cast {
 
@@ -32,7 +33,7 @@ public class Cast {
 
     public <Z> Cast castF(Class<Z> cls, Function<Z, ?> callable) {
         if (cls.isInstance(obj)) {
-            return new EmptyCast(callable.call((Z) obj));
+            return new EmptyCast(callable.apply((Z) obj));
         }
         return this;
     }
@@ -42,7 +43,7 @@ public class Cast {
     }
 
     public <Z> Z orElseGet(Function<Object, Z> callable) {
-        return callable.call(obj);
+        return callable.apply(obj);
     }
 
     public <Z> Z orElseGet(Z alt) {

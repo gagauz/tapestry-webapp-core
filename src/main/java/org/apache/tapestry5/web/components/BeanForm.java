@@ -26,7 +26,7 @@ public class BeanForm extends BeanEditForm {
     @Property(write = false)
     private String submitIcon;
 
-    @Parameter(autoconnect = true, defaultPrefix = BindingConstants.BLOCK)
+    @Parameter(defaultPrefix = BindingConstants.BLOCK)
     @Property
     private Block buttons;
 

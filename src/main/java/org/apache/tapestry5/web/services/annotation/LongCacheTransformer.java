@@ -1,58 +1,27 @@
 package org.apache.tapestry5.web.services.annotation;
 
+import java.util.List;
+import java.util.Optional;
 
-import org.apache.tapestry5.internal.transform.MethodResultCache;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
+import org.apache.tapestry5.web.services.cache.CacheService;
+import org.apache.tapestry5.web.services.cache.WontCacheException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.xl0e.util.C;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class LongCacheTransformer implements ComponentClassTransformWorker2 {
 
     protected static Logger LOG = LoggerFactory.getLogger(LongCacheTransformer.class);
 
-    private static final Map<String, CachedValue> CACHE = C.newHashMap();
-
-    private class CachedValue implements MethodResultCache {
-        private final long expireAfterMillis;
-        private long lastSetMillis;
-        private Object cachedValue;
-
-        public CachedValue(LongCache annotation) {
-            expireAfterMillis = TimeUnit.MILLISECONDS.convert(annotation.value(), annotation.unit());
-            LOG.debug("Create new cache value holder, expires after (ms) : " + expireAfterMillis);
-        }
-
-        @Override
-        public void set(Object cachedValue) {
-            this.lastSetMillis = System.currentTimeMillis();
-            this.cachedValue = cachedValue;
-        }
-
-        @Override
-        public Object get() {
-            return cachedValue;
-        }
-
-        @Override
-        public boolean isCached() {
-            return null != cachedValue && (lastSetMillis + expireAfterMillis > System.currentTimeMillis());
-        }
-
-        @Override
-        public void reset() {
-            lastSetMillis = 0;
-            cachedValue = null;
-        }
-    }
+    @Inject
+    private CacheService cacheService;
 
     @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model) {
@@ -71,27 +40,30 @@ public class LongCacheTransformer implements ComponentClassTransformWorker2 {
     private MethodAdvice createAdvice(PlasticClass plasticClass, PlasticMethod method) {
         final LongCache annotation = method.getAnnotation(LongCache.class);
 
-        final String cacheKey = plasticClass.getClassName() + "." + method.getDescription().methodName;
+        final String cacheKey = Optional.ofNullable(annotation.id()).map(LongCacheId::name).orElseGet(() -> method.getMethodIdentifier());
 
         LOG.debug("Transform method : " + cacheKey);
 
-        CACHE.put(cacheKey, new CachedValue(annotation));
+        return invocation -> {
+            LOG.debug("Lookup in CACHE by key={}, scope={}", cacheKey, annotation.scope());
 
-        return new MethodAdvice() {
-            @Override
-            public void advise(MethodInvocation invocation) {
-                LOG.debug("Lookup in CACHE " + cacheKey);
-                CachedValue cacheValue = CACHE.get(cacheKey);
-                LOG.debug("Cache holder is  " + cacheValue);
-                if (cacheValue.isCached()) {
-                    LOG.debug("Cached value is still valid, return it.");
-                    invocation.setReturnValue(cacheValue.get());
-                    return;
-                }
-                LOG.debug("Cached value is not valid, return refresh it.");
-                invocation.proceed();
-                invocation.rethrow();
-                cacheValue.set(invocation.getReturnValue());
+            Object value = null;
+            boolean doCache = true;
+            try {
+                value = cacheService.getValue(cacheKey, annotation.scope());
+            } catch (WontCacheException e) {
+                doCache = false;
+            }
+
+            if (null != value) {
+                invocation.setReturnValue(value);
+                return;
+            }
+            invocation.proceed();
+            invocation.rethrow();
+            if (doCache) {
+                cacheService.putValue(cacheKey, annotation.scope(), invocation.getReturnValue(),
+                        annotation.unit().toMillis(annotation.value()));
             }
         };
     }

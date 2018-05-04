@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.servlet4preview.http.HttpServletRequestWrapper;
+import org.springframework.context.ApplicationContext;
 
 import com.xl0e.util.C;
 
@@ -25,11 +26,16 @@ public class Global {
     };
 
     protected static ServletContext servletContext;
+    protected static ApplicationContext applicationContext;
     private static final ThreadLocal<HttpServletRequest> requestHolder = new ThreadLocal<>();
     private static final ThreadLocal<HttpServletResponse> responseHolder = new ThreadLocal<>();
 
     public static ServletContext getServletContex() {
         return servletContext;
+    }
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
     public static HttpServletRequest getRequest() {

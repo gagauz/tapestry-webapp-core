@@ -1,9 +1,12 @@
 package com.xl0e.testdata;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.tapestry5.web.config.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,18 @@ public abstract class DataBaseScenario {
             }
         }
 
+        for (Class<? extends DataBaseScenario> cls : getDependsOnClasses()) {
+            if (cls.equals(this.getClass())) {
+                throw new IllegalStateException("Scenario " + this.getClass() + " must not depend on itself!");
+            }
+
+            DataBaseScenario scenario = Global.getApplicationContext().getBean(cls);
+
+            if (!scenario.wasExecuted()) {
+                scenario.run();
+            }
+        }
+
         try {
             final long start = System.currentTimeMillis();
             execute();
@@ -52,5 +67,9 @@ public abstract class DataBaseScenario {
 
     protected DataBaseScenario[] getDependsOn() {
         return new DataBaseScenario[0];
+    }
+
+    protected List<Class<? extends DataBaseScenario>> getDependsOnClasses() {
+        return Collections.emptyList();
     }
 }
