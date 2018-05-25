@@ -1,8 +1,8 @@
 [INFO] Scanning for projects...
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for com.xl0e:tapestry-54-web-core:jar:1.0
-[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework:spring-beans:jar -> duplicate declaration of version ${spring-release.version} @ line 207, column 15
-[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-jar-plugin is missing. @ line 262, column 12
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework:spring-beans:jar -> duplicate declaration of version ${spring-release.version} @ line 202, column 15
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-jar-plugin is missing. @ line 256, column 12
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
@@ -60,15 +60,16 @@
 [INFO] +- org.codehaus.jackson:jackson-mapper-asl:jar:1.8.5:compile
 [INFO] |  \- org.codehaus.jackson:jackson-core-asl:jar:1.8.5:compile
 [INFO] +- org.javassist:javassist:jar:3.18.1-GA:compile
-[INFO] +- org.slf4j:slf4j-log4j12:jar:1.7.25:provided
-[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.25:provided
-[INFO] |  \- log4j:log4j:jar:1.2.17:provided
+[INFO] +- org.apache.logging.log4j:log4j-slf4j-impl:jar:2.11.0:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.8.0-alpha2:compile
+[INFO] |  +- org.apache.logging.log4j:log4j-api:jar:2.11.0:compile
+[INFO] |  \- org.apache.logging.log4j:log4j-core:jar:2.11.0:runtime
 [INFO] +- org.slf4j:jul-to-slf4j:jar:1.7.25:provided
 [INFO] \- org.slf4j:jcl-over-slf4j:jar:1.7.25:provided
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 5.558 s
-[INFO] Finished at: 2018-04-06T23:21:09+03:00
-[INFO] Final Memory: 15M/155M
+[INFO] Total time: 7.330 s
+[INFO] Finished at: 2018-05-17T22:35:24+03:00
+[INFO] Final Memory: 14M/155M
 [INFO] ------------------------------------------------------------------------

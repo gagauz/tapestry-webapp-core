@@ -87,14 +87,14 @@
 			<version>${tapestry-release.version}</version>
 			<exclusions>
 				<exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
 				</exclusion>
 				<exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
-			  <exclusion>
+				<exclusion>
 					<groupId>org.apache.tapestry</groupId>
 					<artifactId>plastic</artifactId>
 				</exclusion>
@@ -150,14 +150,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.apache.tapestry</groupId>
-			<artifactId>tapestry-webresources</artifactId>
-			<version>${tapestry-release.version}</version>
-		</dependency>
-		-->
-		
+		<!-- <dependency> <groupId>org.apache.tapestry</groupId> <artifactId>tapestry-webresources</artifactId> 
+			<version>${tapestry-release.version}</version> </dependency> -->
+
 		<!-- Provide dependency to the Tapestry javadoc taglet which replaces the 
 			Maven component report -->
 		<!-- Hibernate -->
@@ -238,11 +233,16 @@
 
 		<!-- log4j -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.25</version>
-			<scope>provided</scope>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>2.8.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.8.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jul-to-slf4j</artifactId>
@@ -266,7 +266,7 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-		
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

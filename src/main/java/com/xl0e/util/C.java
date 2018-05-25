@@ -68,6 +68,9 @@ public class C {
     }
 
     public static <E> ArrayList<E> arrayList(Collection<E> source) {
+        if (null == source) {
+            return arrayList();
+        }
         return new ArrayList<>(source);
     }
 

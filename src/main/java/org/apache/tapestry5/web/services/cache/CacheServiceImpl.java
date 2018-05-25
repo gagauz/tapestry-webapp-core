@@ -56,7 +56,7 @@ public class CacheServiceImpl implements CacheService {
         }
 
         public boolean isAlive() {
-            return System.currentTimeMillis() > expires;
+            return System.currentTimeMillis() < expires;
         }
 
     }

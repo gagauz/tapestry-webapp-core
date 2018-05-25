@@ -18,7 +18,7 @@ public class SecuredAccessAttributeChecker implements AccessAttributesChecker<Se
                 .map(SecuredAccessAttributes::getAttributes)
                 .orElse(Collections.emptyList());
 
-        return sessionAttributesList.containsAll(resourceAttributesList);
+        return sessionAttributesList.stream().anyMatch(a -> resourceAttributesList.contains(a));
     }
 
 }

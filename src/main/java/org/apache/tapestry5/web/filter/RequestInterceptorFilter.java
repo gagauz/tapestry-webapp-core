@@ -9,8 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.web.config.Global;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestInterceptorFilter extends AbstractHttpFilter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RequestInterceptorFilter.class);
 
     public static interface Handler extends FilterChain {
 
@@ -30,9 +34,12 @@ public class RequestInterceptorFilter extends AbstractHttpFilter {
 
     @Override
     public void filter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        long start = System.currentTimeMillis();
         beforeChain.doFilter(request, response);
+        final String requestUri = Global.getRequest().getRequestURI();
         chain.doFilter(request, response);
         afterChain.doFilter(request, response);
+        LOG.info("Done filter chain for {} in {} ms", requestUri, (System.currentTimeMillis() - start));
     }
 
     @Override

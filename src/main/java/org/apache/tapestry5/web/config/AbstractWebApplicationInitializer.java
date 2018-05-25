@@ -31,7 +31,8 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
     private static final String DEFAULT_SERVLET_MAPPING = "/*";
 
     protected ServletContext servletContext;
-    protected AnnotationConfigWebApplicationContext rootContext;
+
+    protected AnnotationConfigWebApplicationContext springContext;
 
     protected abstract Class<?> getAppModuleClass();
 
@@ -41,25 +42,10 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        Global.servletContext = servletContext;
-
-        this.servletContext = servletContext;
-
-        AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
-        this.rootContext = springContext;
-
-        springContext.setConfigLocations(getSpringConfigLocations());
-
-        Global.applicationContext = springContext;
-
-        servletContext.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, String.valueOf(getUseExternalSpringContext()));
-
-        servletContext.addListener(new ContextLoaderListener(rootContext));
-
+        setServletContext(servletContext);
+        setSpringContext(new AnnotationConfigWebApplicationContext());
         createDefaultFilters();
-
         createTapestryAppFilter();
-
         MDC.put(Global.UUID_COOKIE_NAME, "system");
     }
 
@@ -106,7 +92,31 @@ public abstract class AbstractWebApplicationInitializer implements WebApplicatio
         return filter;
     }
 
-    public AnnotationConfigWebApplicationContext getRootContext() {
-        return rootContext;
+    protected void onServletContext(ServletContext context) {
+
     }
+
+    protected void onSpringContext(AnnotationConfigWebApplicationContext context) {
+
+    }
+
+    public final void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+        onServletContext(servletContext);
+        servletContext.setInitParameter(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, String.valueOf(getUseExternalSpringContext()));
+        Global.servletContext = servletContext;
+    }
+
+    public final void setSpringContext(AnnotationConfigWebApplicationContext springContext) {
+        this.springContext = springContext;
+        springContext.setConfigLocations(getSpringConfigLocations());
+        onSpringContext(springContext);
+        Global.applicationContext = springContext;
+        servletContext.addListener(new ContextLoaderListener(springContext));
+    }
+
+    public AnnotationConfigWebApplicationContext getSpringContext() {
+        return springContext;
+    }
+
 }

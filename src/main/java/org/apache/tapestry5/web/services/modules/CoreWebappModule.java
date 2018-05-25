@@ -64,6 +64,7 @@ import org.apache.tapestry5.web.services.RequestMessagesPipeline;
 import org.apache.tapestry5.web.services.ToolsService;
 import org.apache.tapestry5.web.services.annotation.GetParamTransformer;
 import org.apache.tapestry5.web.services.annotation.LongCacheTransformer;
+import org.apache.tapestry5.web.services.annotation.PageContextTransformer;
 import org.apache.tapestry5.web.services.cache.CacheScopeProvider;
 import org.apache.tapestry5.web.services.cache.CacheScopeProviderImpl;
 import org.apache.tapestry5.web.services.cache.CacheService;
@@ -252,6 +253,7 @@ public class CoreWebappModule {
                                                          OrderedConfiguration<ComponentClassTransformWorker2> configuration) {
         configuration.addInstance("GetParamTransformer", GetParamTransformer.class);
         configuration.addInstance("LongCacheTransformer", LongCacheTransformer.class);
+        configuration.addInstance("PageContextTransformer", PageContextTransformer.class);
     }
 
     // public RequestExceptionHandler buildAppRequestExceptionHandler(final ResponseRenderer renderer,
