@@ -23,26 +23,28 @@ import com.xl0e.util.multimap.Multimaps;
 import com.xl0e.util.multimap.SetMultimap;
 
 public class C {
-    public static <K, V> HashMap<K, V> newHashMap() {
+    public static <K, V> HashMap<K, V> hashMap() {
         return new HashMap<>();
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(Map<K, V> source) {
+    public static <K, V> HashMap<K, V> hashMap(Map<K, V> source) {
         return new HashMap<>(source);
     }
 
-    public static <E> HashSet<E> newHashSet() {
+    public static <E> HashSet<E> hashSet() {
         return new HashSet<>();
     }
 
-    public static <E> HashSet<E> newHashSet(Collection<E> source) {
+    public static <E> HashSet<E> hashSet(Collection<E> source) {
         return new HashSet<>(source);
     }
 
-    public static <E> HashSet<E> newHashSet(E e, @SuppressWarnings("unchecked") E... source) {
+    public static <E> HashSet<E> hashSet(E e, @SuppressWarnings("unchecked") E... source) {
         HashSet<E> set = new HashSet<>();
         set.add(e);
-        set.addAll(Arrays.asList(source));
+        if (source.length > 0) {
+            set.addAll(Arrays.asList(source));
+        }
         return set;
     }
 
@@ -51,11 +53,6 @@ public class C {
         if (null != source) {
             set.addAll(Arrays.asList(source));
         }
-        return set;
-    }
-
-    public static <E> HashSet<E> hashSet() {
-        HashSet<E> set = new HashSet<>();
         return set;
     }
 
@@ -74,11 +71,11 @@ public class C {
         return new ArrayList<>(source);
     }
 
-    public static <E> LinkedList<E> newLinkedList() {
+    public static <E> LinkedList<E> linkedList() {
         return new LinkedList<>();
     }
 
-    public static <E> LinkedList<E> newLinkedList(Collection<E> source) {
+    public static <E> LinkedList<E> linkedList(Collection<E> source) {
         return new LinkedList<>(source);
     }
 
@@ -176,7 +173,7 @@ public class C {
 
     @SuppressWarnings("unchecked")
     public static <K, V> HashMap<K, V> hashMap(Object... keyAndValues) {
-        HashMap<K, V> map = newHashMap();
+        HashMap<K, V> map = hashMap();
         for (int i = 0; i
                 + 1 < keyAndValues.length; i = i
                         + 2)
@@ -186,7 +183,7 @@ public class C {
     }
 
     public static <K, V> Map<K, V> hashMap(Collection<V> values, Function<V, K> keyFunc) {
-        Map<K, V> result = newHashMap();
+        Map<K, V> result = hashMap();
         for (V v : values) {
             result.put(keyFunc.apply(v), v);
         }
@@ -194,7 +191,7 @@ public class C {
     }
 
     public static <K, V, Z> Map<K, Z> hashMap(Collection<V> values, Function<V, K> keyFunc, Function<V, Z> valueFunc) {
-        Map<K, Z> result = newHashMap();
+        Map<K, Z> result = hashMap();
         for (V v : values) {
             result.put(keyFunc.apply(v), valueFunc.apply(v));
         }
@@ -361,6 +358,14 @@ public class C {
             map.put(getter.apply(t), t);
         });
         return C.arrayList(map.values());
+    }
+
+    public static String[] trim(String[] array) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = StringUtils.trim(array[i]);
+        }
+        return array;
+
     }
 
 }

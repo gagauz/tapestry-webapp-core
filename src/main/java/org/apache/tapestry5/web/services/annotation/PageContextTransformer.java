@@ -67,7 +67,7 @@ public class PageContextTransformer implements ComponentClassTransformWorker2 {
         }
 
         if (firstAnnotation.passivate()) {
-            support.addEventHandler(EventConstants.PASSIVATE, firstAnnotation.index(),
+            support.addEventHandler(EventConstants.PASSIVATE, 0,
                     "PageActivationContextWorker passivate event handler", createPassivateHandler(handles, indexes));
         }
 
@@ -122,7 +122,7 @@ public class PageContextTransformer implements ComponentClassTransformWorker2 {
                 // simple / common case for a single @PageContext
                 result = handles[0].get(instance);
             } else {
-                LinkedList<Object> list = C.newLinkedList();
+                LinkedList<Object> list = C.linkedList();
 
                 // iterate backwards
                 for (int i = 0; i < handles.length; i++) {
@@ -131,7 +131,7 @@ public class PageContextTransformer implements ComponentClassTransformWorker2 {
 
                     // ignore trailing nulls
                     if (value != null || !list.isEmpty()) {
-                        list.add(indexes[i], value);
+                        list.add(value);
                     }
                 }
                 result = list.isEmpty() ? null : list;

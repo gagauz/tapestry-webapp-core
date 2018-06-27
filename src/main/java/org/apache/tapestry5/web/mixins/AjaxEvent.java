@@ -4,14 +4,12 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 @Import(library = "ajaxevent.js")
@@ -23,7 +21,7 @@ public class AjaxEvent {
     @Parameter
     private Object[] context;
 
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL, required = true)
     private String zone;
 
     @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "change")
@@ -41,9 +39,6 @@ public class AjaxEvent {
     @Inject
     private JavaScriptSupport javaScriptSupport;
 
-    @Environmental
-    protected ClientBehaviorSupport clientBehaviorSupport;
-
     protected Link createLink() {
         Link link = container.getComponentResources().createEventLink(event, context);
         return link;
@@ -52,9 +47,13 @@ public class AjaxEvent {
     void afterRender(MarkupWriter writer) {
         if (this.zone != null) {
             Link link = createLink();
-            JSONObject spec = new JSONObject("elementId", clientElement.getClientId(), "zoneId", zone, "url", link.toURI(), "valueParam", valueParam, "bind",
-                    bind);
-            javaScriptSupport.addInitializerCall("AjaxEvent", spec);
+            JSONObject spec = new JSONObject(
+                    "elementId", clientElement.getClientId(),
+                    "zoneId", zone,
+                    "url", link.toURI(),
+                    "valueParam", valueParam,
+                    "bind", bind);
+            javaScriptSupport.require("ajaxevent").invoke("init").with(spec);
         }
     }
 }

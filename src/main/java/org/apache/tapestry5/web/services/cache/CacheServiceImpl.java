@@ -9,7 +9,7 @@ import com.xl0e.util.C;
 
 public class CacheServiceImpl implements CacheService {
 
-    private static final Map<String, CachedValue<?>> CACHE = C.newHashMap();
+    private static final Map<String, CachedValue<?>> CACHE = C.hashMap();
 
     @Inject
     private CacheScopeProvider cacheScopeProvider;

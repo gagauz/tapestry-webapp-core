@@ -285,7 +285,7 @@ public class AbstractHibernateDao<Id extends Serializable, Entity extends IModel
     }
 
     @SuppressWarnings("unchecked")
-    public static <I extends Serializable, E extends IModel<I>, D extends AbstractHibernateDao<I, E>> D getDao(Class<E> entityClass) {
+    public static <I extends Serializable, E extends IModel<I>, D extends AbstractHibernateDao<I, E>> D getDao(Class<?> entityClass) {
         return (D) instanceMap.get(entityClass);
     }
 

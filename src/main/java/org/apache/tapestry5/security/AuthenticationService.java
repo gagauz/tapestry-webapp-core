@@ -78,7 +78,7 @@ public class AuthenticationService {
 
     private void copySession() {
         Session old = request.getSession(false);
-        Map<String, Object> attr = C.newHashMap();
+        Map<String, Object> attr = C.hashMap();
         Optional.ofNullable(old).map(Session::getAttributeNames).orElse(Collections.emptyList()).forEach(n -> {
             attr.put(n, old.getAttribute(n));
         });
