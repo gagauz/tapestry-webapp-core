@@ -34,7 +34,7 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
             connId = "Connection [" + connectionId + "] ";
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(connId + "created");
+            LOGGER.debug(connId + " created");
         }
     }
 
@@ -45,7 +45,8 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
                 .replaceAll(" from ", "\nfrom ")
                 .replaceAll(" left ", "\nleft ")
                 .replaceAll(" right ", "\nright ")
-                .replaceAll(" where ", "\nwhere ").replaceAll(", ", ",\n\t");
+                .replaceAll(" where ", "\nwhere ")
+                .replaceAll(", ", ",\n\t");
     }
 
     static PrintWriter PW = new PrintWriter(System.out) {
@@ -99,9 +100,9 @@ public class StatementInterceptor implements com.mysql.jdbc.StatementInterceptor
 
     @Override
     public ResultSetInternalMethods postProcess(String s,
-                                                Statement statement,
-                                                ResultSetInternalMethods resultSetInternalMethods,
-                                                Connection connection)
+            Statement statement,
+            ResultSetInternalMethods resultSetInternalMethods,
+            Connection connection)
             throws SQLException {
         SQLWarning warning;
         if (resultSetInternalMethods != null
